@@ -28,13 +28,13 @@
 <meta property="og:site_name" content="Eumendies">
 <meta property="og:description" content="LSTM 计算过程： \[ 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o) \] 其中\(I_t,F_t,O_t\in R^{n\times">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://eumendies.github.io/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png">
+<meta property="og:image" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png">
 <meta property="article:published_time" content="2022-09-29T07:27:43.000Z">
-<meta property="article:modified_time" content="2022-09-29T07:43:12.425Z">
+<meta property="article:modified_time" content="2022-09-29T07:46:43.881Z">
 <meta property="article:author" content="Eumendies">
 <meta property="article:tag" content="deep-learning">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://eumendies.github.io/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png">
+<meta name="twitter:image" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png">
   
   
 
@@ -139,29 +139,19 @@ h}\)</span>，n为batch_size <span class="math display">\[
 h}\)</span> <span class="math display">\[
 记忆细胞：C_t=F_t \bigodot C_{t-1}+I_t \bigodot \tilde{C}_t \\
 隐藏状态：H_t=O_t \bigodot tanh(C_t)
-\]</span> <span
-class="math inline">\(\bigodot\)</span>表示按元素乘法</p>
+\]</span> <span class="math inline">\(\bigodot\)</span>表示按元素乘法</p>
 <h3 id="要点">要点：</h3>
 <ol type="1">
-<li><p>输入门<span class="math inline">\(I_t\)</span>、遗忘门<span
-class="math inline">\(F_t\)</span>、输出门<span
-class="math inline">\(O_t\)</span>、候选记忆细胞<span
-class="math inline">\(\tilde{C}_t\)</span>的计算与传统RNN中隐藏状态H的计算相似</p></li>
+<li><p>输入门<span class="math inline">\(I_t\)</span>、遗忘门<span class="math inline">\(F_t\)</span>、输出门<span class="math inline">\(O_t\)</span>、候选记忆细胞<span class="math inline">\(\tilde{C}_t\)</span>的计算与传统RNN中隐藏状态H的计算相似</p></li>
 <li><p>遗忘门决定上一个记忆细胞的信息是否流入该时间步的记忆细胞，输入门决定该时间步的候选记忆细胞的信息是否流入该时间步的记忆细胞</p></li>
 <li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p></li>
 <li><p>多层LSTM：</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/LSTM笔记/multiLayer.png" alt="多层LSTM" />
-<figcaption aria-hidden="true">多层LSTM</figcaption>
-</figure></li>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png" class title="多层LSTM"></p></li>
 </ol>
 <h3 id="向量化">向量化：</h3>
-<p><span
-class="math inline">\(输入X：(batch\_size,seq\_len,d\_model)\)</span></p>
-<p><span
-class="math inline">\(隐藏状态H：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
-<p><span
-class="math inline">\(记忆细胞C：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
+<p><span class="math inline">\(输入X：(batch\_size,seq\_len,d\_model)\)</span></p>
+<p><span class="math inline">\(隐藏状态H：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
+<p><span class="math inline">\(记忆细胞C：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
 
 
 <div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a
