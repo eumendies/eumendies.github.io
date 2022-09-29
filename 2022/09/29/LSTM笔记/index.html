@@ -21,12 +21,12 @@
   <title>LSTM笔记 - Eumendies</title>
 
   
-    <meta name="description" content="LSTM计算过程：$$输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)$$ 其中$I_t,F_t,O_t\in R^{n\times h">
+    <meta name="description" content="LSTM计算过程： 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LSTM笔记">
 <meta property="og:url" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Eumendies">
-<meta property="og:description" content="LSTM计算过程：$$输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)$$ 其中$I_t,F_t,O_t\in R^{n\times h">
+<meta property="og:description" content="LSTM计算过程： 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size">
 <meta property="og:locale">
 <meta property="og:image" content="c:\Users\14315\AppData\Roaming\Typora\typora-user-images\image-20220214204809421.png">
 <meta property="article:published_time" content="2022-09-29T04:54:31.000Z">
@@ -76,7 +76,7 @@
 
 <div class="widgets">
 
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LSTM"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9%EF%BC%9A"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96%EF%BC%9A"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div></div></div>
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LSTM"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9%EF%BC%9A"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96%EF%BC%9A"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div></div></div>
 
 
 </div>
@@ -89,12 +89,19 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2022-09-29T04:54:31.000Z">2022-09-29</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2022-09-29T04:54:31.000Z">2022-09-29</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>LSTM笔记</span></h1>
-<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><h3 id="计算过程："><a href="#计算过程：" class="headerlink" title="计算过程："></a>计算过程：</h3><p>$$<br>输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \<br>遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \<br>输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)<br>$$</p>
-<p>其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size<br>$$<br>候选记忆细胞：\tilde{C}<em>t&#x3D;tanh(X_tW</em>{xc}+H_{t-1}W_{hc}+b_c)<br>$$<br>其中$\tilde{C}<em>t \in R^{n \times h}$<br>$$<br>记忆细胞：C_t&#x3D;F_t \bigodot C</em>{t-1}+I_t \bigodot \tilde{C}_t \<br>隐藏状态：H_t&#x3D;O_t \bigodot tanh(C_t)<br>$$<br>$\bigodot$表示按元素乘法</p>
+<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><h3 id="计算过程："><a href="#计算过程：" class="headerlink" title="计算过程："></a>计算过程：</h3><script type="math/tex; mode=display">
+输入门：I_t = \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\
+遗忘门：F_t = \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\
+输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)</script><p>其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size</p>
+<script type="math/tex; mode=display">
+候选记忆细胞：\tilde{C}_t=tanh(X_tW_{xc}+H_{t-1}W_{hc}+b_c)</script><p>其中$\tilde{C}_t \in R^{n \times h}$</p>
+<script type="math/tex; mode=display">
+记忆细胞：C_t=F_t \bigodot C_{t-1}+I_t \bigodot \tilde{C}_t \\
+隐藏状态：H_t=O_t \bigodot tanh(C_t)</script><p>$\bigodot$表示按元素乘法</p>
 <h3 id="要点："><a href="#要点：" class="headerlink" title="要点："></a>要点：</h3><ol>
 <li><p>输入门$I_t$、遗忘门$F_t$、输出门$O_t$、候选记忆细胞$\tilde{C}_t$的计算与传统RNN中隐藏状态H的计算相似</p>
 </li>
@@ -103,19 +110,20 @@
 <li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p>
 </li>
 <li><p>多层LSTM：</p>
- <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="C:\Users\14315\AppData\Roaming\Typora\typora-user-images\image-20220214204809421.png" alt="image-20220214204809421" style="zoom:70%;" /></li>
+<p> <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="C:\Users\14315\AppData\Roaming\Typora\typora-user-images\image-20220214204809421.png" alt="image-20220214204809421" style="zoom:70%;" /></p>
+</li>
 </ol>
 <h3 id="向量化："><a href="#向量化：" class="headerlink" title="向量化："></a>向量化：</h3><p>$输入X：(batch_size,seq_len,d_model)$</p>
 <p>$隐藏状态H：(batch_size,num_direction*num_layers,num_hidden)$</p>
 <p>$记忆细胞C：(batch_size,num_direction*num_layers,num_hidden)$</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2022/09/28/hello-world/">Hello World<span class="note">Older</span></a><div class="line"></div></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2022/09/28/hello-world/">Hello World<span class="note">较早</span></a><div class="line"></div></section></div>
 
 
 
@@ -125,7 +133,7 @@
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>This site was deployed by <a href="https://eumendies.github.io/">@Eumendies</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0" title="v1.9.0">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="https://eumendies.github.io/">@Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0" title="v1.9.0">Stellar</a> 主题创建。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -232,11 +240,11 @@
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0';
   stellar.config = {
     date_suffix: {
-      just: 'Just',
-      min: 'minutes ago',
-      hour: 'hours ago',
-      day: 'days ago',
-      month: 'months ago',
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
     },
   };
 
