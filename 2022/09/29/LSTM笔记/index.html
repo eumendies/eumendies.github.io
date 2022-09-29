@@ -18,20 +18,22 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#f8f8f8">
-  <title>Hello World - Eumendies</title>
+  <title>LSTM笔记 - Eumendies</title>
 
   
-    <meta name="description" content="Hello world!">
+    <meta name="description" content="LSTM计算过程：$$输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)$$ 其中$I_t,F_t,O_t\in R^{n\times h">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://eumendies.github.io/2022/09/28/hello-world/index.html">
+<meta property="og:title" content="LSTM笔记">
+<meta property="og:url" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Eumendies">
-<meta property="og:description" content="Hello world!">
+<meta property="og:description" content="LSTM计算过程：$$输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)$$ 其中$I_t,F_t,O_t\in R^{n\times h">
 <meta property="og:locale">
-<meta property="article:published_time" content="2022-09-28T14:48:31.947Z">
-<meta property="article:modified_time" content="2022-09-29T03:28:15.684Z">
+<meta property="og:image" content="c:\Users\14315\AppData\Roaming\Typora\typora-user-images\image-20220214204809421.png">
+<meta property="article:published_time" content="2022-09-29T04:54:31.000Z">
+<meta property="article:modified_time" content="2022-09-29T04:55:46.484Z">
 <meta property="article:author" content="Eumendies">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\14315\AppData\Roaming\Typora\typora-user-images\image-20220214204809421.png">
   
   
 
@@ -74,9 +76,7 @@
 
 <div class="widgets">
 
-
-<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">Recent Update</span><a class="cap-action" id="rss" title="Subscribe" href="/atom.xml"><svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8938"><path d="M800.966 947.251c0-404.522-320.872-732.448-716.69-732.448V62.785c477.972 0 865.44 395.987 865.44 884.466h-148.75z m-162.273 0h-148.74c0-228.98-181.628-414.598-405.678-414.598v-152.01c306.205 0 554.418 253.68 554.418 566.608z m-446.24-221.12c59.748 0 108.189 49.503 108.189 110.557 0 61.063-48.44 110.563-108.188 110.563-59.747 0-108.18-49.5-108.18-110.563 0-61.054 48.433-110.556 108.18-110.556z" p-id="8939"></path></svg></a></div><div class="widget-body fs14"><div class="more-item"><a class="title" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/">LSTM笔记</a></div><div class="more-item"><a class="title" href="/2022/09/28/hello-world/">Hello World</a></div></div></div>
-
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LSTM"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9%EF%BC%9A"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96%EF%BC%9A"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div></div></div>
 
 
 </div>
@@ -89,11 +89,25 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2022-09-28T14:48:31.947Z">2022-09-28</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2022-09-29T04:54:31.000Z">2022-09-29</time></div></div>
 
 <article class='content md post'>
-<h1 class="article-title"><span>Hello World</span></h1>
-<p>Hello world!</p>
+<h1 class="article-title"><span>LSTM笔记</span></h1>
+<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><h3 id="计算过程："><a href="#计算过程：" class="headerlink" title="计算过程："></a>计算过程：</h3><p>$$<br>输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \<br>遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \<br>输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)<br>$$</p>
+<p>其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size<br>$$<br>候选记忆细胞：\tilde{C}<em>t&#x3D;tanh(X_tW</em>{xc}+H_{t-1}W_{hc}+b_c)<br>$$<br>其中$\tilde{C}<em>t \in R^{n \times h}$<br>$$<br>记忆细胞：C_t&#x3D;F_t \bigodot C</em>{t-1}+I_t \bigodot \tilde{C}_t \<br>隐藏状态：H_t&#x3D;O_t \bigodot tanh(C_t)<br>$$<br>$\bigodot$表示按元素乘法</p>
+<h3 id="要点："><a href="#要点：" class="headerlink" title="要点："></a>要点：</h3><ol>
+<li><p>输入门$I_t$、遗忘门$F_t$、输出门$O_t$、候选记忆细胞$\tilde{C}_t$的计算与传统RNN中隐藏状态H的计算相似</p>
+</li>
+<li><p>遗忘门决定上一个记忆细胞的信息是否流入该时间步的记忆细胞，输入门决定该时间步的候选记忆细胞的信息是否流入该时间步的记忆细胞</p>
+</li>
+<li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p>
+</li>
+<li><p>多层LSTM：</p>
+ <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="C:\Users\14315\AppData\Roaming\Typora\typora-user-images\image-20220214204809421.png" alt="image-20220214204809421" style="zoom:70%;" /></li>
+</ol>
+<h3 id="向量化："><a href="#向量化：" class="headerlink" title="向量化："></a>向量化：</h3><p>$输入X：(batch_size,seq_len,d_model)$</p>
+<p>$隐藏状态H：(batch_size,num_direction*num_layers,num_hidden)$</p>
+<p>$记忆细胞C：(batch_size,num_direction*num_layers,num_hidden)$</p>
 
 
 <div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
@@ -101,7 +115,7 @@
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><div class="line"></div><a id="prev" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/">LSTM笔记<span class="note">Newer</span></a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2022/09/28/hello-world/">Hello World<span class="note">Older</span></a><div class="line"></div></section></div>
 
 
 
