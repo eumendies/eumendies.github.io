@@ -4,7 +4,7 @@
 <head>
   <meta name="generator" content="Hexo 6.3.0">
   <meta charset="utf-8">
-  
+  <meta name="robots" content="noindex,follow">
 
   <meta http-equiv='x-dns-prefetch-control' content='on' />
   <link rel='dns-prefetch' href='https://fastly.jsdelivr.net'>
@@ -18,24 +18,16 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#f8f8f8">
-  <title>LSTM笔记 - Eumendies</title>
+  <title>分类：algorithm - Eumendies</title>
 
   
-    <meta name="description" content="LSTM 计算过程： \[ 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o) \] 其中\(I_t,F_t,O_t\in R^{n\times">
-<meta property="og:type" content="article">
-<meta property="og:title" content="LSTM笔记">
-<meta property="og:url" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/index.html">
+    <meta property="og:type" content="website">
+<meta property="og:title" content="Eumendies">
+<meta property="og:url" content="https://eumendies.github.io/categories/algorithm/index.html">
 <meta property="og:site_name" content="Eumendies">
-<meta property="og:description" content="LSTM 计算过程： \[ 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o) \] 其中\(I_t,F_t,O_t\in R^{n\times">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png">
-<meta property="article:published_time" content="2022-09-29T07:27:43.000Z">
-<meta property="article:modified_time" content="2022-09-30T06:51:30.187Z">
 <meta property="article:author" content="Eumendies">
-<meta property="article:tag" content="deep-learning">
-<meta property="article:tag" content="NLP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png">
   
   
 
@@ -64,10 +56,8 @@
   
 
 
-
-
   <div class='l_body' id='start'>
-    <aside class='l_left' layout='post'>
+    <aside class='l_left' layout=''>
     
 
 
@@ -77,115 +67,59 @@
 <nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
+<div class="widget-wrap" id="markdown"><div class="widget-header cap dis-select"><span class="name">欢迎</span></div><div class="widget-body fs14"><p>学习编程时的一些想法或者笔记，博主邮箱：liuzf042@163.com</p>
+</div></div>
 
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#lstm"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div></div></div>
-
-
+<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">最近更新</span><a class="cap-action" id="rss" title="Subscribe" href="/atom.xml"><svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8938"><path d="M800.966 947.251c0-404.522-320.872-732.448-716.69-732.448V62.785c477.972 0 865.44 395.987 865.44 884.466h-148.75z m-162.273 0h-148.74c0-228.98-181.628-414.598-405.678-414.598v-152.01c306.205 0 554.418 253.68 554.418 566.608z m-446.24-221.12c59.748 0 108.189 49.503 108.189 110.557 0 61.063-48.44 110.563-108.188 110.563-59.747 0-108.18-49.5-108.18-110.563 0-61.054 48.433-110.556 108.18-110.556z" p-id="8939"></path></svg></a></div><div class="widget-body fs14"><div class="more-item"><a class="title" href="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/">有限自动机与序列识别</a></div><div class="more-item"><a class="title" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/">LSTM笔记</a></div><div class="more-item"><a class="title" href="/2022/09/28/hello-world/">Hello World</a></div></div></div>
 </div>
 
 
     </aside>
-    <div class='l_main'>
+    <div class='l_main list'>
       
+  
+
+<header class="header mobile-only">
+
+<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div>
+</header>
+
+
 
       
 
+  
+
+
+  <div class='nav-wrap'>
+  <nav class='sub post cap'>
     
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-          tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            processEscapes: true
-          }
-        });
-      </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-            tex2jax: {
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-            }
-          });
-      </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-              var all = MathJax.Hub.getAllJax(), i;
-              for(i=0; i < all.length; i += 1) {
-                  all[i].SourceElement().parentNode.className += ' has-jax';
-              }
-          });
-      </script>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-
-
-
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/deep-learning/">deep-learning</a></div><div id="post-meta">发布于&nbsp;<time datetime="2022-09-29T07:27:43.000Z">2022-09-29</time></div></div>
-
-<article class='content md post'>
-<h1 class="article-title"><span>LSTM笔记</span></h1>
-<h2 id="lstm">LSTM</h2>
-<h3 id="计算过程">计算过程：</h3>
-<p><span class="math display">\[
-输入门：I_t = \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\
-遗忘门：F_t = \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\
-输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)
-\]</span></p>
-<p>其中<span class="math inline">\(I_t,F_t,O_t\in R^{n\times
-h}\)</span>，n为batch_size <span class="math display">\[
-候选记忆细胞：\tilde{C}_t=tanh(X_tW_{xc}+H_{t-1}W_{hc}+b_c)
-\]</span> 其中<span class="math inline">\(\tilde{C}_t \in R^{n \times
-h}\)</span> <span class="math display">\[
-记忆细胞：C_t=F_t \bigodot C_{t-1}+I_t \bigodot \tilde{C}_t \\
-隐藏状态：H_t=O_t \bigodot tanh(C_t)
-\]</span> <span class="math inline">\(\bigodot\)</span>表示按元素乘法</p>
-<h3 id="要点">要点：</h3>
-<ol type="1">
-<li><p>输入门<span class="math inline">\(I_t\)</span>、遗忘门<span class="math inline">\(F_t\)</span>、输出门<span class="math inline">\(O_t\)</span>、候选记忆细胞<span class="math inline">\(\tilde{C}_t\)</span>的计算与传统RNN中隐藏状态H的计算相似</p></li>
-<li><p>遗忘门决定上一个记忆细胞的信息是否流入该时间步的记忆细胞，输入门决定该时间步的候选记忆细胞的信息是否流入该时间步的记忆细胞</p></li>
-<li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p></li>
-<li><p>多层LSTM：</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png" alt="多层LSTM">
-<figcaption aria-hidden="true">多层LSTM</figcaption>
-</figure></li>
-</ol>
-<h3 id="向量化">向量化：</h3>
-<p><span class="math inline">\(输入X：(batch\_size,seq\_len,d\_model)\)</span></p>
-<p><span class="math inline">\(隐藏状态H：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
-<p><span class="math inline">\(记忆细胞C：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
-<hr>
-<p>图片来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/jerr__y/article/details/61195257">TensorFlow入门（五）多层
-LSTM 通俗易懂版_永永夜的博客-CSDN博客_lstm层数</a></p>
-
-
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
-4.0 国际</a> 许可协议，转载请注明出处。</p>
-</div></section></div>
-
-</article>
-
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2022/09/28/hello-world/">Hello World<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/">有限自动机与序列识别<span class="note">较新</span></a></section></div>
-
-
-
-
-
-
-  <div class='related-wrap md reveal' id="comments">
-    <div class='cmt-title cap theme'>
-      快来参与讨论吧
-    </div>
-    <div class='cmt-body valine'>
+      <a href='/'>近期发布</a>
+    
+    
       
+        <a class='active' href='/categories'>分类：algorithm</a>
+      
+    
+    
+      
+        <a href='/tags'>标签</a>
+      
+    
+    
+      
+        <a href='/archives'>归档</a>
+      
+    
+  </nav>
+</div>
 
-<div id="valine_container" class="valine_thread"><svg class="loading" style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
+  <div class="post-list post"><a class="post-card post " href="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/">
+<article class="md"><h2 class="post-title">有限自动机与序列识别</h2><div class="excerpt"><p>子字符串搜索是指给定一段文本，需要在其中找到想要的字符串；如果将文本换成输入流，那么问题就转换成了序列识别；而有限自动机则是一个能够在线性时间内完成以上任务的一种数学模型。</p></div><div class="meta cap"><span class="cap" id="post-meta">发布于&nbsp;<time datetime="2022-10-02T06:35:51.000Z">2022-10-02</time></span><span class="cap breadcrumb">algorithm</span></div></article>
+</a></div>
+  
 
-    </div>
-  </div>
+
 
 
 
