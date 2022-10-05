@@ -21,12 +21,12 @@
   <title>LSTM笔记 - Eumendies</title>
 
   
-    <meta name="description" content="LSTM 计算过程： \[ 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o) \] 其中\(I_t,F_t,O_t\in R^{n\times">
+    <meta name="description" content="LSTM计算过程： 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LSTM笔记">
 <meta property="og:url" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Eumendies">
-<meta property="og:description" content="LSTM 计算过程： \[ 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o) \] 其中\(I_t,F_t,O_t\in R^{n\times">
+<meta property="og:description" content="LSTM计算过程： 输入门：I_t &#x3D; \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\ 遗忘门：F_t &#x3D; \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\ 输出门：O_t &#x3D; \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://eumendies.github.io/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png">
 <meta property="article:published_time" content="2022-09-29T07:27:43.000Z">
@@ -78,7 +78,7 @@
 
 <div class="widgets">
 
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#lstm"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div></div></div>
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LSTM"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9%EF%BC%9A"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96%EF%BC%9A"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div></div></div>
 
 
 </div>
@@ -126,44 +126,34 @@
 
 <article class='content md post'>
 <h1 class="article-title"><span>LSTM笔记</span></h1>
-<h2 id="lstm">LSTM</h2>
-<h3 id="计算过程">计算过程：</h3>
-<p><span class="math display">\[
+<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><h3 id="计算过程："><a href="#计算过程：" class="headerlink" title="计算过程："></a>计算过程：</h3><script type="math/tex; mode=display">
 输入门：I_t = \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\
 遗忘门：F_t = \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\
-输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)
-\]</span></p>
-<p>其中<span class="math inline">\(I_t,F_t,O_t\in R^{n\times
-h}\)</span>，n为batch_size <span class="math display">\[
-候选记忆细胞：\tilde{C}_t=tanh(X_tW_{xc}+H_{t-1}W_{hc}+b_c)
-\]</span> 其中<span class="math inline">\(\tilde{C}_t \in R^{n \times
-h}\)</span> <span class="math display">\[
+输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)</script><p>其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size</p>
+<script type="math/tex; mode=display">
+候选记忆细胞：\tilde{C}_t=tanh(X_tW_{xc}+H_{t-1}W_{hc}+b_c)</script><p>其中$\tilde{C}_t \in R^{n \times h}$</p>
+<script type="math/tex; mode=display">
 记忆细胞：C_t=F_t \bigodot C_{t-1}+I_t \bigodot \tilde{C}_t \\
-隐藏状态：H_t=O_t \bigodot tanh(C_t)
-\]</span> <span class="math inline">\(\bigodot\)</span>表示按元素乘法</p>
-<h3 id="要点">要点：</h3>
-<ol type="1">
-<li><p>输入门<span class="math inline">\(I_t\)</span>、遗忘门<span class="math inline">\(F_t\)</span>、输出门<span class="math inline">\(O_t\)</span>、候选记忆细胞<span class="math inline">\(\tilde{C}_t\)</span>的计算与传统RNN中隐藏状态H的计算相似</p></li>
-<li><p>遗忘门决定上一个记忆细胞的信息是否流入该时间步的记忆细胞，输入门决定该时间步的候选记忆细胞的信息是否流入该时间步的记忆细胞</p></li>
-<li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p></li>
+隐藏状态：H_t=O_t \bigodot tanh(C_t)</script><p>$\bigodot$表示按元素乘法</p>
+<h3 id="要点："><a href="#要点：" class="headerlink" title="要点："></a>要点：</h3><ol>
+<li><p>输入门$I_t$、遗忘门$F_t$、输出门$O_t$、候选记忆细胞$\tilde{C}_t$的计算与传统RNN中隐藏状态H的计算相似</p>
+</li>
+<li><p>遗忘门决定上一个记忆细胞的信息是否流入该时间步的记忆细胞，输入门决定该时间步的候选记忆细胞的信息是否流入该时间步的记忆细胞</p>
+</li>
+<li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p>
+</li>
 <li><p>多层LSTM：</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png" alt="多层LSTM">
-<figcaption aria-hidden="true">多层LSTM</figcaption>
-</figure></li>
+<p> <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png" alt="多层LSTM"></p>
+</li>
 </ol>
-<h3 id="向量化">向量化：</h3>
-<p><span class="math inline">\(输入X：(batch\_size,seq\_len,d\_model)\)</span></p>
-<p><span class="math inline">\(隐藏状态H：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
-<p><span class="math inline">\(记忆细胞C：(batch\_size,num\_direction*num\_layers,num\_hidden)\)</span></p>
+<h3 id="向量化："><a href="#向量化：" class="headerlink" title="向量化："></a>向量化：</h3><p>$输入X：(batch_size,seq_len,d_model)$</p>
+<p>$隐藏状态H：(batch_size,num_direction*num_layers,num_hidden)$</p>
+<p>$记忆细胞C：(batch_size,num_direction*num_layers,num_hidden)$</p>
 <hr>
-<p>图片来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/jerr__y/article/details/61195257">TensorFlow入门（五）多层
-LSTM 通俗易懂版_永永夜的博客-CSDN博客_lstm层数</a></p>
+<p>图片来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/jerr__y/article/details/61195257">TensorFlow入门（五）多层 LSTM 通俗易懂版_永永夜的博客-CSDN博客_lstm层数</a></p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
-4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
@@ -191,10 +181,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="https://eumendies.github.io/"><span class="citation"
-data-cites="Eumendies">@Eumendies</span></a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0"
-title="v1.9.0">Stellar</a> 主题创建。</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="https://eumendies.github.io/">@Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0" title="v1.9.0">Stellar</a> 主题创建。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
