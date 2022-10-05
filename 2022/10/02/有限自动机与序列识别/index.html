@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://eumendies.github.io/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction1.gif">
 <meta property="og:image" content="https://eumendies.github.io/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction2.gif">
 <meta property="article:published_time" content="2022-10-02T06:35:51.000Z">
-<meta property="article:modified_time" content="2022-10-03T02:40:42.297Z">
+<meta property="article:modified_time" content="2022-10-05T13:38:31.734Z">
 <meta property="article:author" content="Eumendies">
 <meta property="article:tag" content="algorithm">
 <meta property="article:tag" content="KMP算法">
@@ -155,7 +155,7 @@
 <p>如果下一个字符幸运的还是<kbd>C</kbd>，我们则可以继续前进到达状态2；如果不幸地检测到了<kbd>G</kbd>，则目前检测到的是<kbd>CG</kbd>，和我们的目标没法重叠，我们只能无奈地回到状态0。</p>
 <p>当我们处在状态2时，再读取到一个<kbd>U</kbd>即可大功告成，但若是读取到的还是<kbd>C</kbd>（<del>不考虑这种情况在生命科学中是否存在</del>），我们既不用退回到状态0也不会退回到状态1，我们仍然会处于状态2，因为我们当前检测到的序列是<kbd>CCC</kbd>，如果取后两个<kbd>C</kbd>，我们还是符合状态2的定义，现在只需把第一个<kbd>C</kbd>丢掉不管即可。所以有限自动机的检测是允许重叠的，读取到一个不符合期望的字符时不一定会退回状态0，除非我们要求必须一次性读取到全部目标字符。</p>
 <p>由此，我们可以画出完整的状态转移图，同时得到状态转移图的矩阵表示：</p>
-<div class="tag-plugin tabs" align="center" id="tab_1" "><ul class="nav-tabs"><li class="tab"><a href="#tab_1-1">状态转移图</a></li><li class="tab active"><a href="#tab_1-2">状态转移矩阵</a></li></ul><div class="tab-content"><div class="tab-pane" id="tab_1-1"><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/final.png" alt="定义状态" style="zoom:50%;"></p></div><div class="tab-pane active" id="tab_1-2"><table>
+<div class="tag-plugin tabs" align="center" id="tab_1" "><ul class="nav-tabs"><li class="tab active"><a href="#tab_1-1">状态转移图</a></li><li class="tab"><a href="#tab_1-2">状态转移矩阵</a></li></ul><div class="tab-content"><div class="tab-pane active" id="tab_1-1"><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/final.png" alt="定义状态" style="zoom:50%;"></p></div><div class="tab-pane" id="tab_1-2"><table>
 <thead>
 <tr class="header">
 <th style="text-align: center;"></th>
@@ -221,10 +221,10 @@ finite automata, DFA)。</p>
 <p>给定一个要检测的序列，最容易构建的显然是DFA的主干部分，即从状态0到状态1，从状态1到状态2...从状态n-1到状态n的路径</p>
 <p>对于剩下的读取到不满足期望的字符的状态转移，我们可以这样考虑，由于在状态j读到了一个不满足期望的字符<code>char</code>，则目前读到的整个序列都是不满足要求的，那么我们则剔除序列中的第一个字符，将剩下的序列[1...j]输入到尚未构建完成的有限自动机中，去检测这剩下的序列能到达何种状态，这个状态就是<code>j</code>读取到<code>char</code>后会到达的状态。</p>
 <p>例如，如果我们读取到了序列<kbd>CU</kbd>，那么我们将序列<kbd>U</kbd>输入到当前的有限自动机中，最终到达状态0，那么则可以确定<code>dfa['U'][1] = 0</code></p>
-<div class="tag-plugin tabs" align="center" id="tab_2" "><ul class="nav-tabs"><li class="tab"><a href="#tab_2-1">第一个例子</a></li><li class="tab active"><a href="#tab_2-2">第二个例子</a></li></ul><div class="tab-content"><div class="tab-pane" id="tab_2-1"><figure>
+<div class="tag-plugin tabs" align="center" id="tab_2" "><ul class="nav-tabs"><li class="tab active"><a href="#tab_2-1">第一个例子</a></li><li class="tab"><a href="#tab_2-2">第二个例子</a></li></ul><div class="tab-content"><div class="tab-pane active" id="tab_2-1"><figure>
 <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction1.gif" alt="construction">
 <figcaption aria-hidden="true">construction</figcaption>
-</figure></div><div class="tab-pane active" id="tab_2-2"><figure>
+</figure></div><div class="tab-pane" id="tab_2-2"><figure>
 <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction2.gif" alt="construction2">
 <figcaption aria-hidden="true">construction2</figcaption>
 </figure></div></div></div>
