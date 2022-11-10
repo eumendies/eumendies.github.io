@@ -367,7 +367,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
       if (!path) {
         path = decodeURI(window.location.pathname);
       }
-      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-6lszft4i1-eumendies.vercel.app/","commentCount":true,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","网址（选填）"],"requiredMeta":["nick","昵称","邮箱"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧"},"login":"disable"}, {
+      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-6lszft4i1-eumendies.vercel.app/","commentCount":true,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","网址（选填）","nick","mail"],"requiredMeta":["nick"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧"},"login":"disable"}, {
         el: '#waline_container',
         path: path,
       }));
