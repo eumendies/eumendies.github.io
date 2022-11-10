@@ -109,14 +109,10 @@
 </a><a class="post-card post " href="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/">
 <article class="md"><h2 class="post-title">有限自动机与序列识别</h2><div class="excerpt"><p>子字符串搜索是指给定一段文本，需要在其中找到想要的字符串；如果将文本换成输入流，那么问题就转换成了序列识别；而有限自动机则是一个能够在线性时间内完成以上任务的一种数学模型。</p></div><div class="meta cap"><span class="cap" id="post-meta">发布于&nbsp;<time datetime="2022-10-02T06:35:51.000Z">2022-10-02</time></span><span class="cap breadcrumb">algorithm</span></div></article>
 </a><a class="post-card post " href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/">
-<article class="md"><h2 class="post-title">LSTM笔记</h2><div class="excerpt"><p>LSTM
-计算过程：
-\[
+<article class="md"><h2 class="post-title">LSTM笔记</h2><div class="excerpt"><p>LSTM计算过程：
 输入门：I_t = \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\
 遗忘门：F_t = \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\
-输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)
-\]
-其中\(I_t,F_t,O_t\in R^{n\tim...</p></div><div class="meta cap"><span class="cap" id="post-meta">发布于&nbsp;<time datetime="2022-09-29T07:27:43.000Z">2022-09-29</time></span><span class="cap breadcrumb">deep-learning</span></div></article>
+输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_s...</p></div><div class="meta cap"><span class="cap" id="post-meta">发布于&nbsp;<time datetime="2022-09-29T07:27:43.000Z">2022-09-29</time></span><span class="cap breadcrumb">deep-learning</span></div></article>
 </a><a class="post-card post " href="/2022/09/28/hello-world/">
 <article class="md"><h2 class="post-title">Hello World</h2><div class="excerpt"><p>Hello world!
 </p></div><div class="meta cap"><span class="cap" id="post-meta">发布于&nbsp;<time datetime="2022-09-28T14:48:31.947Z">2022-09-28</time></span></div></article>
@@ -126,12 +122,7 @@
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/"><span class="citation"
-data-cites="anonymity">@anonymity</span></a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a>
-主题创建。 本博客所有文章除特别声明外，均采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
-4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -287,44 +278,18 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 <!-- optional -->
 
   <script>
-  function getEmojiMaps() {
-    function emoji(path, idx, ext) {
-      return path + "/" + path + "-" + idx + "." + ext;
-    }
-    var emojiMaps = {};
-    for (var i = 1; i <= 54; i++) {
-      emojiMaps['tieba-' + i] = emoji('tieba', i, 'png');
-    }
-    for (var i = 1; i <= 101; i++) {
-      emojiMaps['qq-' + i] = emoji('qq', i, 'gif');
-    }
-    for (var i = 1; i <= 116; i++) {
-      emojiMaps['aru-' + i] = emoji('aru', i, 'gif');
-    }
-    for (var i = 1; i <= 125; i++) {
-      emojiMaps['twemoji-' + i] = emoji('twemoji', i, 'png');
-    }
-    for (var i = 1; i <= 4; i++) {
-      emojiMaps['weibo-' + i] = emoji('weibo', i, 'png');
-    }
-    return emojiMaps;
-  }
   function load_comment(){
-    if(!document.getElementById("valine_container"))return;
-    stellar.loadScript('', {defer:true}).then(function () {
-      const el = document.getElementById("valine_container");
+    if(!document.getElementById("waline_container"))return;
+    stellar.loadCSS('https://unpkg.com/@waline/client@v2/dist/waline.css');
+    stellar.loadScript('https://unpkg.com/@waline/client@v2/dist/waline.js', {defer:true}).then(function () {
+      const el = document.getElementById("waline_container");
       var path = el.getAttribute('comment_id');
-      const placeholder = "";
       if (!path) {
         path = decodeURI(window.location.pathname);
       }
-      var valine = new Valine();
-      valine.init(Object.assign({"appId":"pab9dPdB8gcdKD1QAsRj83cY-gzGzoHsz","appKey":"6SfBYp7muR4tkcLrlhPhkZ2G"}, {
-        el: '#valine_container',
+      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-6lszft4i1-eumendies.vercel.app/","commentCount":true,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","网址（选填）"],"requiredMeta":["nick"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧"}}, {
+        el: '#waline_container',
         path: path,
-        placeholder: placeholder,
-        emojiCDN: 'https://fastly.jsdelivr.net/gh/volantis-x/cdn-emoji/valine/',
-        emojiMaps: getEmojiMaps(),
       }));
     });
   }
