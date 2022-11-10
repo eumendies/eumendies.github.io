@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://eumendies.github.io/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/stack.gif">
 <meta property="og:image" content="https://eumendies.github.io/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/recursion.gif">
 <meta property="article:published_time" content="2022-11-09T09:05:18.000Z">
-<meta property="article:modified_time" content="2022-11-10T07:09:40.849Z">
+<meta property="article:modified_time" content="2022-11-10T09:23:04.391Z">
 <meta property="article:author" content="Eumendies">
 <meta property="article:tag" content="assembly language">
 <meta property="article:tag" content="计算机组成原理">
@@ -172,7 +172,7 @@ convention)</h2>
 <figcaption aria-hidden="true">栈变化</figcaption>
 </figure>
 <h2 id="进阶递归">进阶：递归</h2>
-<p>更复杂的情况就是递归调用，这里以计算阶乘为例</p>
+<p>更复杂的情况就是递归调用，这里以计算阶乘为例。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fact</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 为了让汇编代码步骤分明，故这里的代码写得啰嗦一些</span></span><br><span class="line">    <span class="type">int</span> x = fact(n - <span class="number">1</span>);</span><br><span class="line">    <span class="type">int</span> x = n * x;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>计算阶乘的递归函数是一个<strong>有去有回</strong>的递归过程，当满足递归结束条件时需要从最后被调用的<code>fact</code>函数层层返回，每层<code>fact</code>函数的返回地址都是不同的，但是我们却只有一个<code>ra</code>寄存器，因此在我们调用下一层函数时，我们需要先保存<code>ra</code>寄存器中的值（<code>ra</code>寄存器不是保存寄存器，需要由调用者自行保存）。</p>
 <figure>
