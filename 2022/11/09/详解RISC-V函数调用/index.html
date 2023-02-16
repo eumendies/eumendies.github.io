@@ -87,8 +87,7 @@
 
 <div class="widgets">
 
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">详解RISC-V函数调用</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%A6%E5%8F%B7%E7%BA%A6%E5%AE%9A"><span class="toc-text">符号约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jal%E5%92%8Cjalr"><span class="toc-text">jal和jalr</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-text">函数调用的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9Acalling-convention"><span class="toc-text">函数调用约定(Calling
-convention)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">举例详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E9%80%92%E5%BD%92"><span class="toc-text">进阶：递归</span></a></li></ol></div></div></div>
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">详解RISC-V函数调用</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%A6%E5%8F%B7%E7%BA%A6%E5%AE%9A"><span class="toc-text">符号约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jal%E5%92%8Cjalr"><span class="toc-text">jal和jalr</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-text">函数调用的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A-Calling-convention"><span class="toc-text">函数调用约定(Calling convention)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">举例详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%EF%BC%9A%E9%80%92%E5%BD%92"><span class="toc-text">进阶：递归</span></a></li></ol></div></div></div>
 
 
 
@@ -109,42 +108,33 @@ convention)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" 
 <h1 class="article-title"><span>详解RISC-V函数调用</span></h1>
 <p>RISC-V函数调用时应该遵守什么规定，在函数调用的过程中发生了什么变化？</p>
 <span id="more"></span>
-<h2 id="符号约定">符号约定</h2>
-<p><strong>本文使用32位RISC-V作为示例</strong></p>
+<h2 id="符号约定"><a href="#符号约定" class="headerlink" title="符号约定"></a>符号约定</h2><p><strong>本文使用32位RISC-V作为示例</strong></p>
 <p>寄存器：</p>
 <ul>
-<li><code>ra</code>：返回地址(Return
-address)寄存器，即<code>x1</code>寄存器</li>
+<li><code>ra</code>：返回地址(Return address)寄存器，即<code>x1</code>寄存器</li>
 <li><code>sp</code>：栈指针寄存器，即<code>x2</code>寄存器</li>
 <li><code>t0-t2, t3-t6</code>：临时寄存器，即<code>x5-x7, x28-x31</code>寄存器</li>
 <li><code>s0-s1, s2-s11</code>：保存寄存器，即<code>x8-x9, x18-x27</code>寄存器</li>
 <li><code>a0-a7</code>：函数参数寄存器，即<code>x10-x17</code>寄存器</li>
 </ul>
-<h2 id="jal和jalr">jal和jalr</h2>
-<p>在函数调用中我们需要用到两条关键的指令：<code>jal</code>和<code>jalr</code>。</p>
-<ol type="1">
-<li><p>jump and
-link，<code>jal rd, Label</code>：UJ型指令，指令格式：</p>
-<p><kbd>immediate[20,10:1,11,19:12]</kbd><kbd>rd</kbd><kbd>opcode</kbd></p>
-<p>使用<code>jal</code>指令时需要指定一个寄存器rd和一个标签Label（会在汇编阶段被翻译成立即数immediate），该指令会将PC+4保存到rd寄存器中，并且跳转到标签位置(PC
-+ immediate)继续执行指令</p></li>
-<li><p>jump and link
-register，<code>jalr rd, imm(r1)</code>：I型指令，指令格式：</p>
-<p><kbd>immediate[11:0]</kbd><kbd>rs1</kbd><kbd>funct3</kbd><kbd>rd</kbd><kbd>opcode</kbd></p>
-<p>使用<code>jalr</code>指令时会将PC+4保存到rd寄存器中，并且跳转到地址rs1
-+ immediate继续执行指令</p></li>
+<h2 id="jal和jalr"><a href="#jal和jalr" class="headerlink" title="jal和jalr"></a>jal和jalr</h2><p>在函数调用中我们需要用到两条关键的指令：<code>jal</code>和<code>jalr</code>。</p>
+<ol>
+<li><p>jump and link，<code>jal rd, Label</code>：UJ型指令，指令格式：</p>
+<p> <kbd>immediate[20,10:1,11,19:12]</kbd><kbd>rd</kbd><kbd>opcode</kbd></p>
+<p> 使用<code>jal</code>指令时需要指定一个寄存器rd和一个标签Label（会在汇编阶段被翻译成立即数immediate），该指令会将PC+4保存到rd寄存器中，并且跳转到标签位置(PC + immediate)继续执行指令</p>
+</li>
+<li><p>jump and link register，<code>jalr rd, imm(r1)</code>：I型指令，指令格式：</p>
+<p> <kbd>immediate[11:0]</kbd><kbd>rs1</kbd><kbd>funct3</kbd><kbd>rd</kbd><kbd>opcode</kbd></p>
+<p> 使用<code>jalr</code>指令时会将PC+4保存到rd寄存器中，并且跳转到地址rs1 + immediate继续执行指令</p>
+</li>
 </ol>
 <p>使用<code>jal</code>和<code>jalr</code>的组合来调用函数：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 指令		  	  # 指令的地址</span><br><span class="line">addi s0, x0, 1		# 0x0000 0000</span><br><span class="line">jal ra, funct1		# 0x0000 0004</span><br><span class="line">addi s1, x0, 2		# 0x0000 0008</span><br><span class="line">jal ra, exit		# 0x0000 000c</span><br><span class="line"></span><br><span class="line">funct1:		    	</span><br><span class="line">	sub t0, t1, t2	# 0x0000 0010</span><br><span class="line">	jalr x0, 0(ra)	# 0x0000 0014</span><br><span class="line">	</span><br><span class="line">funct2:				</span><br><span class="line">	addi x0, x0, 0	# 0x0000 0018</span><br><span class="line">	jalr x0, 0(ra)	# 0x0000 001c</span><br><span class="line"></span><br><span class="line">exit:</span><br><span class="line">	# 使用系统调用退出程序，在此不展示细节</span><br></pre></td></tr></table></figure>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/jal_and_jalr.gif" alt="执行过程">
-<figcaption aria-hidden="true">执行过程</figcaption>
-</figure>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/jal_and_jalr.gif" alt="执行过程"></p>
 <p>对<code>jalr x0, 0(ra)</code>的解释：在该条指令中我们使用<code>x0</code>寄存器作为<code>rd</code>寄存器来写入，由于<code>x0</code>寄存器的值始终为0，所以相当于丢弃掉了pc+4的地址，之所以丢弃该地址是因为我们不需要使用该地址。</p>
 <p>同样，我们可以使用<code>jal x0, Label</code>来进行跳转，由于没有将pc+4保存，因此后续没办法再使用<code>jalr</code>指令跳转回来，相当于使用了一条C语言中的<code>goto</code>语句。</p>
-<div class="tag-plugin note" color="red"><div class="title"><strong>jal指令和jalr指令的错误用法：</strong></div><div class="body"><p>不要混淆两者进而写出jal x0, ra或者jalr x0,Label这样的指令！给jal指令提供跳转地址必须使用标签而不能通过寄存器，即使寄存器中存有一条指令的地址。而jalr是I型指令，意味着你必须提供两个寄存器和一个立即数，其中第二个寄存器中应该保存一条指令的地址。</p></div></div>
-<h2 id="函数调用的过程">函数调用的过程</h2>
-<ol type="1">
+<div class="tag-plugin note" color="red"><div class="title"><strong>jal指令和jalr指令的错误用法：</strong></div><div class="body"><p>不要混淆两者进而写出jal x0, ra或者jalr x0, Label这样的指令！给jal指令提供跳转地址必须使用标签而不能通过寄存器，即使寄存器中存有一条指令的地址。而jalr是I型指令，意味着你必须提供两个寄存器和一个立即数，其中第二个寄存器中应该保存一条指令的地址。</p></div></div>
+<h2 id="函数调用的过程"><a href="#函数调用的过程" class="headerlink" title="函数调用的过程"></a>函数调用的过程</h2><ol>
 <li>将参数放到函数可以访问到的位置（参数寄存器<code>a0-a7</code>）</li>
 <li>将控制转交给函数（使用<code>jal</code>指令）</li>
 <li>函数获取任何其需要的存储资源</li>
@@ -152,13 +142,10 @@ register，<code>jalr rd, imm(r1)</code>：I型指令，指令格式：</p>
 <li>函数将返回值放在调用者(Caller)可以访问的位置（寄存器<code>a0, a1</code>）</li>
 <li>将控制交还给调用者(使用<code>jalr</code>指令)</li>
 </ol>
-<h2 id="函数调用约定calling-convention">函数调用约定(Calling
-convention)</h2>
-<p>在函数调用前，某些寄存器中可能存储了重要的数值，这些数值可能在我们完成函数调用后仍需使用，所以我们希望<strong>这些值在函数调用后仍然保持不变</strong>，因此我们需要遵守一些约定来达到这个目的。</p>
+<h2 id="函数调用约定-Calling-convention"><a href="#函数调用约定-Calling-convention" class="headerlink" title="函数调用约定(Calling convention)"></a>函数调用约定(Calling convention)</h2><p>在函数调用前，某些寄存器中可能存储了重要的数值，这些数值可能在我们完成函数调用后仍需使用，所以我们希望<strong>这些值在函数调用后仍然保持不变</strong>，因此我们需要遵守一些约定来达到这个目的。</p>
 <p>最简单的方法是，当我们调用函数时，函数先将32个寄存器中的值全部保存到内存中，完成函数功能后再将内存中的值恢复到32个寄存器中。然而这个方法不仅麻烦而且浪费，因此为了减少寄存器的换出，RISC-V将19个寄存器分成了两组：<u>临时寄存器</u>和<u>保存寄存器</u>。</p>
 <p>而要遵守的约定非常简单：<strong>对于被调用者（函数），其必须保存并恢复保存寄存器的内容，而不用保存临时寄存器中的内容；对于调用者，除了保存寄存器以外的寄存器的值如果在函数调用完成后还要使用，那么要由调用者自行保存（比如ra寄存器）。调用结束后，栈指针、保存寄存器的值和函数调用之前的值一样</strong></p>
-<h2 id="举例详解">举例详解</h2>
-<p>假设我们要使用RISC-V指令实现下面的c语言代码</p>
+<h2 id="举例详解"><a href="#举例详解" class="headerlink" title="举例详解"></a>举例详解</h2><p>假设我们要使用RISC-V指令实现下面的c语言代码</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">addTwo</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">    <span class="type">int</span> c = addTwo(a, b);</span><br><span class="line">    <span class="type">int</span> d = a + c;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>main</code>函数的实现比较简单，<code>main</code>函数作为<code>addTwo</code>函数的调用者，会假定<code>addTwo</code>函数会为其保存保存寄存器中的内容，因此对于函数调用后仍需要使用到的<code>a</code>变量，main函数可以将其保存在保存寄存器中，完成函数调用后仍然可以直接使用。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">main:</span><br><span class="line">	# 1.变量初始化</span><br><span class="line">	addi s0, x0, 1	# s0 = 1</span><br><span class="line">	addi t0, x0, 2	# t0 = 2</span><br><span class="line">	# 2.将函数参数放进参数寄存器中</span><br><span class="line">	addi a0, s0, 0</span><br><span class="line">	addi a1, t0, 0</span><br><span class="line">	# 3.函数调用</span><br><span class="line">	jal ra, addTwo</span><br><span class="line">	# 4.取得函数返回值</span><br><span class="line">	addi s1, a0, 0	# s1 = addTwo(a, b)</span><br><span class="line">	# 5.继续执行剩下指令</span><br><span class="line">	add s1, s1, s0	# s1 = s1 + s0</span><br><span class="line">	jal x0, exit</span><br></pre></td></tr></table></figure>
@@ -167,24 +154,15 @@ convention)</h2>
 <p>假设我们将<code>main</code>函数中的<code>int d = a + c;</code>改为<code>int d = b + c</code>，由于我们的变量<code>b</code>是存储在临时寄存器<code>t0</code>中，所以被调用的函数不保证临时寄存器的值不发生改变，被调用函数是可以任意使用临时寄存器的。因此，我们要么将变量<code>b</code>存进另一个保存寄存器中，要么我们在调用函数前将其值保存至栈上，在调用函数后将其值恢复。下面是改变后的<code>main</code>函数片段（<code>addTwo</code>函数无需改动）：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 将临时变量压栈</span><br><span class="line">addi sp, sp, -4</span><br><span class="line">sw t0, 0(sp)</span><br><span class="line"># 调用函数</span><br><span class="line">jal ra, addTwo</span><br><span class="line"># 恢复临时变量值</span><br><span class="line">lw t0, 0(sp)</span><br><span class="line">addi sp, sp, 4</span><br></pre></td></tr></table></figure>
 <p>当然，在这个例子中即使不保存<code>t0</code>的值，最后也能得到正确的结果，但是这样的情况是没有保证的！为了100%得到正确的结果，在调用函数前一定要保存之后要使用的临时寄存器，这样就无需担心被调用者是否使用了临时寄存器。</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/stack.gif" alt="栈变化">
-<figcaption aria-hidden="true">栈变化</figcaption>
-</figure>
-<h2 id="进阶递归">进阶：递归</h2>
-<p>更复杂的情况就是递归调用，这里以计算阶乘为例。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/stack.gif" alt="栈变化"></p>
+<h2 id="进阶：递归"><a href="#进阶：递归" class="headerlink" title="进阶：递归"></a>进阶：递归</h2><p>更复杂的情况就是递归调用，这里以计算阶乘为例。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fact</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 为了让汇编代码步骤分明，故这里的代码写得啰嗦一些</span></span><br><span class="line">    <span class="type">int</span> x = fact(n - <span class="number">1</span>);</span><br><span class="line">    <span class="type">int</span> x = n * x;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>计算阶乘的递归函数是一个<strong>有去有回</strong>的递归过程，当满足递归结束条件时需要从最后被调用的<code>fact</code>函数层层返回，每层<code>fact</code>函数的返回地址都是不同的，但是我们却只有一个<code>ra</code>寄存器，因此在我们调用下一层函数时，我们需要先保存<code>ra</code>寄存器中的值（<code>ra</code>寄存器不是保存寄存器，需要由调用者自行保存）。</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/recursion.gif" alt="调用过程">
-<figcaption aria-hidden="true">调用过程</figcaption>
-</figure>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/recursion.gif" alt="调用过程"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#================================================#</span><br><span class="line"># Function: compute n factorial</span><br><span class="line"># Arguments:</span><br><span class="line"># 	a0 (int): n</span><br><span class="line"># Returns:</span><br><span class="line">#	a0 (int): factorial(n) </span><br><span class="line">#================================================#</span><br><span class="line">factorial:</span><br><span class="line">	# if a0 == 1 return</span><br><span class="line">    addi t0, x0, 1</span><br><span class="line">    beq a0, t0, return</span><br><span class="line"></span><br><span class="line">    addi sp, sp, -8</span><br><span class="line">    sw a0, 0(sp)    # save n</span><br><span class="line">    sw ra, 4(sp)    # save ra</span><br><span class="line">    addi a0, a0, -1 # a0 = n - 1</span><br><span class="line">    jal ra factorial    # fact(n-1)</span><br><span class="line">    add t0, x0, a0 # t0 = fact(n-1)</span><br><span class="line">    lw a0, 0(sp)	# a0 = n;</span><br><span class="line">    lw ra, 4(sp)</span><br><span class="line">    addi sp, sp, 8 </span><br><span class="line">    mul a0, a0, t0  # a0 = n * fact(n-1)</span><br><span class="line">    jalr x0, 0(ra)	# return n * fact(n-1)</span><br><span class="line">return:</span><br><span class="line">    jalr x0, 0(ra)</span><br></pre></td></tr></table></figure>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
-4.0 国际</a>许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a>许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
@@ -211,12 +189,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/"><span class="citation"
-data-cites="Eumendies">@Eumendies</span></a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a>
-主题创建。 本博客所有文章除特别声明外，均采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
-4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>

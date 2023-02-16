@@ -88,8 +88,7 @@
 
 <div class="widgets">
 
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">xv6的虚拟存储</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%94%A8%E6%88%B7%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.1 在用户态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.2 在内核态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E9%9C%80%E8%A6%81%E4%BD%BF%E7%94%A8%E7%94%A8%E6%88%B7%E6%8F%90%E4%BE%9B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80"><span class="toc-text">2.3
-内核态下需要使用用户提供的虚拟地址</span></a></li></ol></div></div></div>
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">xv6的虚拟存储</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E5%9C%A8%E7%94%A8%E6%88%B7%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.1 在用户态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E5%9C%A8%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.2 在内核态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E9%9C%80%E8%A6%81%E4%BD%BF%E7%94%A8%E7%94%A8%E6%88%B7%E6%8F%90%E4%BE%9B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80"><span class="toc-text">2.3 内核态下需要使用用户提供的虚拟地址</span></a></li></ol></div></div></div>
 
 
 
@@ -141,41 +140,21 @@
 <h1 class="article-title"><span>xv6的虚拟存储</span></h1>
 <p>xv6是MIT为其操作系统课程开发的一个教学目的操作系统，本文将介绍xv6的虚拟存储。</p>
 <span id="more"></span>
-<h1 id="基本配置">1 基本配置</h1>
-<p>xv6中页(page)的大小是4096(<span class="math inline">\(2^{12}\)</span>)字节，因此虚拟地址中需要12位来索引页中字节，此外还需要27位来索引页表中的物理页号，所以实际上xv6只使用了64位虚拟地址中的39位，保留了高25位。</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/VA.png" alt="虚拟地址">
-<figcaption aria-hidden="true">虚拟地址</figcaption>
-</figure>
-<p>一个页表表项（page table
-entry，后面简称pte）中包含了一个44位物理页号，与虚拟地址中的12位页内偏移合并即为56位的物理地址；除此之外还有10位权限位。</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/pte.png" alt="pte">
-<figcaption aria-hidden="true">pte</figcaption>
-</figure>
-<p>由于页表中常常含有大量的空映射，为了节约存储空间，xv6采用了<strong>三级页表</strong>，将虚拟地址中27位索引位分成3份各9位分别索引各级页表。如果采用单级页表，创建页表时需要在内存中留出<span class="math inline">\(2^{27}\)</span>个pte的空间；而三级页表则是先创建一个含有<span class="math inline">\(2^{9}\)</span>个pte的页表，当添加映射时才需要创建后两级页表，实现了表项的稀疏存储。</p>
-<h1 id="虚拟地址的转换">2 虚拟地址的转换</h1>
-<h2 id="在用户态下的虚拟地址转换">2.1 在用户态下的虚拟地址转换</h2>
-<p>假设用户程序要解引用一个指针，这个指针当中存储的64位地址会被视为虚拟地址，内存管理单元(MMU)会到用户程序的页表中找到虚拟地址相应的表项，然后将虚拟地址转换成物理地址。<code>satp</code>寄存器中会存储当前程序页表的<strong>物理地址</strong>，MMU则会使用这个页表进行转换。</p>
+<h1 id="1-基本配置"><a href="#1-基本配置" class="headerlink" title="1 基本配置"></a>1 基本配置</h1><p>xv6中页(page)的大小是4096($2^{12}$)字节，因此虚拟地址中需要12位来索引页中字节，此外还需要27位来索引页表中的物理页号，所以实际上xv6只使用了64位虚拟地址中的39位，保留了高25位。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/VA.png" alt="虚拟地址"></p>
+<p>一个页表表项（page table entry，后面简称pte）中包含了一个44位物理页号，与虚拟地址中的12位页内偏移合并即为56位的物理地址；除此之外还有10位权限位。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/pte.png" alt="pte"></p>
+<p>由于页表中常常含有大量的空映射，为了节约存储空间，xv6采用了<strong>三级页表</strong>，将虚拟地址中27位索引位分成3份各9位分别索引各级页表。如果采用单级页表，创建页表时需要在内存中留出$2^{27}$个pte的空间；而三级页表则是先创建一个含有$2^{9}$个pte的页表，当添加映射时才需要创建后两级页表，实现了表项的稀疏存储。</p>
+<h1 id="2-虚拟地址的转换"><a href="#2-虚拟地址的转换" class="headerlink" title="2 虚拟地址的转换"></a>2 虚拟地址的转换</h1><h2 id="2-1-在用户态下的虚拟地址转换"><a href="#2-1-在用户态下的虚拟地址转换" class="headerlink" title="2.1 在用户态下的虚拟地址转换"></a>2.1 在用户态下的虚拟地址转换</h2><p>假设用户程序要解引用一个指针，这个指针当中存储的64位地址会被视为虚拟地址，内存管理单元(MMU)会到用户程序的页表中找到虚拟地址相应的表项，然后将虚拟地址转换成物理地址。<code>satp</code>寄存器中会存储当前程序页表的<strong>物理地址</strong>，MMU则会使用这个页表进行转换。</p>
 <p><code>satp</code>寄存器指向第二级页表，MMU使用虚拟页号高9位取得pte，该pte中的物理页号是第一级页表的物理地址，使用虚拟页号中9位索引第一级页表得到第二个pte，这个pte指向第零级页表，最后用低9位索引第零级页表得到最终的pte，将这个pte中的物理页号和虚拟地址中12位偏移量结合得最终的物理地址。</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/va2pa.gif" alt="va2pa">
-<figcaption aria-hidden="true">va2pa</figcaption>
-</figure>
-<h2 id="在内核态下的虚拟地址转换">2.2 在内核态下的虚拟地址转换</h2>
-<p>内核地址空间与用户程序地址空间的不同点在于内核地址空间使用<strong>直接映射</strong>，即虚拟地址的值和物理地址的值相同。地址空间中除了trampoline和kstack以外都采用了直接映射，稍后会看到直接映射的好处。</p>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/kpgtbl.png" alt="kpgtbl">
-<figcaption aria-hidden="true">kpgtbl</figcaption>
-</figure>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/va2pa.gif" alt="va2pa"></p>
+<h2 id="2-2-在内核态下的虚拟地址转换"><a href="#2-2-在内核态下的虚拟地址转换" class="headerlink" title="2.2 在内核态下的虚拟地址转换"></a>2.2 在内核态下的虚拟地址转换</h2><p>内核地址空间与用户程序地址空间的不同点在于内核地址空间使用<strong>直接映射</strong>，即虚拟地址的值和物理地址的值相同。地址空间中除了trampoline和kstack以外都采用了直接映射，稍后会看到直接映射的好处。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/kpgtbl.png" alt="kpgtbl"></p>
 <p>在内核态下解引用一个指针，MMU仍然会查询内核页表来转换虚拟地址，只不过转换后得到的物理地址和原来的虚拟地址相同。</p>
-<p>图中的free
-memory区域是内核用来分配给用户程序的内存，因此用户程序使用的物理内存地址不仅在用户页表中存在映射，在内核页表中也存在映射，但是两个映射的虚拟地址不同。</p>
-<h2 id="内核态下需要使用用户提供的虚拟地址">2.3
-内核态下需要使用用户提供的虚拟地址</h2>
-<p>用户程序常常需要内核执行一些任务并返回结果，因此会通过系统调用传递一个虚拟地址，希望内核将执行结果存储到内存中的相应位置。</p>
+<p>图中的free memory区域是内核用来分配给用户程序的内存，因此用户程序使用的物理内存地址不仅在用户页表中存在映射，在内核页表中也存在映射，但是两个映射的虚拟地址不同。</p>
+<h2 id="2-3-内核态下需要使用用户提供的虚拟地址"><a href="#2-3-内核态下需要使用用户提供的虚拟地址" class="headerlink" title="2.3 内核态下需要使用用户提供的虚拟地址"></a>2.3 内核态下需要使用用户提供的虚拟地址</h2><p>用户程序常常需要内核执行一些任务并返回结果，因此会通过系统调用传递一个虚拟地址，希望内核将执行结果存储到内存中的相应位置。</p>
 <p>但是用户程序和内核使用的是完全不相同的两个页表，内核并不能直接解引用这个虚拟地址，但是：</p>
-<ol type="1">
+<ol>
 <li>内核保存了用户页表的物理地址</li>
 <li>内核可以通过程序在这个页表中查询到虚拟地址对应的物理地址PA，walk()函数实现了该任务</li>
 <li>取得这个物理地址PA后，可以直接对其解引用，MMU会将PA视为虚拟地址，然后在内核页表中查询对应的物理地址</li>
@@ -183,16 +162,11 @@ memory区域是内核用来分配给用户程序的内存，因此用户程序�
 </ol>
 <p>注意，2和3是两个不同的过程，2是在软件中进行的，模拟了MMU查询页表的过程，而3是在硬件中进行的过程。这个过程的伪代码如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">copyout(userVA):</span><br><span class="line">	userPA = walk(user_pgtbl, userVA)</span><br><span class="line">    *userPA = result</span><br></pre></td></tr></table></figure>
-<figure>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/copyout.gif" alt="copyout">
-<figcaption aria-hidden="true">copyout</figcaption>
-</figure>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/copyout.gif" alt="copyout"></p>
 <p>比如用户程序传递虚拟地址<code>0x0000020000</code>给内核，内核通过walk函数得到相应的物理地址<code>0x00800e0000</code>，对其进行解引用并赋值为结果值，MMU在内核页表中查询“虚拟地址”<code>0x00800e0000</code>对应的物理地址，查询结果为<code>0x00800e0000</code>，则CPU将结果值存入<code>0x00800e0000</code>。</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
-4.0 国际</a>许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a>许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
@@ -219,12 +193,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/"><span class="citation"
-data-cites="Eumendies">@Eumendies</span></a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a>
-主题创建。 本博客所有文章除特别声明外，均采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
-4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
