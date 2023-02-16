@@ -23,17 +23,24 @@
   <title>Eumendies</title>
 
   
-    <meta name="description" content="Hello world!">
+    <meta name="description" content="xv6是MIT为其操作系统课程开发的一个教学目的操作系统，本文将介绍xv6的虚拟存储。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://eumendies.github.io/2022/09/28/hello-world/index.html">
+<meta property="og:title" content="xv6的虚拟存储">
+<meta property="og:url" content="https://eumendies.github.io/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/index.html">
 <meta property="og:site_name" content="Eumendies">
-<meta property="og:description" content="Hello world!">
+<meta property="og:description" content="xv6是MIT为其操作系统课程开发的一个教学目的操作系统，本文将介绍xv6的虚拟存储。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-09-28T14:48:31.947Z">
-<meta property="article:modified_time" content="2022-09-29T03:28:15.684Z">
+<meta property="og:image" content="https://eumendies.github.io/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/VA.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/pte.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/va2pa.gif">
+<meta property="og:image" content="https://eumendies.github.io/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/kpgtbl.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/copyout.gif">
+<meta property="article:published_time" content="2023-02-16T05:03:11.000Z">
+<meta property="article:modified_time" content="2023-02-16T06:12:32.147Z">
 <meta property="article:author" content="Eumendies">
-<meta name="twitter:card" content="summary">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://eumendies.github.io/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/VA.png">
   
   
 
@@ -81,9 +88,8 @@
 
 <div class="widgets">
 
-
-<div class="widget-wrap" id="recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/"><span class="title">xv6的虚拟存储</span></a><a class="item title" href="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/"><span class="title">有限自动机与序列识别</span></a><a class="item title" href="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><span class="title">xv6系统调用过程</span></a><a class="item title" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/"><span class="title">LSTM笔记</span></a><a class="item title" href="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/"><span class="title">详解RISC-V函数调用</span></a></div></div>
-
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">xv6的虚拟存储</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%94%A8%E6%88%B7%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.1 在用户态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.2 在内核态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E9%9C%80%E8%A6%81%E4%BD%BF%E7%94%A8%E7%94%A8%E6%88%B7%E6%8F%90%E4%BE%9B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80"><span class="toc-text">2.3
+内核态下需要使用用户提供的虚拟地址</span></a></li></ol></div></div></div>
 
 
 
@@ -97,12 +103,91 @@
 
       
 
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+          }
+        });
+      </script>
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2022-09-28T14:48:31.947Z">2022-09-28</time></div></div>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+            tex2jax: {
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+          });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+              var all = MathJax.Hub.getAllJax(), i;
+              for(i=0; i < all.length; i += 1) {
+                  all[i].SourceElement().parentNode.className += ' has-jax';
+              }
+          });
+      </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-02-16T05:03:11.000Z">2023-02-16</time></div></div>
 
 <article class='content md post'>
-<h1 class="article-title"><span>Hello World</span></h1>
-<p>Hello world!</p>
+<h1 class="article-title"><span>xv6的虚拟存储</span></h1>
+<p>xv6是MIT为其操作系统课程开发的一个教学目的操作系统，本文将介绍xv6的虚拟存储。</p>
+<span id="more"></span>
+<h1 id="基本配置">1 基本配置</h1>
+<p>xv6中页(page)的大小是4096(<span class="math inline">\(2^{12}\)</span>)字节，因此虚拟地址中需要12位来索引页中字节，此外还需要27位来索引页表中的物理页号，所以实际上xv6只使用了64位虚拟地址中的39位，保留了高25位。</p>
+<figure>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/VA.png" alt="虚拟地址">
+<figcaption aria-hidden="true">虚拟地址</figcaption>
+</figure>
+<p>一个页表表项（page table
+entry，后面简称pte）中包含了一个44位物理页号，与虚拟地址中的12位页内偏移合并即为56位的物理地址；除此之外还有10位权限位。</p>
+<figure>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/pte.png" alt="pte">
+<figcaption aria-hidden="true">pte</figcaption>
+</figure>
+<p>由于页表中常常含有大量的空映射，为了节约存储空间，xv6采用了<strong>三级页表</strong>，将虚拟地址中27位索引位分成3份各9位分别索引各级页表。如果采用单级页表，创建页表时需要在内存中留出<span class="math inline">\(2^{27}\)</span>个pte的空间；而三级页表则是先创建一个含有<span class="math inline">\(2^{9}\)</span>个pte的页表，当添加映射时才需要创建后两级页表，实现了表项的稀疏存储。</p>
+<h1 id="虚拟地址的转换">2 虚拟地址的转换</h1>
+<h2 id="在用户态下的虚拟地址转换">2.1 在用户态下的虚拟地址转换</h2>
+<p>假设用户程序要解引用一个指针，这个指针当中存储的64位地址会被视为虚拟地址，内存管理单元(MMU)会到用户程序的页表中找到虚拟地址相应的表项，然后将虚拟地址转换成物理地址。<code>satp</code>寄存器中会存储当前程序页表的<strong>物理地址</strong>，MMU则会使用这个页表进行转换。</p>
+<p><code>satp</code>寄存器指向第二级页表，MMU使用虚拟页号高9位取得pte，该pte中的物理页号是第一级页表的物理地址，使用虚拟页号中9位索引第一级页表得到第二个pte，这个pte指向第零级页表，最后用低9位索引第零级页表得到最终的pte，将这个pte中的物理页号和虚拟地址中12位偏移量结合得最终的物理地址。</p>
+<figure>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/va2pa.gif" alt="va2pa">
+<figcaption aria-hidden="true">va2pa</figcaption>
+</figure>
+<h2 id="在内核态下的虚拟地址转换">2.2 在内核态下的虚拟地址转换</h2>
+<p>内核地址空间与用户程序地址空间的不同点在于内核地址空间使用<strong>直接映射</strong>，即虚拟地址的值和物理地址的值相同。地址空间中除了trampoline和kstack以外都采用了直接映射，稍后会看到直接映射的好处。</p>
+<figure>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/kpgtbl.png" alt="kpgtbl">
+<figcaption aria-hidden="true">kpgtbl</figcaption>
+</figure>
+<p>在内核态下解引用一个指针，MMU仍然会查询内核页表来转换虚拟地址，只不过转换后得到的物理地址和原来的虚拟地址相同。</p>
+<p>图中的free
+memory区域是内核用来分配给用户程序的内存，因此用户程序使用的物理内存地址不仅在用户页表中存在映射，在内核页表中也存在映射，但是两个映射的虚拟地址不同。</p>
+<h2 id="内核态下需要使用用户提供的虚拟地址">2.3
+内核态下需要使用用户提供的虚拟地址</h2>
+<p>用户程序常常需要内核执行一些任务并返回结果，因此会通过系统调用传递一个虚拟地址，希望内核将执行结果存储到内存中的相应位置。</p>
+<p>但是用户程序和内核使用的是完全不相同的两个页表，内核并不能直接解引用这个虚拟地址，但是：</p>
+<ol type="1">
+<li>内核保存了用户页表的物理地址</li>
+<li>内核可以通过程序在这个页表中查询到虚拟地址对应的物理地址PA，walk()函数实现了该任务</li>
+<li>取得这个物理地址PA后，可以直接对其解引用，MMU会将PA视为虚拟地址，然后在内核页表中查询对应的物理地址</li>
+<li>由于内核页表<strong>直接映射</strong>的特点，最后得到的物理地址和PA完全相同</li>
+</ol>
+<p>注意，2和3是两个不同的过程，2是在软件中进行的，模拟了MMU查询页表的过程，而3是在硬件中进行的过程。这个过程的伪代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">copyout(userVA):</span><br><span class="line">	userPA = walk(user_pgtbl, userVA)</span><br><span class="line">    *userPA = result</span><br></pre></td></tr></table></figure>
+<figure>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/copyout.gif" alt="copyout">
+<figcaption aria-hidden="true">copyout</figcaption>
+</figure>
+<p>比如用户程序传递虚拟地址<code>0x0000020000</code>给内核，内核通过walk函数得到相应的物理地址<code>0x00800e0000</code>，对其进行解引用并赋值为结果值，MMU在内核页表中查询“虚拟地址”<code>0x00800e0000</code>对应的物理地址，查询结果为<code>0x00800e0000</code>，则CPU将结果值存入<code>0x00800e0000</code>。</p>
 
 
 <div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a
@@ -112,7 +197,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/">LSTM笔记</a></div><div class="item" id="next"></div></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/">xv6系统调用过程</a></div></section></div>
 
 
 
