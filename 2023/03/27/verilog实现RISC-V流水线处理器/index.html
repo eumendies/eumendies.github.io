@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://eumendies.github.io/2023/03/27/verilog%E5%AE%9E%E7%8E%B0RISC-V%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%A4%84%E7%90%86%E5%99%A8/forwarding.gif">
 <meta property="og:image" content="https://eumendies.github.io/2023/03/27/verilog%E5%AE%9E%E7%8E%B0RISC-V%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%A4%84%E7%90%86%E5%99%A8/control_hazard.gif">
 <meta property="article:published_time" content="2023-03-27T02:25:04.000Z">
-<meta property="article:modified_time" content="2023-04-07T06:03:45.575Z">
+<meta property="article:modified_time" content="2023-04-24T00:14:43.030Z">
 <meta property="article:author" content="Eumendies">
 <meta property="article:tag" content="计算机组成原理">
 <meta property="article:tag" content="verilog">
@@ -155,7 +155,7 @@ ID)，<u>执行阶段</u>(EX)，<u>访存阶段</u>(MEM)，<u>写回阶段</u>(W
 <p>ALU接受两个输入数据，然后根据ALUControl来决定要进行的计算并给出输出。</p>
 <figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span>(</span><br><span class="line">    <span class="keyword">input</span> <span class="keyword">signed</span>[<span class="number">31</span>:<span class="number">0</span>] A, B,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">3</span>:<span class="number">0</span>] ALUControl,</span><br><span class="line">    <span class="keyword">output</span> <span class="keyword">signed</span>[<span class="number">31</span>:<span class="number">0</span>] result</span><br><span class="line">	);</span><br></pre></td></tr></table></figure>
 <h2 id="ram">RAM</h2>
-<p>使用256个8位宽的寄存器来组成RAM，即有256个字节。当MemWrite信号为高时，将传入的双字从传入的内存地址开始一个字节一个字节地往后写，读取数据时也是从给定的内存地址开始逐字节读取。</p>
+<p>使用256个8位宽的寄存器来组成RAM，即有256个字节。当MemWrite信号为高时，将传入的数据从传入的内存地址开始一个字节一个字节地往后写，读取数据时也是从给定的内存地址开始逐字节读取。</p>
 <p>同时还要根据指令的funct3字段来确定要写入的数据长度</p>
 <figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> RAM(</span><br><span class="line">	<span class="keyword">input</span> clk, rstn,</span><br><span class="line">    <span class="keyword">input</span> MemWrite, MemRead,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">2</span>:<span class="number">0</span>] instr_funct3,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] address,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] WD,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] ReadData</span><br><span class="line">	);</span><br></pre></td></tr></table></figure>
 <h2 id="ram前递单元">RAM前递单元</h2>
