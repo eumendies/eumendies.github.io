@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.15.1">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://fastly.jsdelivr.net'>
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
+  <link rel='dns-prefetch' href='//unpkg.com'>
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>Eumendies</title>
+
+  
+    <meta name="description" content="相比于宏观经济学，微观经济学研究的是个体或者单个市场的经济行为和决策。微观经济学分册主要通过分析和比较的方式来推导和解释市场现象和制度，所以该书首先介绍了经济学的十大原理，然后引出重要的分析工具——供给与需求曲线，然后再具体到赋税、国际贸易、垄断等市场行为对供给需求曲线的影响，分析这些行为如何达到最终的目的——有利可图。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《经济学原理》微观经济学分册总结">
+<meta property="og:url" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Eumendies">
+<meta property="og:description" content="相比于宏观经济学，微观经济学研究的是个体或者单个市场的经济行为和决策。微观经济学分册主要通过分析和比较的方式来推导和解释市场现象和制度，所以该书首先介绍了经济学的十大原理，然后引出重要的分析工具——供给与需求曲线，然后再具体到赋税、国际贸易、垄断等市场行为对供给需求曲线的影响，分析这些行为如何达到最终的目的——有利可图。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E6%9B%B2%E7%BA%BF.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E8%BF%87%E5%89%A9%E5%92%8C%E7%9F%AD%E7%BC%BA.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E6%94%AF%E4%BB%98%E6%84%8F%E6%84%BF.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%89%A9%E4%BD%99.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E6%80%BB%E5%89%A9%E4%BD%99.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%87%BA%E5%8F%A3.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E8%BF%9B%E5%8F%A3.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%8D%96%E8%80%85%E5%BE%81%E7%A8%8E.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E4%B9%B0%E8%80%85%E5%BE%81%E7%A8%8E.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%BC%B9%E6%80%A7.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E7%A8%8E%E6%94%B6%E8%B4%9F%E6%8B%85.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E6%97%A0%E8%B0%93%E6%8D%9F%E5%A4%B1.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E6%80%BB%E6%88%90%E6%9C%AC.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E6%88%90%E6%9C%AC%E6%9B%B2%E7%BA%BF.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%85%B8%E5%9E%8B%E6%88%90%E6%9C%AC%E6%9B%B2%E7%BA%BF.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E8%BE%B9%E9%99%85%E6%88%90%E6%9C%AC-%E4%BB%B7%E6%A0%BC.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E7%9F%AD%E6%9C%9F%E4%BE%9B%E7%BB%99%E6%9B%B2%E7%BA%BF.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E9%95%BF%E6%9C%9F%E4%BE%9B%E7%BB%99%E6%9B%B2%E7%BA%BF.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E7%9F%AD%E6%9C%9F%E4%B8%8E%E9%95%BF%E6%9C%9F.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E7%9F%AD%E6%9C%9F%E5%B8%82%E5%9C%BA%E4%BE%9B%E7%BB%99.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E9%95%BF%E6%9C%9F%E5%B8%82%E5%9C%BA%E4%BE%9B%E7%BB%99.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E7%9F%AD%E6%9C%9F%E9%95%BF%E6%9C%9F%E5%9D%87%E8%A1%A1.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%9E%84%E6%96%AD%E9%9C%80%E6%B1%82.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%9E%84%E6%96%AD%E6%9C%80%E5%A4%A7%E5%88%A9%E6%B6%A6.png">
+<meta property="og:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E5%9E%84%E6%96%AD%E6%97%A0%E6%95%88%E7%8E%87.png">
+<meta property="article:published_time" content="2023-08-04T03:01:05.000Z">
+<meta property="article:modified_time" content="2023-08-04T03:02:26.132Z">
+<meta property="article:author" content="Eumendies">
+<meta property="article:tag" content="读书">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://eumendies.github.io/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/%E6%9B%B2%E7%BA%BF.png">
+  
+  
+
+  <!-- feed -->
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/logo.jpg">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class='l_body' id='start'>
+    <aside class='l_left' layout='post'>
+    
+
+  
+
+<header class="header">
+
+<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Eumendies</div></a></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/friends/">友链</a><a class="nav-item" href="/about/">关于</a></nav>
+</header>
+
+
+<div class="widgets">
+
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">《经济学原理》微观经济学分册总结</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8D%81%E5%A4%A7%E5%8E%9F%E7%90%86"><span class="toc-text">1. 经济学十大原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E6%9B%B2%E7%BA%BF%E4%B8%8E%E4%BE%9B%E7%BB%99%E6%9B%B2%E7%BA%BF"><span class="toc-text">2. 需求曲线与供给曲线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E7%A6%8F%E5%88%A9%E7%BB%8F%E6%B5%8E%E5%AD%A6%E7%9C%8B%E4%BE%9B%E7%BB%99%E9%9C%80%E6%B1%82%E6%9B%B2%E7%BA%BF"><span class="toc-text">3. 从福利经济学看供给需求曲线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BD%E9%99%85%E8%B4%B8%E6%98%93%E5%AF%B9%E4%BE%9B%E7%BB%99%E9%9C%80%E6%B1%82%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-text">4. 国际贸易对供给需求的影响</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8E%E6%94%B6%E5%AF%B9%E4%BE%9B%E7%BB%99%E9%9C%80%E6%B1%82%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-text">5. 税收对供给需求的影响</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%90%E6%9C%AC%E6%9B%B2%E7%BA%BF"><span class="toc-text">6. 成本曲线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%9E%E4%BA%89%E5%B8%82%E5%9C%BA"><span class="toc-text">7. 竞争市场</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9E%84%E6%96%AD"><span class="toc-text">8. 垄断</span></a></li></ol></div></div></div>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class='l_main'>
+      
+
+      
+
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+          }
+        });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+            tex2jax: {
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+          });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+              var all = MathJax.Hub.getAllJax(), i;
+              for(i=0; i < all.length; i += 1) {
+                  all[i].SourceElement().parentNode.className += ' has-jax';
+              }
+          });
+      </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/%E7%AC%94%E8%AE%B0/">笔记</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-08-04T03:01:05.000Z">2023-08-04</time></div></div>
+
+<article class='content md post'>
+<h1 class="article-title"><span>《经济学原理》微观经济学分册总结</span></h1>
+<p>相比于宏观经济学，微观经济学研究的是<u>个体或者单个市场</u>的经济行为和决策。微观经济学分册主要通过分析和比较的方式来推导和解释市场现象和制度，所以该书首先介绍了经济学的十大原理，然后引出重要的分析工具——供给与需求曲线，然后再具体到赋税、国际贸易、垄断等市场行为对供给需求曲线的影响，分析这些行为如何达到最终的目的——有利可图。</p>
+<span id="more"></span>
+<h2 id="经济学十大原理">1. 经济学十大原理</h2>
+<p>经济学研究人们如何做出决策、人们如何相互影响、整体经济如何运行，而在每个方面都有若干条具有概括意义的原理。</p>
+<ul>
+<li>人们如何做出决策：
+<ul>
+<li>人们面临权衡取舍。这是人们需要做出决策的前提，大多数情况下不可能做到既要...又要...，比如有时常常需要在效率和公平之间做选择。</li>
+<li>某种东西的成本是为了得到它所放弃的东西，即机会成本。机会成本不单单包括放弃掉的经济收益，还包括时间等不以金钱为单位的东西。比如读研究生的机会成本就包括放弃掉的就业的收入和相应的时间花费。</li>
+<li>理性人考虑边际量。边际变动是对当前计划的微小增量调整，理性人通过一步步的边际变动逐渐达到利益最大化。</li>
+<li>人们会对激励做出反应。政府决策可以通过影响激励来改变人们的行为。</li>
+</ul></li>
+<li>人们如何相互影响：
+<ul>
+<li>贸易可以让每个人状况变得更好。各国可以专注生产自己最擅长生产的产品，然后通过贸易来交换其他种类的产品，专业化提高了整体的效率。</li>
+<li>市场是组织经济活动的好方法。市场上每个人都只关心自己利益的最大化，但在大多数情况下却会实现整个社会福利的最大化。</li>
+<li>政府有时可以改善市场结果。市场在某些情况下也会失灵，需要政府介入。</li>
+</ul></li>
+<li>整体经济如何运行：
+<ul>
+<li>一国的生活水平取决于它生产物品与服务的能力。一国生产率的增长率决定了它的平均收入的增长率。</li>
+<li>当政府发行了过多货币时，物价上升。</li>
+<li>社会面临通货膨胀与失业之间的短期权衡取舍。货币量增加刺激社会整体支出水平从而增大需求，激励企业雇佣更多工人生产产品。</li>
+</ul></li>
+</ul>
+<p>微观经济学展开描述了关于人们如何进行决策和人们如何相互影响的经济学原理，而宏观经济学则详细描述整体经济如何运行的经济学原理。</p>
+<h2 id="需求曲线与供给曲线">2. 需求曲线与供给曲线</h2>
+<p>需求曲线用来表示一种物品的价格和需求量之间的关系，而供给曲线则用来表示一种物品的价格和供给量之间的关系。一般情况下，需求曲线向右下方倾斜，供给曲线向右上方倾斜。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/曲线.png"></p>
+<p>需求曲线向右下方倾斜的现实意义是当一样物品的价格上升时，其需求量下降，消费者会选择更多购买该物品的替代品。供给曲线向右上方倾斜的现实意义是当一样物品的价格上升时，其供给量也上升。</p>
+<p>曲线的移动：当需求(供给)增加时，需求(供给)曲线向右移动，意味着在同样的价格下，需求(供给)量增大，需求(供给)减少时则向左移动。</p>
+<p>供给和需求曲线的交点被称为均衡点，在均衡点上方的情况被称为过剩，均衡点下方的情况称为短缺。在供给过剩的情况下，卖者无法卖出全部产品，因此需要降低价格，价格的降低使供给减少需求增大，最终达到均衡点；在供给短缺的情况下，有过量的消费者购买产品，卖者上升价格不会减少销量反而会增加销量，价格上升使供给增加需求减少从而达到均衡点。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/过剩和短缺.png"></p>
+<h2 id="从福利经济学看供给需求曲线">3. 从福利经济学看供给需求曲线</h2>
+<p>将买者愿意为某种物品支付的最高量称为支付意愿，买者会拒绝购买价格高于自己支付意愿的商品。</p>
+<p>假设对某商品A的买者的支付意愿进行统计，以10元为间隔，最终统计出支付意愿在100元的有10人，支付意愿在90元的有20人，支付意愿在80元的有15人；则当该商品价格低于80元时有10+20+15=45人愿意购买，价格高于80低于90时有10+20=30人愿意购买，价格高于90低于100时只有10人愿意购买，而价格高于100时无人愿意购买。将该结果绘制成曲线如下：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/支付意愿.png"></p>
+<p>价格每下降10元时，愿意支付的买者数量就会相应增加，如果我们将价格间隔从10元改成5元，则是每下降五元就会有新的买者加入市场，可以想象，当我们把这个价格间隔不断缩小，这条曲线就会越来越平滑，最终就变成了我们之前看到的需求曲线。需求曲线可以看成是消费者支付意愿的反映。</p>
+<p>对于生产者来说也是一样，生产者生产一件商品需要成本，这个成本既包括生产时的直接经济支出，还包括时间等其他机会成本，因此对于生产者来说也存在一个销售意愿，只有当价格高于销售意愿时生产者才愿意售出产品。随着价格的升高，高出一些生产者的销售意愿之后，就会有新的生产者进入市场，因此供给曲线是一条向右上方倾斜的曲线。</p>
+<p>对消费者来说，若商品价格低于其支付意愿，则支付意愿和商品价格之间的差值是消费者从参与市场中获得的利益，将其称为消费者剩余。同理，商品价格和销售意愿之间的差值被称为生产者剩余。</p>
+<p>当价格下降时，原来就参与市场的买者的消费者剩余会增加，新加入市场的消费者也有相应的消费者剩余，市场上的总消费者剩余增加；但是对卖者来说，价格下降会导致有生产者退出市场，仍然参与市场的生产者的生产者剩余也会下降，市场上的总生产者剩余减少。价格上升时则反之。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/剩余.png"></p>
+<u>市场上的总剩余等于消费者剩余加上生产者剩余，当市场位于均衡点时总剩余最大。</u>
+<p>因为当供给过剩时，供给量大于需求量，生产者的销售量等于需求量，有一部分产品由于未被售出而没有给生产者带来剩余；当供给短缺时，供给量小于需求量，销售量就等于供给量，有一部分消费者没能买到产品因而也没有消费者剩余。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/总剩余.png"></p>
+<h2 id="国际贸易对供给需求的影响">4. 国际贸易对供给需求的影响</h2>
+<p>当一个国内市场还没有参加国际贸易时，存在国内价格和世界价格(均为均衡状态)不同的情况。当国内市场参加国际贸易后，国内价格就会自发调节到世界价格。如果国内价格低于世界价格，生产者就有进行出口的激励；如果国内价格高于世界价格，消费者就有购买进口品的激励。</p>
+<p>如果一个国家成为出口国，国内价格就会上升到世界价格，根据前面的结论，国内的消费者剩余就要减少，但是由于参加了国际贸易，生产者的销售量已经不等于国内的需求量，由于价格上升而多生产的产品可以出口到他国，因而生产者剩余会增加。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/出口.png"></p>
+<p>如果一个国家成为进口国，国内价格就会下降到世界价格，国内的生产者剩余就要减少，但是由于参加了国际贸易，消费者可以通过购买进口品来弥补国内的供给短缺，因而消费者剩余会增加。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/进口.png"></p>
+<p>变成出口国时，生产者状况变好但是消费者状况变坏了；变成进口国时，消费者状况变好但是生产者状况变坏了。但无论变成出口国还是进口国，国内的总剩余都因为参加了国际贸易而变得更多了，赢家的收益超过了输家的损失。</p>
+<h2 id="税收对供给需求的影响">5. 税收对供给需求的影响</h2>
+<p>如果对卖者征税，要求卖者每售出一件物品就向政府支付一定量的税收，由于征税导致卖者销售成本升高，卖者如果想维持同样的供给量，必定需要提高销售价格，提高的幅度等于税收量以此抵消税收的影响，因此供给曲线向上移动，导致新的均衡点向左移动，税收缩小了市场规模。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/卖者征税.png"></p>
+<p>如果对买者征税，买者每购买一件商品都要向政府支付一定税额，那么相当于提高了商品的价格，那么当商品价格不变的时候，买者购买量减少，需求曲线向左移动(也可以说向下移动，移动幅度等于税收量，即市场价格需要下降才能维持同样的购买量)。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/买者征税.png"></p>
+<p>无论对卖者还是买者征税，买者支付的价格都上升，卖者得到的价格都下降，需要二者共同分担税收负担，区别仅在于谁对税收直接付钱。无论对何者征税，买者实际支付的价格和卖者实际得到的价格的差值都等于税收量，征税往供给需求曲线中打入了一个三角形的楔子。</p>
+<p>要研究卖者和买者各分担了多少税收负担，就需要研究供给弹性和需求弹性。</p>
+<p>供给量和需求量会随价格变动而发生变化，我们用价格弹性来衡量需求量或者供给量对价格变动的反应程度。当价格变动时，如果供给量或者需求量变化很大，就称其为富有弹性的，如果变化很小，则称其为缺乏弹性的。反映在图形上则是约平坦的曲线价格弹性越大，约陡峭的曲线价格弹性越小。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/弹性.png"></p>
+<p>当需求缺乏弹性而供给富有弹性时，税收更多由消费者承担，打入一个税收楔子后卖者得到的价格并没有下降太多，而买者支付的价格上升得更多。对需求富有弹性而供给缺乏弹性的市场征税时情况则反之。(图中没有画出新的供给或需求曲线，因为无论对谁征税，其结果是一样的)</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/税收负担.png"></p>
+<p>因此<u>税收负担更多落到弹性较小的一方身上</u>。弹性衡量的是价格变得不利时买者卖者离开市场的意愿，弹性小意味着没有其他的替代品，不太愿意离开市场，从而必须承担更多的税收负担。</p>
+<p>再研究赋税之后的生产者剩余、消费者剩余和政府收入。政府的收入等于税收量乘以新均衡点下的商品购买量，而生产者剩余是卖者得到价格和供给曲线所围面积，消费者剩余是买者得到价格和需求曲线所围面积。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/无谓损失.png"></p>
+<p>可以看到有税收时的总剩余相比无税收的总剩余减少了一块面积，这一块减少的总剩余称为无谓损失。由于无谓损失的存在，买者和卖者减少的剩余要大于政府获得的收入。由于税收导致有人退出市场，政府自然无法征收到退出市场的人的税收，因此就存在无谓损失。供给和需求的弹性越小，无谓损失也越小，因为退出市场的人少。</p>
+<h2 id="成本曲线">6. 成本曲线</h2>
+<p>企业想要达到利润最大化，那么不仅仅要关注市场价格，还要关注自己的生产成本和产量的问题。</p>
+<p>企业想要增大产量就要增大投入提高成本，当产量比较低的时候，要提升一定的产量只需投入较少的成本，但是当产量越来越高时，提升单位产量所需要的投入成本就会变得越来越高，比如企业起步时每雇佣多一个工人就能更充分地利用生产设备从而提高产量，但是随着工人数量增加，再增加工人可能使工人在拥挤条件下工作反而互相妨碍，导致每个增加的工人贡献的产量越来越小，这就是边际产量递减。</p>
+<p>边际产量是增加一单位投入引起的产量增加，边际产量递减就是一种投入的边际产量随着投入量增加而减少的特征。画出产量与总成本的关系如下：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/总成本.png"></p>
+<p>除了总成本，还有其他用来衡量成本的指标：</p>
+<ul>
+<li>固定成本：不随产量变动而变动的成本，即使企业根本不生产也要发生的成本</li>
+<li>可变成本：随产量变动而变动的成本。</li>
+<li>边际成本：额外一单位产量所引起的总成本的增加。</li>
+</ul>
+<p>企业通常还想知道某产量下一单位产品的成本有多少，这样就有了平均总成本(ATC)、平均固定成本(AFC)、平均可变成本(AVC)，企业常常考察这些平均成本、边际成本(MC)与产量之间的关系来进行短期决策和长期决策。</p>
+<p>对于边际成本，由于产量越高，提升一产量所要的投入越多，因此边际成本随产量增加而增加。</p>
+<p>对于平均固定成本，由于固定成本不随产量变化而变化，因此平均固定成本随产量增加而减小，呈反比关系。</p>
+<p>给定产量x，将0到x所有对应的边际成本求和即可得到产量x下的可变成本，换句话说，<u>可变成本的一阶差分等于边际成本</u>。由于边际成本递增，那么平均可变成本也一定是递增的，且平均可变成本低于边际成本。</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">产量</th>
+<th style="text-align: center;">0</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">边际成本</td>
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;">0.4</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">可变成本</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;">1.1</td>
+</tr>
+</tbody>
+</table>
+<p>对于平均总成本，其为平均固定成本和平均可变成本之和，平均固定成本随产量增加而减小，平均可变成本随产量增加而增加。在产量较低时，平均固定成本下降速度较快，占主导地位，因此平均总成本下降；产量较高时，平均固定成本下降速度放缓(反比曲线)，平均可变成本增加占主导地位，平均总成本升高。</p>
+<p>各平均成本和产量关系如下：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/成本曲线.png"></p>
+<p>平均总成本曲线的底端时的产量称为有效规模，此时平均总成本最小。平均总成本曲线的低点就是平均总成本曲线和边际成本曲线的交点，边际成本大于平均总成本时平均总成本才开始增加，相当于只有当下一门考试成绩大于目前的平均成绩时，平均成绩才会上升。</p>
+<p>实际上，边际成本并不是一直递增的，企业并不是在雇佣了第一个工人后边际产量就开始递减，人少的时候多雇佣一些人可以更好的分工，从而边际产量增加，雇佣人数到了一定程度才会发生边际产量递减。因此边际成本有一段先下降的过程，典型的成本曲线如下：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/典型成本曲线.png"></p>
+<h2 id="竞争市场">7. 竞争市场</h2>
+<p>竞争市场是有许多买者和卖者的市场，每个买者卖者对市场价格的影响可以忽略不计，因此他们都是价格接受者。</p>
+<p>企业每多生产一单位产品获得的利润称为边际利润，边际利润应该等于边际收入减去边际成本，在竞争市场下，企业无论增产还是减产都无法影响市场价格，因此此时边际收入等于市场价格。当边际利润大于0时，企业增产就能增加收入，当边际利润小于0时，企业需要减产来达到最大利润。因此，<u>当企业的边际成本等于市场价格时，企业的利润最大化</u>。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/边际成本-价格.png"></p>
+<p>当我们将这种关系画成曲线我们就发现边际成本曲线和供给曲线是非常相似的，在供给曲线中，给定一个市场价格就能得到市场上的供给量，在边际成本曲线中也是一样，当企业知道了市场价格之后，同样也可以确定自己利润最大化的供给量，似乎可以认为边际成本曲线就是一个企业的供给曲线。</p>
+<p>但实际上边际成本曲线与供给曲线有一点很大的不同，可以想象，当市场价格不断降低时，企业的利润会从最大值一直减小到0，市场价格再降低，企业就应该停止生产了，而不是等到价格为0才停止生产。所以边际成本曲线只是一部分上等于企业的供给曲线。</p>
+<p>我们假设，在短期决策中企业不考虑退出市场，在长期决策中企业可以自由进出市场。如果企业决定短期停止营业，则企业不再需要付出可变成本，但是仍然需要支出固定成本。因此当从事生产时的收益＜可变成本时，企业暂时停止营业，不等式两边同时除以产量，则变为价格＜平均可变成本时，企业暂时停止营业。结合前面边际成本曲线与供给曲线相似的结论，可知<u>企业的短期供给曲线是边际成本曲线位于平均可变成本曲线之上的部分。</u></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/短期供给曲线.png"></p>
+<p>在长期决策中，企业会考虑退出市场，此时企业不再需要支出可变成本和固定成本，即收益＜总成本时企业退出市场，不等式两边同时除以产量，得到价格＜平均总成本时企业退出市场。因此，企业的长期供给曲线是位于平均总成本之上的部分。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/长期供给曲线.png"></p>
+<p>需要注意的是，边际成本曲线与平均可变成本相交时的价格是低于与平均总成本相交时的价格的。在短期中，如果价格高于平均可变成本但是低于平均总成本，此时收益是无法补偿总成本的，是存在亏损的，但是足以补偿投入的可变成本，且我们假设企业短期内不考虑退出市场，因此即使此时存在亏损也不至于退出市场，可以等待价格回升。但是如果价格长期低于平均总成本，企业只能退出市场。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/短期与长期.png"></p>
+<p>上面考察的都是单个企业的供给曲线，接下来需要考察整个市场上的供给曲线。</p>
+<p>对于短期供给曲线，由于假设不存在企业进入退出市场，因此只需要把市场上所有企业的短期供给曲线加和即可得到市场的短期供给曲线，最后得出的图形和我们之前画的供给曲线一致。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/短期市场供给.png"></p>
+<p>对于长期供给曲线，由于企业可以自由进出，当市场上现有企业盈利时就会有企业加入市场，导致供给增加、价格减少、利润减少；当市场上现有企业亏损时就会有企业退出市场，导致供给减少、价格升高、利润增多。当达到市场均衡时，仍处在市场中的企业经济利润为零。由于利润为零，因此价格只能等于平均总成本，因此长期供给曲线是一条水平线。长期供给曲线上的点是处在市场均衡状态下的，该价格下的供给量还需要取决于需求量即均衡点的位置。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/长期市场供给.png"></p>
+<p>当市场达到均衡时，假如市场需求增加，则会使得价格上升，此时在市场中的企业短期内获得利润，短期均衡点位于长期供应曲线上方；在长期范围内则会有新的企业加入市场，导致供给增加、价格下降，导致市场内的企业经济利润重新为零，新的均衡点重新落到长期供给曲线上。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/短期长期均衡.png"></p>
+<h2 id="垄断">8. 垄断</h2>
+<p>在竞争市场中，企业是价格接受者，在垄断市场中，垄断企业(市场上的唯一卖者)是价格决定者，两者的目标同样是利润最大化，但是却有很不同的市场结果。</p>
+<p>由于垄断市场上只有垄断企业一个卖者，因此市场的需求曲线就是企业的需求曲线，在某一定价下的需求量就是企业的供给量(由于没有竞争，垄断者可以市场需求多少产品就生产多少产品)。对于竞争企业来说，提高产量并不会影响市场价格，因此其边际收益等于市场价格；对于垄断企业来说，它按照需求曲线进行供给，因此增加产量时价格下降，其边际收益小于市场价格，平均收益等于市场价格。当价格下降过多时，即使销售量增加了，总收益也会减少，导致边际收益小于零。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/垄断需求.png"></p>
+<p>无论是竞争市场还是垄断市场，边际利润还是等于边际收益减去边际成本，只要边际利润还大于0，企业增产就能提升利润。因此垄断者的利润最大化产量是由边际收益曲线与边际成本曲线的交点决定的。但是由于需求曲线在边际收益曲线上方，因此此时的价格是高于边际成本的。(对于竞争企业来说，利润最大化时边际成本等于价格)</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/垄断最大利润.png"></p>
+<p>垄断使得企业可以收取更高的价格从而获得比同产量下竞争企业更多的利润，这对企业所有者是合意的，但是对消费者来说是不合意的。我们可以通过分析总剩余来考察垄断对整个社会是否合意，对于竞争企业来说我们使用供给曲线来衡量其销售成本，但是对于垄断企业我们要用边际成本曲线来衡量其销售成本。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/垄断无效率.png"></p>
+<p>需求曲线和边际成本曲线相交时的产量是效率产量，此时总剩余最大，但是垄断企业的产量低于效率产量，垄断价格高于边际成本导致有消费者拒绝进入市场，出现无谓损失，因此垄断是无效率的。</p>
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
+4.0 国际</a>许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2023/06/24/%E4%BD%BF%E7%94%A8%E8%AF%8D%E5%90%91%E9%87%8F%E5%92%8C%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E5%BA%A6%E8%BF%9B%E8%A1%8C%E6%96%87%E6%9C%AC%E6%9F%A5%E9%87%8D/">使用词向量和余弦相似度进行文本查重</a></div></section></div>
+
+
+
+
+
+
+  <div class='related-wrap md reveal' id="comments">
+    <div class='cmt-title cap theme'>
+      快来参与讨论吧
+    </div>
+    <div class='cmt-body waline'>
+      
+
+<div id="waline_container" class="waline_thread"><svg class="loading" style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
+
+    </div>
+  </div>
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/"><span class="citation"
+data-cites="Eumendies">@Eumendies</span></a> 使用 <a
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a>
+主题创建。 本博客所有文章除特别声明外，均采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
+4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class='float-panel mobile-only blur' style='display:none'>
+  <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"></path><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"></path></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.15.1';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.15.1';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js'
+  };
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@6/swiper-bundle.min.css","js":"https://unpkg.com/swiper@6/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://fastly.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://fastly.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://fastly.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti/umd/heti.min.css","js":"https://unpkg.com/heti/umd/heti-addon.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+  <script>
+  function load_comment(){
+    if(!document.getElementById("waline_container"))return;
+    stellar.loadCSS('https://unpkg.com/@waline/client@v2/dist/waline.css');
+    stellar.loadScript('https://unpkg.com/@waline/client@v2/dist/waline.js', {defer:true}).then(function () {
+      const el = document.getElementById("waline_container");
+      var path = el.getAttribute('comment_id');
+      if (!path) {
+        path = decodeURI(window.location.pathname);
+      }
+      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://example.eumendies.me/","commentCount":false,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","nick","mail"],"requiredMeta":["nick"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"login":"enable"}, {
+        el: '#waline_container',
+        path: path,
+      }));
+    });
+  }
+  window.addEventListener('DOMContentLoaded', (event) => {
+    console.log('DOM fully loaded and parsed');
+    load_comment();
+  });
+
+</script>
+
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
