@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/basic.jpg">
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/%E7%8A%B6%E6%80%81%E6%9C%BA.png">
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/term.png">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/typora_pictures/election.jpg">
+<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election.jpg">
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/vote.jpg">
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/conflict.jpg">
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-candidates.jpg">
@@ -57,7 +57,7 @@
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot-prev.jpg">
 <meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/send-snapshot.jpg">
 <meta property="article:published_time" content="2023-11-05T04:00:26.000Z">
-<meta property="article:modified_time" content="2023-11-05T07:17:23.185Z">
+<meta property="article:modified_time" content="2023-11-05T07:21:54.901Z">
 <meta property="article:author" content="Eumendies">
 <meta property="article:tag" content="分布式系统">
 <meta name="twitter:card" content="summary_large_image">
@@ -177,7 +177,7 @@
 <p>发起选举的服务器需要做三件事：1. 首先转换为候选者状态，投票给自己，2.
 然后将保存的任期号加一，并把新的任期号发送给其他所有服务器。3.
 如果得到大多数选票，转换成领导者状态；如果在一定时间内没有得到大多数选票，就重置超时时间并转回跟随者状态等待下一次选举。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/typora_pictures\election.jpg"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election.jpg"></p>
 <p>一个服务器是否投票另一个服务器取决于双方的任期号。当其他服务器收到投票请求时，如果发来的任期号大于自己保存的任期号，则选择投票给该服务器并设置新的任期号，如果发来的任期号小于等于自己保存的任期号，则拒绝投票给该服务器。当该服务器获得大于半数的投票时，其从候选者状态转换为领导者状态。如果该服务器没有成为领导者，则重新回到跟随者状态并重置超时时间。</p>
 <p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/vote.jpg"></p>
 <p>服务器有命令需要发送时就发送命令，没有命令需要发送时就定时发送“心跳”信息给所有跟随者。为了避免在领导者未宕机的情况下跟随者发起选举，领导者需要定时发送“心跳”信息，当跟随者收到来自领导者的消息(心跳信息或任何其他信息)时就会重置自己的超时计时器。领导者发送心跳信息的间隔时间要小于跟随者超时时间的最小值。领导者发送心跳信息时需要附带任期号，因为领导者可能已经过时了，而其他服务器需要通过任期号来判断这点，具体请参考2.2.3
