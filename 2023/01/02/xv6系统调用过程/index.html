@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://eumendies.github.io/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/user_space.png">
 <meta property="og:image" content="https://eumendies.github.io/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/process.png">
 <meta property="article:published_time" content="2023-01-02T00:23:17.000Z">
-<meta property="article:modified_time" content="2023-06-22T07:47:35.201Z">
+<meta property="article:modified_time" content="2023-06-22T07:47:36.000Z">
 <meta property="article:author" content="Eumendies">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary_large_image">
@@ -161,7 +161,7 @@
 <li>将<code>trapframe</code>中保存的<code>sepc</code>值写入<code>sepc</code>寄存器中，由于在内核中也可能发生trap，会导致<code>sepc</code>寄存器的值被修改，所以现在要再次写一遍<code>sepc</code>寄存器的值</li>
 <li>跳转到<code>trampoline</code>中的<code>userret</code></li>
 </ol>
-<div class="tag-plugin note"><div class="title"><strong>trapframe的初始化</strong></div><div class="body"><p>每个用户进程在内核中被首次创建出来后都会调用一遍usertrapret函数返回用户空间，从而其trapframe中会保存有内核页表地址等信息，使其可以完成系统调用。</p></div></div>
+<div class="tag-plugin note"><div class="title"><strong>trapframe的初始化</strong></div><div class="body"><p>每个用户进程在内核中被首次创建出来后都会调用一遍usertrapret函数返回用户空间，从而其trapframe中会保存有内核页表地址等信息，使其可以完成系统调用。</p></div></div>
 <p><code>trampoline</code>中的<code>userret</code>执行流程如下：</p>
 <ol type="1">
 <li>将<code>trapframe</code>中保存的通用寄存器值恢复到32个寄存器中，因为<code>trapframe</code>中<code>a0</code>寄存器的值已经在<code>syscall</code>中被修改成了系统调用函数的返回值，因此恢复过程完毕后<code>a0</code>寄存器中就保存着返回值供用户程序使用</li>
