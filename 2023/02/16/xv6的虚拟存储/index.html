@@ -190,7 +190,9 @@ memory区域是内核用来分配给用户程序的内存，因此用户程序�
 <p>比如用户程序传递虚拟地址<code>0x0000020000</code>给内核，内核通过walk函数得到相应的物理地址<code>0x00800e0000</code>，对其进行解引用并赋值为结果值，MMU在内核页表中查询“虚拟地址”<code>0x00800e0000</code>对应的物理地址，查询结果为<code>0x00800e0000</code>，则CPU将结果值存入<code>0x00800e0000</code>。</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a>许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
+4.0 国际</a>许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
@@ -217,7 +219,12 @@ memory区域是内核用来分配给用户程序的内存，因此用户程序�
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/"><span class="citation"
+data-cites="Eumendies">@Eumendies</span></a> 使用 <a
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a>
+主题创建。 本博客所有文章除特别声明外，均采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
+4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -382,7 +389,7 @@ memory区域是内核用来分配给用户程序的内存，因此用户程序�
       if (!path) {
         path = decodeURI(window.location.pathname);
       }
-      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://example.eumendies.me/","commentCount":false,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","nick","mail"],"requiredMeta":["nick"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"login":"enable"}, {
+      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","nick","mail"],"requiredMeta":["nick"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"login":"enable"}, {
         el: '#waline_container',
         path: path,
       }));
