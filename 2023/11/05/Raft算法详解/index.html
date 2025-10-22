@@ -96,112 +96,104 @@
   </div>
   </div><article class="md-text content"><p>Raft算法用于将一台服务器的状态机分布到服务器集群中，保持各个服务器的状态一致，以便在主服务器宕机时能够找出一台新服务器替代，并且让用户无法察觉到这个过程。Raft是一种共识算法，可以将其主要过程分为领导者选举、日志复制、日志压缩等，通过Raft算法，我们可以实现具有容错的分布式系统。本文详细介绍了Raft算法的实现原理，并且附带详细的案例分析帮助理解。</p>
 <span id="more"></span>
-<h2 id="raft的基本概念">1. Raft的基本概念</h2>
-<p>Raft是一种共识算法，只有在大多数(多于半数，<span class="math inline">$\lfloor\frac{n}{2}\rfloor+1$</span>)服务器同意某一个命令并保存了该命令之后，这个命令才会被提交，然后服务器再对客户端进行回应，这样做是为了保证当主服务器宕机时，能够找出一台和原来主服务器具有相同状态机的替代服务器。</p>
+<h2 id="1-raft的基本概念"><a class="markdownIt-Anchor" href="#1-raft的基本概念"></a> 1. Raft的基本概念</h2>
+<p>Raft是一种共识算法，只有在大多数(多于半数，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⌊</mo><mfrac><mi>n</mi><mn>2</mn></mfrac><mo stretchy="false">⌋</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\lfloor\frac{n}{2}\rfloor+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.095em;vertical-align:-0.345em;"></span><span class="mopen">⌊</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.695392em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">⌋</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>)服务器同意某一个命令并保存了该命令之后，这个命令才会被提交，然后服务器再对客户端进行回应，这样做是为了保证当主服务器宕机时，能够找出一台和原来主服务器具有相同状态机的替代服务器。</p>
 <p>为了实现上述的“大多数”原则，Raft给服务器设置了三种状态，分别是领导者(leader)、跟随者(follower)和候选者(candidate)。跟随者通过投票选出领导者，只有得到“大多数”跟随者投票的服务器能成为领导者；领导者负责将命令同步给跟随者，只有被“大多数”跟随者确认的命令才能提交。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/basic.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/basic.jpg" alt></p>
 <p>客户端发来的命令必须被保存，因为当有跟随者因为各种原因错过了某些命令时，领导者必须负责将跟随者缺少的命令发送给跟随者；当跟随者收到领导者发来的命令时，也必须根据自己保存的内容来判断传来的命令是重复的、是过时的、是可以确认的、还是缺少了一些前置命令的。</p>
 <p>Raft算法将命令保存到日志当中，日志中保存的命令实际上可以构建出一个状态机，只要保存的日志与领导者一致，重启的服务器按照日志保存的命令顺序执行，最后就可以同步到和领导者相同的状态。领导者将自己的日志复制给其他的跟随者实际上就是将状态机复制给其他服务器。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/状态机.png"></p>
-<h2 id="领导者选举">2. 领导者选举</h2>
-<h3 id="选举过程">2.1 选举过程</h3>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/%E7%8A%B6%E6%80%81%E6%9C%BA.png" alt></p>
+<h2 id="2-领导者选举"><a class="markdownIt-Anchor" href="#2-领导者选举"></a> 2. 领导者选举</h2>
+<h3 id="21-选举过程"><a class="markdownIt-Anchor" href="#21-选举过程"></a> 2.1 选举过程</h3>
 <p>Raft算法将时间划分成一个个任期(term)，当有跟随者发起选举时其转变成为候选者，然后将当前任期号加一，如果它得到了大多数跟随者的投票，那么它就可以由候选者转换成为当前任期的领导者。每个服务器需要维护一个变量来记录当前的任期号。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/term.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/term.png" alt></p>
 <p>Raft使用超时机制来控制选举的发生。每个服务器被赋予一个随机的超时时间，当一个跟随者经过一个超时时间后还没有收到来自领导者的消息时，它会认为领导者已经宕机，并发起一次新的选举。领导者宕机或者领导者与跟随者网络不通都会导致这种超时的发生。</p>
-<p>发起选举的服务器需要做三件事：1. 首先转换为候选者状态，投票给自己，2.
-然后将保存的任期号加一，并把新的任期号发送给其他所有服务器。3.
-如果得到大多数选票，转换成领导者状态；如果在一定时间内没有得到大多数选票，就重置超时时间并转回跟随者状态等待下一次选举。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election.jpg"></p>
+<p>发起选举的服务器需要做三件事：1. 首先转换为候选者状态，投票给自己，2. 然后将保存的任期号加一，并把新的任期号发送给其他所有服务器。3. 如果得到大多数选票，转换成领导者状态；如果在一定时间内没有得到大多数选票，就重置超时时间并转回跟随者状态等待下一次选举。</p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election.jpg" alt></p>
 <p>一个服务器是否投票另一个服务器取决于双方的任期号。当其他服务器收到投票请求时，如果发来的任期号大于自己保存的任期号，则选择投票给该服务器并设置新的任期号，如果发来的任期号小于等于自己保存的任期号，则拒绝投票给该服务器。当该服务器获得大于半数的投票时，其从候选者状态转换为领导者状态。如果该服务器没有成为领导者，则重新回到跟随者状态并重置超时时间。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/vote.jpg"></p>
-<p>服务器有命令需要发送时就发送命令，没有命令需要发送时就定时发送“心跳”信息给所有跟随者。为了避免在领导者未宕机的情况下跟随者发起选举，领导者需要定时发送“心跳”信息，当跟随者收到来自领导者的消息(心跳信息或任何其他信息)时就会重置自己的超时计时器。领导者发送心跳信息的间隔时间要小于跟随者超时时间的最小值。领导者发送心跳信息时需要附带任期号，因为领导者可能已经过时了，而其他服务器需要通过任期号来判断这点，具体请参考2.2.3
-多领导者。</p>
-<h3 id="corner-case">2.2 corner case</h3>
-<h4 id="raft初启动">2.2.1 Raft初启动</h4>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/vote.jpg" alt></p>
+<p>服务器有命令需要发送时就发送命令，没有命令需要发送时就定时发送“心跳”信息给所有跟随者。为了避免在领导者未宕机的情况下跟随者发起选举，领导者需要定时发送“心跳”信息，当跟随者收到来自领导者的消息(心跳信息或任何其他信息)时就会重置自己的超时计时器。领导者发送心跳信息的间隔时间要小于跟随者超时时间的最小值。领导者发送心跳信息时需要附带任期号，因为领导者可能已经过时了，而其他服务器需要通过任期号来判断这点，具体请参考2.2.3 多领导者。</p>
+<h3 id="22-corner-case"><a class="markdownIt-Anchor" href="#22-corner-case"></a> 2.2 corner case</h3>
+<h4 id="221-raft初启动"><a class="markdownIt-Anchor" href="#221-raft初启动"></a> 2.2.1 Raft初启动</h4>
 <p>当Raft算法刚刚启动时，所有服务器都处于跟随者状态，由于没有领导者发送心跳信息，在一段时间过后必定有一个服务器首先超时并发起选举。</p>
 <p>每个服务器的超时时间都是随机设定而不是设为相同的固定值，这是为了防止出现大多数服务器同时超时的情况。当所有服务器同时超时时，每个发起选举的服务器都会先投票给自己，这样就没有一个服务器能够得到大多数选票，然后又经过一段相同的时间，所有服务器再次同时发起选举，这样就会导致死循环发生。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/conflict.jpg"></p>
-<h4 id="多候选者">2.2.2 多候选者</h4>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/conflict.jpg" alt></p>
+<h4 id="222-多候选者"><a class="markdownIt-Anchor" href="#222-多候选者"></a> 2.2.2 多候选者</h4>
 <p>虽然随机设置的超时时间让同时超时变得不太可能，但是一个新任期中还是有可能出现两个及以上的候选者。比如当两个服务器的超时时间很接近时，一个服务器超时后另一个服务器马上就紧跟着超时了；又比如有一条心跳信息因为网络原因丢失了，那么就有一个跟随者的时钟没有被重置，其剩余的时间可能恰好与其他跟随者的超时时间很相近。</p>
 <p>现在假设服务器A超时，将任期号升至2，且在还没来得及将投票请求发送出去时服务器B也超时，也将自己的任期号升至2，此时新任期中就有两个候选者，网络中包含了两个候选者的投票请求。其他跟随者可能在收到一个投票请求后又会收到另一条投票请求，但是2.1节中描述的投票规则保证了：<strong>一个服务器在一个任期中最多投票一次</strong>。</p>
 <p>若另一个服务器C先收到了A的投票请求，C由于收到了更大的任期号所以会选择同意投票，然后其任期号也升至2。当其再收到B的投票请求时，由于收到的任期号还是2，并不比自己现在的任期号大，因此C会拒绝投票，同理，任何其他来自任期2的投票请求都会被C拒绝。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-candidates.jpg"></p>
-<p>“大多数原则”加上一任期一票的限制保证了一个重要的性质：<strong>一个任期内只能产生一个领导者</strong>。如果有n个服务器，则当上领导者必须获得<span class="math inline">$\lfloor\frac{n}{2}\rfloor+1$</span>的选票，而服务器在一个任期内只会投票一次，总投票数最多为n，如果出现了两个领导者，则总票数大于n，矛盾。</p>
-<h4 id="多领导者">2.2.3 多领导者</h4>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-candidates.jpg" alt></p>
+<p>“大多数原则”加上一任期一票的限制保证了一个重要的性质：<strong>一个任期内只能产生一个领导者</strong>。如果有n个服务器，则当上领导者必须获得<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⌊</mo><mfrac><mi>n</mi><mn>2</mn></mfrac><mo stretchy="false">⌋</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\lfloor\frac{n}{2}\rfloor+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.095em;vertical-align:-0.345em;"></span><span class="mopen">⌊</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.695392em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">⌋</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>的选票，而服务器在一个任期内只会投票一次，总投票数最多为n，如果出现了两个领导者，则总票数大于n，矛盾。</p>
+<h4 id="223-多领导者"><a class="markdownIt-Anchor" href="#223-多领导者"></a> 2.2.3 多领导者</h4>
 <p>需要注意：<strong>一个任期内只有一个领导者不等于某时刻下只有一个领导者</strong>。假设任期1的领导者与其他所有跟随者的网络连接断开，剩下的跟随者在超时后会选举出任期2的领导者，此时任期1的领导者和任期2的领导者同时存在，但并不违反一个任期内只有一个领导者的性质。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-leaders.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-leaders.jpg" alt></p>
 <p>与其他服务器隔离的任期1领导者仍在不断尝试发送心跳信息，当它和任何一个服务器的网络连接恢复后，收到心跳信息的服务器会发现这是一个来自任期1的信息，说明存在一个已经过时的领导者，服务器会在回应中附带上最新的任期号，任期1领导者看到这个任期号后直到自己已不再是领导者，就会转换为跟随者。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/out-of-date.jpg"></p>
-<h4 id="无法选出领导者">2.2.3 无法选出领导者</h4>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/out-of-date.jpg" alt></p>
+<h4 id="223-无法选出领导者"><a class="markdownIt-Anchor" href="#223-无法选出领导者"></a> 2.2.3 无法选出领导者</h4>
 <p>如果大多数服务器宕机或者断网，此时没有服务器能够得到大多数选票，剩下的服务器就会不断地发起选举，然后失败，然后一段时间后继续发起选举，直到在线服务器的数量恢复到一定程度，在这种情况下会经历数个没有领导者的任期，这段时间内系统无法处理客户端的请求。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum.jpg" alt></p>
 <p>即使当大多数服务器宕机时当前任期的领导者没有宕机，它仍旧回应不了客户端的请求，因为它无法将这条命令添加到大多数跟随者的日志中。</p>
-<h2 id="日志同步">3. 日志同步</h2>
-<h3 id="同步过程">3.1 同步过程</h3>
+<h2 id="3-日志同步"><a class="markdownIt-Anchor" href="#3-日志同步"></a> 3. 日志同步</h2>
+<h3 id="31-同步过程"><a class="markdownIt-Anchor" href="#31-同步过程"></a> 3.1 同步过程</h3>
 <p>当领导者被选举出来后，它就可以开始接收客户端的请求。当接收到来自客户端的命令时，领导者需要负责将命令同步到所有跟随者的日志中，同步过程总共分为四步：</p>
-<ol type="1">
+<ol>
 <li>领导者首先将这条命令添加到自己的日志，然后发送给所有跟随者。</li>
 <li>跟随者收到命令后也将这条命令加到自己的日志当中，然后向领导者确认。</li>
 <li>当领导者收到大多数跟随者的确认之后才能提交并执行这条命令，执行完毕之后向客户端发送响应。如果领导者没有得到大多数跟随者的确认，领导者需要不断给未确认的跟随者重发命令直到收到确认。</li>
 <li>在之后的心跳信息中，会包含有领导者已经提交到哪条命令的信息，收到心跳信息的跟随者查看该信息，如果自己的日志中包含有领导者已提交的命令，则跟随者也提交并执行这些命令。</li>
 </ol>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync1.jpg"></p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync2.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync1.jpg" alt></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync2.jpg" alt></p>
 <p><strong>服务器通过网络发送的任何消息都有可能会丢失</strong>，因此可能会有跟随者没有收到某些命令，如果此时领导者发来新的命令，跟随者需要拒绝这条命令并要求领导者将跟随者缺失的命令重新发送，否则跟随者的日志会缺少条目，这样就与领导者的日志出现了不一致。</p>
 <p>为了避免日志条目的缺失，保存到日志中的条目还需要额外保存添加这个条目时所在的任期，结合条目在日志中的索引号和相对应的任期号，跟随者就能判断自己是否缺少了一些日志条目。保存了任期号的日志如下图：</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/log.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/log.png" alt></p>
 <p>领导者在发送新的日志条目给跟随者时，要附带上该条目的前一条目的索引和任期号，跟随者利用发来的索引从日志中取出条目，如果不存在条目或者条目记录的任期和传来的任期不符，那么跟随者就拒绝添加新的日志条目。实际上这是在确认新条目之前的条目与领导者的是否一致。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/lack.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/lack.jpg" alt></p>
 <p>由于每个跟随者成功接收的情况不同，因此领导者需要记录每个跟随者的日志同步情况。领导者维护一个matchIndex数组和一个nextIndex数组，前者保存各个跟随者的日志和自身日志匹配到了哪一个索引，后者保存下一次要发送给各个跟随者的日志条目的索引号。</p>
-<p>在上图的例子中，原本的nextIndex[1] =
-4，因此领导者给跟随者1发送了索引为4的日志条目，但是跟随者1由于缺少索引为3的条目所以拒绝添加，领导者收到拒绝消息后会将nextIndex[1]减一，即下一次发送日志条目3(为了提高效率，可以一次性发送条目3及其之后的所有条目)，如果继续失败则不断减小nextIndex直到成功，成功则将nextIndex[1]设置为发送的最后一个条目的索引号加一。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/nextIndex.jpg"></p>
-<h3 id="corner-case-1">3.2 corner case</h3>
-<h4 id="更换领导者">3.2.1 更换领导者</h4>
+<p>在上图的例子中，原本的nextIndex[1] = 4，因此领导者给跟随者1发送了索引为4的日志条目，但是跟随者1由于缺少索引为3的条目所以拒绝添加，领导者收到拒绝消息后会将nextIndex[1]减一，即下一次发送日志条目3(为了提高效率，可以一次性发送条目3及其之后的所有条目)，如果继续失败则不断减小nextIndex直到成功，成功则将nextIndex[1]设置为发送的最后一个条目的索引号加一。</p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/nextIndex.jpg" alt></p>
+<h3 id="32-corner-case"><a class="markdownIt-Anchor" href="#32-corner-case"></a> 3.2 corner case</h3>
+<h4 id="321-更换领导者"><a class="markdownIt-Anchor" href="#321-更换领导者"></a> 3.2.1 更换领导者</h4>
 <p>当服务器们选出新的领导者时，新领导者不知道各服务器的日志同步情况。假设原领导者宕机，剩下的服务器选出一个新的领导者，但新选出来的领导者由于尚未与跟随者们进行过日志同步，因此不知道其他服务器上日志的同步情况，即无法确定matchIndex和nextIndex数组的值。</p>
 <p>为了能够进行正确的同步，新领导者将每个跟随者的matchIndex设置为0，nextIndex设置为自己日志中的最大索引加一。此时当领导者<strong>收到新的命令</strong>时，它就会直接发送最新的命令给其他跟随者，如果其他跟随者同意添加，那说明跟随者的日志和领导者的日志是完全一致的，可以将matchIndex设置为日志的最大索引；如果跟随者拒绝添加，则领导者像常规情况一样逐步减小nextIndex尝试逐个发送之前的条目，直到跟随者同意添加。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/leader-change.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/leader-change.jpg" alt></p>
 <p>即使新领导者短时间内没有收到新的命令，也可以通过心跳信息来获取跟随者的日志同步情况。即使是心跳信息，领导者也要附带上prevIndex和prevTerm，领导者将这两个值分别设置为日志中最后一个条目的索引和任期号，如果收到了跟随者否定的响应则说明跟随者的日志没有完全和领导者的同步，然后领导者将相应的nextIndex减一，后续过程则是和前文一样的不断试探。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/heartbeat-prev.jpg"></p>
-<h4 id="跟随者宕机">3.2.2 跟随者宕机</h4>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/heartbeat-prev.jpg" alt></p>
+<h4 id="322-跟随者宕机"><a class="markdownIt-Anchor" href="#322-跟随者宕机"></a> 3.2.2 跟随者宕机</h4>
 <p>如果跟随者宕机，导致当前没有多于半数的服务器在线，那么剩下的服务器将无法提交任何一条命令。由于领导者无法得到大多数服务器的确认，因此不能将命令提交执行，当然也就不能对客户端进行响应，客户端长时间得不到响应，可能会将命令重发，领导者就会将同一条命令再次保存到日志中，后续大多数服务器重新上线后领导者可能会执行多条相同的命令，不过这些命令是具有幂等性的，因此不会对状态机造成影响。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum-log.jpg"></p>
-<h4 id="条目未提交时领导者宕机">3.2.3 条目未提交时领导者宕机</h4>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum-log.jpg" alt></p>
+<h4 id="323-条目未提交时领导者宕机"><a class="markdownIt-Anchor" href="#323-条目未提交时领导者宕机"></a> 3.2.3 条目未提交时领导者宕机</h4>
 <p>一个领导者可能在还未提交某条命令时就宕机了，但它可能之前已经将这条命令添加到了某些跟随者的日志中，这些未提交的日志条目<strong>要么被新的领导者提交，要么被新的领导者覆盖</strong>。</p>
 <p>如果新领导者日志中没有未提交的日志条目，当它将新日志条目添加到其他跟随者日志中时会覆盖跟随者日志中的日志条目。当跟随者收到新条目时，如果发现新条目要插入的位置已有条目，跟随者需要用新条目覆盖旧条目，因为跟随者需要和领导者保持日志同步。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite.jpg" alt></p>
 <blockquote>
 <p>这里画了5台服务器，如果只有前3台服务器，第二台服务器不可能成为新领导者，这与即将引入的新选举规则有关</p>
 </blockquote>
 <p>如果新领导者日志中有未提交的日志条目，它需要将这个条目先同步到跟随者日志中，但即使大多数服务器已经有了这个条目，它也要<strong>等提交了一条当前任期的日志条目后</strong>才能提交前一任期的日志条目。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/commited-by-new-leader.jpg"></p>
-<p>如果不这样做的话，就有可能导致已提交的条目被下一个领导者覆盖。以原始论文中给出的图为例，在(a)中S1在提交索引2条目前宕机；(b)中S5成为任期3的新领导者，并在给自己的日志添加一条新条目后宕机；(c)中S1恢复并成为任期4的领导者，将索引2的条目添加给S3后立即提交该条目，然后再次宕机；(d)中S5成为任期5的领导者，并且将原来添加的条目同步到了所有跟随者的日志中，这样就导致了S1在索引2处已提交的条目被覆盖！</p>
-<p>但如果在(c)中S1没有立即提交索引2的条目，而是像(e)一样等到提交了任期4的条目后再提交任期2的条目，那么即使S5再次成为领导者也无法再覆盖跟随者的日志，因为S5会发送prevIndex
-= 1, prevTerm =
-1，这已经不符合S1、S2、S3目前的日志状态，因此会拒绝添加这个条目。</p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/commited-by-new-leader.jpg" alt></p>
+<p>如果不这样做的话，就有可能导致已提交的条目被下一个领导者覆盖。以原始论文中给出的图为例，在(a)中S1在提交索引2条目前宕机；(b)中S5成为任期3的新领导者，并在给自己的日志添加一条新条目后宕机；©中S1恢复并成为任期4的领导者，将索引2的条目添加给S3后立即提交该条目，然后再次宕机；(d)中S5成为任期5的领导者，并且将原来添加的条目同步到了所有跟随者的日志中，这样就导致了S1在索引2处已提交的条目被覆盖！</p>
+<p>但如果在©中S1没有立即提交索引2的条目，而是像(e)一样等到提交了任期4的条目后再提交任期2的条目，那么即使S5再次成为领导者也无法再覆盖跟随者的日志，因为S5会发送prevIndex = 1, prevTerm = 1，这已经不符合S1、S2、S3目前的日志状态，因此会拒绝添加这个条目。</p>
 <p>又如果S1在还没提交任期4的条目时又宕机了，但此时任期2的条目还未被提交，是允许被覆盖的，因此也没有问题。</p>
 <blockquote>
 <p>但事实上，在引入新的选举规则后，S5根本不可能再次成为新的领导者</p>
 </blockquote>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite-commit.png"></p>
-<h4 id="缺少条目的跟随者成为领导者">3.2.4
-缺少条目的跟随者成为领导者</h4>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite-commit.png" alt></p>
+<h4 id="324-缺少条目的跟随者成为领导者"><a class="markdownIt-Anchor" href="#324-缺少条目的跟随者成为领导者"></a> 3.2.4 缺少条目的跟随者成为领导者</h4>
 <p>按照我们目前的选举规则，一般谁先发出选举请求谁就更可能成为新的领导者，假如一个缺少条目的跟随者成为领导者，会导致其他跟随者已提交的条目被覆盖。为了防止这种情况的发生，需要在已有的选举规则上再新增一条：跟随者收到投票请求时，<strong>只有当候选者的日志比自己的日志更新的时候才同意投票</strong>。</p>
-<p>Raft算法这样来定义“新”：1. 最后一个日志条目的任期号更大。2.
-如果相同，则日志更长的为”新”。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/more-up-to-date.jpg"></p>
+<p>Raft算法这样来定义“新”：1. 最后一个日志条目的任期号更大。2. 如果相同，则日志更长的为&quot;新&quot;。</p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/more-up-to-date.jpg" alt></p>
 <p>在3.2.3的图(e)中，如果S1，S2，S3的日志中添加了任期4的条目，那么即使S1宕机，S5也不可能成为任期5的领导者了，S5可以得到S4的选票，但是得不到S2和S3的选票。通过添加这样一条新的选举规则，S5不可能再次覆盖其他服务器中已经提交了的日志条目。</p>
 <p>为了让服务器在选举阶段能够相互对比日志情况，候选者在发送投票请求时不仅要附带自己所处的任期，还要附带自己最后一条日志条目的索引和任期号。跟随者用发来的索引和任期号对比自己的最后一条日志条目，如果候选者的更新则同意投票。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election-restriction.jpg"></p>
-<h2 id="快照">4. 快照</h2>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election-restriction.jpg" alt></p>
+<h2 id="4-快照"><a class="markdownIt-Anchor" href="#4-快照"></a> 4. 快照</h2>
 <p>处理的用户请求越多，服务器的日志就越长，占用的内存空间就越多，因此需要使用快照技术来压缩日志。</p>
 <p>当日志达到一定大小之后，服务器选定一个已经提交了的索引位，将该索引位下的服务器状态保存到硬盘当中，然后该索引位之前的日志条目就可以被丢弃。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot.png" alt></p>
 <p>保存快照时服务器还要记录快照中包含的最后一条日志条目的索引和任期号，当领导者需要发送快照后一条日志条目给其他跟随者时，要将prevIndex和prevTerm设置为快照中尾部条目的对应值。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot-prev.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot-prev.jpg" alt></p>
 <p>如果跟随者缺少的条目已经被包含在了领导者的快照当中，即nextIndex值小于等于lastIncludedIndex值时，那么领导者就直接将保存的快照发送给跟随者，跟随者直接将服务器的状态设置为快照中的状态。</p>
-<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/send-snapshot.jpg"></p>
-<h2 id="总结">5. 总结</h2>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/send-snapshot.jpg" alt></p>
+<h2 id="5-总结"><a class="markdownIt-Anchor" href="#5-总结"></a> 5. 总结</h2>
 <p>Raft算法从选举开始，当跟随者超时之后转为候选者发起选举，然后向其他跟随者发送自己的任期号、日志尾部条目的索引和任期号；跟随者收到投票请求后，如果对方的任期号大于自己的任期号、并且对方的日志更新，则同意投票。候选者得到大多数选票后成为领导者。</p>
 <p>领导者负责处理客户端请求并将日志条目同步到其他跟随者的日志当中。当领导者收到客户端新请求后，要将新的日志条目发送给跟随者，并附带prevIndex、prevTerm，跟随者确定自己没有缺失之前的条目后确认添加，领导者得到大多数跟随者的确认后将命令提交。没有条目要发送的时候领导者向跟随者发送心跳信息避免跟随者发起选举。</p>
 <p>当服务器的日志到达一定的大小之后，需要通过快照来进行压缩。快照保存了服务器的状态，还有包括的最后一条日志条目的索引和任期号，用于领导者进行日志同步。发送快照可以让一些落后很多的跟随者快速地来到和领导者接近的状态。</p>
@@ -209,9 +201,7 @@
 <div class="article-footer">
     <section id="license">
       <div class="header"><span>许可协议</span></div>
-      <div class="body"><p>本文采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
-4.0 国际</a> 许可协议，转载请注明出处。</p>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div>
     </section>
     
@@ -238,19 +228,15 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar
-1.33.1</a> 主题创建。 本博客所有文章除特别声明外，均采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
-4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。<br />
+本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#raft%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">1. Raft的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="toc-text">2. 领导者选举</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B"><span class="toc-text">2.1 选举过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#corner-case"><span class="toc-text">2.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#raft%E5%88%9D%E5%90%AF%E5%8A%A8"><span class="toc-text">2.2.1 Raft初启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E5%80%99%E9%80%89%E8%80%85"><span class="toc-text">2.2.2 多候选者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">2.2.3 多领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A0%E6%B3%95%E9%80%89%E5%87%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">2.2.3 无法选出领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="toc-text">3. 日志同步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">3.1 同步过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#corner-case-1"><span class="toc-text">3.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%8D%A2%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">3.2.1 更换领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%9F%E9%9A%8F%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text">3.2.2 跟随者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%A1%E7%9B%AE%E6%9C%AA%E6%8F%90%E4%BA%A4%E6%97%B6%E9%A2%86%E5%AF%BC%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text">3.2.3 条目未提交时领导者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%BA%E5%B0%91%E6%9D%A1%E7%9B%AE%E7%9A%84%E8%B7%9F%E9%9A%8F%E8%80%85%E6%88%90%E4%B8%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">3.2.4
-缺少条目的跟随者成为领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7"><span class="toc-text">4. 快照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">5. 总结</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-raft%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. Raft的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="toc-text"> 2. 领导者选举</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.1 选举过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-corner-case"><span class="toc-text"> 2.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#221-raft%E5%88%9D%E5%90%AF%E5%8A%A8"><span class="toc-text"> 2.2.1 Raft初启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#222-%E5%A4%9A%E5%80%99%E9%80%89%E8%80%85"><span class="toc-text"> 2.2.2 多候选者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#223-%E5%A4%9A%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text"> 2.2.3 多领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#223-%E6%97%A0%E6%B3%95%E9%80%89%E5%87%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text"> 2.2.3 无法选出领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="toc-text"> 3. 日志同步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#31-%E5%90%8C%E6%AD%A5%E8%BF%87%E7%A8%8B"><span class="toc-text"> 3.1 同步过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32-corner-case"><span class="toc-text"> 3.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#321-%E6%9B%B4%E6%8D%A2%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text"> 3.2.1 更换领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#322-%E8%B7%9F%E9%9A%8F%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text"> 3.2.2 跟随者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#323-%E6%9D%A1%E7%9B%AE%E6%9C%AA%E6%8F%90%E4%BA%A4%E6%97%B6%E9%A2%86%E5%AF%BC%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text"> 3.2.3 条目未提交时领导者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#324-%E7%BC%BA%E5%B0%91%E6%9D%A1%E7%9B%AE%E7%9A%84%E8%B7%9F%E9%9A%8F%E8%80%85%E6%88%90%E4%B8%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text"> 3.2.4 缺少条目的跟随者成为领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%BF%AB%E7%85%A7"><span class="toc-text"> 4. 快照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%80%BB%E7%BB%93"><span class="toc-text"> 5. 总结</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
 </div></aside><div class='float-panel'>
   <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
