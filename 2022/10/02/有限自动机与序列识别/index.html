@@ -97,93 +97,113 @@
   </div>
   </div><article class="md-text content"><p>子字符串搜索是指给定一段文本，需要在其中找到想要的字符串；如果将文本换成输入流，那么问题就转换成了序列识别；而有限自动机则是一个能够在线性时间内完成以上任务的一种数学模型。</p>
 <span id="more"></span>
-<h2 id="1-使用有限自动机进行子字符串搜索的基本过程"><a href="#1-使用有限自动机进行子字符串搜索的基本过程" class="headerlink" title="1 使用有限自动机进行子字符串搜索的基本过程"></a>1 使用有限自动机进行子字符串搜索的基本过程</h2><p><kbd>AUG</kbd><kbd>GCU</kbd><kbd>CCU</kbd><kbd>CUG</kbd><kbd>UAA</kbd></p>
+<h2 id="使用有限自动机进行子字符串搜索的基本过程">1
+使用有限自动机进行子字符串搜索的基本过程</h2>
+<p><kbd>AUG</kbd><kbd>GCU</kbd><kbd>CCU</kbd><kbd>CUG</kbd><kbd>UAA</kbd></p>
 <p>假设这是mRNA上的一串密码子，而我们想要找到这串序列中密码子<kbd>CCU</kbd>的位置。</p>
-<h3 id="1-1-定义状态"><a href="#1-1-定义状态" class="headerlink" title="1.1 定义状态"></a>1.1 定义状态</h3><p>要使用有限自动机来完成这个任务，首先需要设置读取过程中的<u>状态</u>，为此，我们做出以下定义：</p>
+<h3 id="定义状态">1.1 定义状态</h3>
+<p>要使用有限自动机来完成这个任务，首先需要设置读取过程中的<u>状态</u>，为此，我们做出以下定义：</p>
 <p><strong>状态0</strong>: 未读取到任何符合的字符</p>
-<p><strong>状态1</strong>: 读取到一个符合的字符，在上面的例子中即读取到碱基C</p>
-<p><strong>状态2</strong>: 连续读取到两个符合的字符，即连续读取到两个碱基C</p>
-<p><strong>状态3</strong>: 读取到所有符合的字符，匹配成功，即检测到密码子<kbd>CCU</kbd></p>
-<p><img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/init.png" alt="定义状态"></p>
-<h3 id="1-2-确定状态转移"><a href="#1-2-确定状态转移" class="headerlink" title="1.2 确定状态转移"></a>1.2 确定状态转移</h3><p>有限自动机的初始状态为0，我们一个一个地从文本中读取字符，根据读取到的字符，我们要确定有限自动机会到达的下一个状态，当达到状态3时，我们的目标才算是完成了。</p>
+<p><strong>状态1</strong>:
+读取到一个符合的字符，在上面的例子中即读取到碱基C</p>
+<p><strong>状态2</strong>:
+连续读取到两个符合的字符，即连续读取到两个碱基C</p>
+<p><strong>状态3</strong>:
+读取到所有符合的字符，匹配成功，即检测到密码子<kbd>CCU</kbd></p>
+<figure>
+<img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/init.png" alt="定义状态">
+<figcaption aria-hidden="true">定义状态</figcaption>
+</figure>
+<h3 id="确定状态转移">1.2 确定状态转移</h3>
+<p>有限自动机的初始状态为0，我们一个一个地从文本中读取字符，根据读取到的字符，我们要确定有限自动机会到达的下一个状态，当达到状态3时，我们的目标才算是完成了。</p>
 <p>举个例子，如果我们第一个读取的字符是<kbd>A</kbd>，这并不是我们所需要检测的第一个字符，则状态机仍然会处于状态0；但是如果我们读取的字符是<kbd>C</kbd>，这正是目标密码子的第一个字符，根据定义，自动机到达状态1。</p>
 <p>如果下一个字符幸运的还是<kbd>C</kbd>，我们则可以继续前进到达状态2；如果不幸地检测到了<kbd>G</kbd>，则目前检测到的是<kbd>CG</kbd>，和我们的目标没法重叠，我们只能无奈地回到状态0。</p>
 <p>当我们处在状态2时，再读取到一个<kbd>U</kbd>即可大功告成，但若是读取到的还是<kbd>C</kbd>（<del>不考虑这种情况在生命科学中是否存在</del>），我们既不用退回到状态0也不会退回到状态1，我们仍然会处于状态2，因为我们当前检测到的序列是<kbd>CCC</kbd>，如果取后两个<kbd>C</kbd>，我们还是符合状态2的定义，现在只需把第一个<kbd>C</kbd>丢掉不管即可。所以有限自动机的检测是允许重叠的，读取到一个不符合期望的字符时不一定会退回状态0，除非我们要求必须一次性读取到全部目标字符。</p>
 <p>由此，我们可以画出完整的状态转移图，同时得到状态转移图的矩阵表示：</p>
-<div class="tag-plugin tabs" align="center" id="tab_1"><div class="nav-tabs"><div class="tab active"><a href="#tab_1-1">状态转移图</a></div><div class="tab"><a href="#tab_1-2">状态转移矩阵</a></div></div><div class="tab-content"><div class="tab-pane active" id="tab_1-1"><p><img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/final.png" alt="定义状态" style="zoom:50%;"></p></div><div class="tab-pane" id="tab_1-2"><div class="table-container">
-<table>
+<div class="tag-plugin tabs" align="center" id="tab_1"><div class="nav-tabs"><div class="tab active"><a href="#tab_1-1">状态转移图</a></div><div class="tab"><a href="#tab_1-2">状态转移矩阵</a></div></div><div class="tab-content"><div class="tab-pane active" id="tab_1-1"><p><img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/final.png" alt="定义状态" style="zoom:50%;"></p></div><div class="tab-pane" id="tab_1-2"><table>
 <thead>
-<tr>
-<th style="text-align:center"></th>
-<th style="text-align:center">0</th>
-<th style="text-align:center">1</th>
-<th style="text-align:center">2</th>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">0</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:center">C</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">2</td>
+<tr class="odd">
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2</td>
 </tr>
-<tr>
-<td style="text-align:center">U</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">3</td>
+<tr class="even">
+<td style="text-align: center;">U</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">3</td>
 </tr>
-<tr>
-<td style="text-align:center">A</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
+<tr class="odd">
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
 </tr>
-<tr>
-<td style="text-align:center">…</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
+<tr class="even">
+<td style="text-align: center;">…</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
 </tr>
-<tr>
-<td style="text-align:center">Z</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
+<tr class="odd">
+<td style="text-align: center;">Z</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
 </tr>
 </tbody>
-</table>
-</div></div></div></div>
-<p>按照以上步骤，给定<strong>非空有穷的状态集合</strong>、<strong>非空有穷的输入字母表</strong>、<strong>状态转移函数</strong>、<strong>初始状态</strong>、<strong>终止状态</strong>，则最终得到了有限自动机。而上面这个自动机，对于每个状态和每个输入字符，可以完全确定<strong>唯一</strong>的后继状态，则称为确定型有穷自动机(deterministic finite automata, DFA)。</p>
+</table></div></div></div>
+<p>按照以上步骤，给定<strong>非空有穷的状态集合</strong>、<strong>非空有穷的输入字母表</strong>、<strong>状态转移函数</strong>、<strong>初始状态</strong>、<strong>终止状态</strong>，则最终得到了有限自动机。而上面这个自动机，对于每个状态和每个输入字符，可以完全确定<strong>唯一</strong>的后继状态，则称为确定型有穷自动机(deterministic
+finite automata, DFA)。</p>
 <p>我们定义一个二维数组<code>int[R][j] dfa</code>来表示上面的状态转移矩阵，R是输入字母表的字母个数，j是当前所处的状态，<code>dfa[c][j]</code>代表状态j下读取到字符c后的后继状态，该矩阵描述了状态转移函数。</p>
 <p>对于我们要处理的问题，矩阵<code>dfa</code>是一个稀疏(sparse)矩阵，大部分元素是0，如果输入字母表是ASCII码表（128个字符）或者Unicode（65536个），则情况更甚。</p>
-<h3 id="1-3-根据状态转移表完成我们的任务"><a href="#1-3-根据状态转移表完成我们的任务" class="headerlink" title="1.3 根据状态转移表完成我们的任务"></a>1.3 根据状态转移表完成我们的任务</h3><p> 初始化自动机，状态<code>j = 0</code>，</p>
-<ol>
-<li><p>读取第一个字符，为<kbd>A</kbd>，<code>dfa[&#39;A&#39;][0] = 0</code>，仍在状态0</p>
-</li>
-<li><p>读取第二个字符，为<kbd>U</kbd>，<code>dfa[&#39;U&#39;][0] = 0</code>，仍在状态0</p>
-<p> ……</p>
-</li>
-<li><p>读取第五个字符，为<kbd>C</kbd>，<code>dfa[&#39;C&#39;][0] = 1</code>，到达状态1</p>
-</li>
-<li>读取第六个字符，为<kbd>U</kbd>，<code>dfa[&#39;U&#39;][1] = 0</code>，回到状态0</li>
-<li>读取第七个字符，为<kbd>C</kbd>，<code>dfa[&#39;C&#39;][0] = 1</code>，到达状态1</li>
-<li>读取第八个字符，为<kbd>C</kbd>，<code>dfa[&#39;C&#39;][1] = 2</code>，到达状态2</li>
-<li>读取第九个字符，为<kbd>U</kbd>，<code>dfa[&#39;U&#39;][2] = 3</code>，到达状态3，算法终止</li>
+<h3 id="根据状态转移表完成我们的任务">1.3
+根据状态转移表完成我们的任务</h3>
+<p>初始化自动机，状态<code>j = 0</code>，</p>
+<ol type="1">
+<li><p>读取第一个字符，为<kbd>A</kbd>，<code>dfa['A'][0] = 0</code>，仍在状态0</p></li>
+<li><p>读取第二个字符，为<kbd>U</kbd>，<code>dfa['U'][0] = 0</code>，仍在状态0</p>
+<p>……</p></li>
+<li><p>读取第五个字符，为<kbd>C</kbd>，<code>dfa['C'][0] = 1</code>，到达状态1</p></li>
+<li><p>读取第六个字符，为<kbd>U</kbd>，<code>dfa['U'][1] = 0</code>，回到状态0</p></li>
+<li><p>读取第七个字符，为<kbd>C</kbd>，<code>dfa['C'][0] = 1</code>，到达状态1</p></li>
+<li><p>读取第八个字符，为<kbd>C</kbd>，<code>dfa['C'][1] = 2</code>，到达状态2</p></li>
+<li><p>读取第九个字符，为<kbd>U</kbd>，<code>dfa['U'][2] = 3</code>，到达状态3，算法终止</p></li>
 </ol>
-<p><img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/process.gif" alt="过程"></p>
-<h2 id="2-如何用代码自动生成DFA？"><a href="#2-如何用代码自动生成DFA？" class="headerlink" title="2 如何用代码自动生成DFA？"></a>2 如何用代码自动生成DFA？</h2><p>给定一个要检测的序列，最容易构建的显然是DFA的主干部分，即从状态0到状态1，从状态1到状态2…从状态n-1到状态n的路径</p>
+<figure>
+<img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/process.gif" alt="过程">
+<figcaption aria-hidden="true">过程</figcaption>
+</figure>
+<h2 id="如何用代码自动生成dfa">2 如何用代码自动生成DFA？</h2>
+<p>给定一个要检测的序列，最容易构建的显然是DFA的主干部分，即从状态0到状态1，从状态1到状态2…从状态n-1到状态n的路径</p>
 <p>对于剩下的匹配失败时的状态转移，我们可以这样考虑，由于在状态j读到了一个不满足期望的字符<code>char</code>，则目前读到的整个序列[0…j]都是不满足要求的，那么我们则剔除序列中的第一个字符，检验序列[1…j]输入自动机后会到达什么状态，该状态就是状态<code>j</code>读取<code>char</code>时会到达的状态。我们先将序列<strong>[1…j-1]</strong>输入状态机，检验其会达到什么状态，将这个状态称为重启状态<code>x</code>，再在这个状态下输入字符<code>char</code>，检验会到达什么状态，该状态即为状态<code>j</code>匹配<code>char</code>时会到达的状态。</p>
-<p>比如说，我们在状态2下匹配到了<kbd>C</kbd>，则目前读取到的序列是<kbd>CCC</kbd>，我们去掉第一个字符，将第二个字符<kbd>C</kbd>输入状态机，最终达到状态1，则状态2重启状态为状态1，再将匹配失败的那个字符<kbd>C</kbd>输入状态1，最终到达状态2，则<code>dfa[&#39;C&#39;][2] = dfa[&#39;C&#39;][1] = 2</code>，即目前我们匹配成功的字符数目还是2个。</p>
+<p>比如说，我们在状态2下匹配到了<kbd>C</kbd>，则目前读取到的序列是<kbd>CCC</kbd>，我们去掉第一个字符，将第二个字符<kbd>C</kbd>输入状态机，最终达到状态1，则状态2重启状态为状态1，再将匹配失败的那个字符<kbd>C</kbd>输入状态1，最终到达状态2，则<code>dfa['C'][2] = dfa['C'][1] = 2</code>，即目前我们匹配成功的字符数目还是2个。</p>
 <p>故我们可以得出<code>dfa[匹配失败字符][j] = dfa[匹配失败字符][x], dfa[匹配成功字符][j] = j + 1</code>。</p>
-<div class="tag-plugin tabs" align="center" id="tab_2"><div class="nav-tabs"><div class="tab active"><a href="#tab_2-1">第一个例子</a></div><div class="tab"><a href="#tab_2-2">第二个例子</a></div></div><div class="tab-content"><div class="tab-pane active" id="tab_2-1"><p><img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction1.gif" alt="construction"></p></div><div class="tab-pane" id="tab_2-2"><p><img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction2.gif" alt="construction2"></p></div></div></div>
+<div class="tag-plugin tabs" align="center" id="tab_2"><div class="nav-tabs"><div class="tab active"><a href="#tab_2-1">第一个例子</a></div><div class="tab"><a href="#tab_2-2">第二个例子</a></div></div><div class="tab-content"><div class="tab-pane active" id="tab_2-1"><figure>
+<img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction1.gif" alt="construction">
+<figcaption aria-hidden="true">construction</figcaption>
+</figure></div><div class="tab-pane" id="tab_2-2"><figure>
+<img src="/2022/10/02/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%BA%8F%E5%88%97%E8%AF%86%E5%88%AB/construction2.gif" alt="construction2">
+<figcaption aria-hidden="true">construction2</figcaption>
+</figure></div></div></div>
 <p>上述过程的代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">DFAConstruct</span><span class="params">(String pat)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">M</span> <span class="operator">=</span> pat.length();</span><br><span class="line">    <span class="type">int</span>[][] dfa = <span class="keyword">new</span> <span class="title class_">int</span>[R][M]; <span class="comment">//如果是ASCII码，则R = 128</span></span><br><span class="line">    dfa[pat.charAt(<span class="number">0</span>)][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>, j = <span class="number">1</span>; j &lt; M; j++) </span><br><span class="line">     &#123; </span><br><span class="line">         <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> <span class="number">0</span>; c &lt; R; c++) </span><br><span class="line">         	dfa[c][j] = dfa[c][x];</span><br><span class="line">         dfa[pat.charAt(j)][j] = j+<span class="number">1</span>; </span><br><span class="line">         x = dfa[pat.charAt(j)][x]; </span><br><span class="line"> 	&#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </article>
 <div class="article-footer">
     <section id="license">
       <div class="header"><span>许可协议</span></div>
-      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+      <div class="body"><p>本文采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
+4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div>
     </section>
     
@@ -210,14 +230,20 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar
+1.33.1</a> 主题创建。 本博客所有文章除特别声明外，均采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
+4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BD%BF%E7%94%A8%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E8%BF%9B%E8%A1%8C%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%90%9C%E7%B4%A2%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B"><span class="toc-text">1 使用有限自动机进行子字符串搜索的基本过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%AE%9A%E4%B9%89%E7%8A%B6%E6%80%81"><span class="toc-text">1.1 定义状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E7%A1%AE%E5%AE%9A%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB"><span class="toc-text">1.2 确定状态转移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E6%A0%B9%E6%8D%AE%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB%E8%A1%A8%E5%AE%8C%E6%88%90%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="toc-text">1.3 根据状态转移表完成我们的任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A6%82%E4%BD%95%E7%94%A8%E4%BB%A3%E7%A0%81%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90DFA%EF%BC%9F"><span class="toc-text">2 如何用代码自动生成DFA？</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA%E8%BF%9B%E8%A1%8C%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%90%9C%E7%B4%A2%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B"><span class="toc-text">1
+使用有限自动机进行子字符串搜索的基本过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E7%8A%B6%E6%80%81"><span class="toc-text">1.1 定义状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB"><span class="toc-text">1.2 确定状态转移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB%E8%A1%A8%E5%AE%8C%E6%88%90%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="toc-text">1.3
+根据状态转移表完成我们的任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E7%94%A8%E4%BB%A3%E7%A0%81%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90dfa"><span class="toc-text">2 如何用代码自动生成DFA？</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
 </div></aside><div class='float-panel'>
   <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>

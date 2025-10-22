@@ -97,36 +97,45 @@
   </div>
   </div><article class="md-text content"><p>LSTM计算公式</p>
 <span id="more"></span>
-<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><h3 id="计算过程："><a href="#计算过程：" class="headerlink" title="计算过程："></a>计算过程：</h3><script type="math/tex; mode=display">
+<h2 id="lstm">LSTM</h2>
+<h3 id="计算过程">计算过程：</h3>
+<p><span class="math display">$$
 输入门：I_t = \sigma(X_tW_{xi}+H_{t-1}W_{hi}+b_i)  \\
 遗忘门：F_t = \sigma(X_tW_{xf}+H_{t-1}W_{hf}+b_f)  \\
-输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)</script><p>其中$I_t,F_t,O_t\in R^{n\times h}$，n为batch_size</p>
-<script type="math/tex; mode=display">
-候选记忆细胞：\tilde{C}_t=tanh(X_tW_{xc}+H_{t-1}W_{hc}+b_c)</script><p>其中$\tilde{C}_t \in R^{n \times h}$</p>
-<script type="math/tex; mode=display">
+输出门：O_t = \sigma(X_tW_{xo}+H_{t-1}W_{ho}+b_o)
+$$</span></p>
+<p>其中<span class="math inline"><em>I</em><sub><em>t</em></sub>, <em>F</em><sub><em>t</em></sub>, <em>O</em><sub><em>t</em></sub> ∈ <em>R</em><sup><em>n</em> × <em>h</em></sup></span>，n为batch_size
+<span class="math display"><em>候</em><em>选</em><em>记</em><em>忆</em><em>细</em><em>胞</em>：<em>C̃</em><sub><em>t</em></sub> = <em>t</em><em>a</em><em>n</em><em>h</em>(<em>X</em><sub><em>t</em></sub><em>W</em><sub><em>x</em><em>c</em></sub>+<em>H</em><sub><em>t</em> − 1</sub><em>W</em><sub><em>h</em><em>c</em></sub>+<em>b</em><sub><em>c</em></sub>)</span>
+其中<span class="math inline"><em>C̃</em><sub><em>t</em></sub> ∈ <em>R</em><sup><em>n</em> × <em>h</em></sup></span>
+<span class="math display">$$
 记忆细胞：C_t=F_t \bigodot C_{t-1}+I_t \bigodot \tilde{C}_t \\
-隐藏状态：H_t=O_t \bigodot tanh(C_t)</script><p>$\bigodot$表示按元素乘法</p>
-<h3 id="要点："><a href="#要点：" class="headerlink" title="要点："></a>要点：</h3><ol>
-<li><p>输入门$I_t$、遗忘门$F_t$、输出门$O_t$、候选记忆细胞$\tilde{C}_t$的计算与传统RNN中隐藏状态H的计算相似</p>
-</li>
-<li><p>遗忘门决定上一个记忆细胞的信息是否流入该时间步的记忆细胞，输入门决定该时间步的候选记忆细胞的信息是否流入该时间步的记忆细胞</p>
-</li>
-<li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p>
-</li>
+隐藏状态：H_t=O_t \bigodot tanh(C_t)
+$$</span> <span class="math inline">⨀</span>表示按元素乘法</p>
+<h3 id="要点">要点：</h3>
+<ol type="1">
+<li><p>输入门<span class="math inline"><em>I</em><sub><em>t</em></sub></span>、遗忘门<span class="math inline"><em>F</em><sub><em>t</em></sub></span>、输出门<span class="math inline"><em>O</em><sub><em>t</em></sub></span>、候选记忆细胞<span class="math inline"><em>C̃</em><sub><em>t</em></sub></span>的计算与传统RNN中隐藏状态H的计算相似</p></li>
+<li><p>遗忘门决定上一个记忆细胞的信息是否流入该时间步的记忆细胞，输入门决定该时间步的候选记忆细胞的信息是否流入该时间步的记忆细胞</p></li>
+<li><p>输出门控制改时间步的记忆细胞的信息是否流入该时间步的隐藏状态并被输出层利用</p></li>
 <li><p>多层LSTM：</p>
-<p> <img src="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png" alt="多层LSTM"></p>
-</li>
+<figure>
+<img src="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/multiLayer.png" alt="多层LSTM">
+<figcaption aria-hidden="true">多层LSTM</figcaption>
+</figure></li>
 </ol>
-<h3 id="向量化："><a href="#向量化：" class="headerlink" title="向量化："></a>向量化：</h3><p>$输入X：(batch_size,seq_len,d_model)$</p>
-<p>$隐藏状态H：(batch_size,num_direction*num_layers,num_hidden)$</p>
-<p>$记忆细胞C：(batch_size,num_direction*num_layers,num_hidden)$</p>
+<h3 id="向量化">向量化：</h3>
+<p><span class="math inline"><em>输</em><em>入</em><em>X</em>：(<em>b</em><em>a</em><em>t</em><em>c</em><em>h</em>_<em>s</em><em>i</em><em>z</em><em>e</em>,<em>s</em><em>e</em><em>q</em>_<em>l</em><em>e</em><em>n</em>,<em>d</em>_<em>m</em><em>o</em><em>d</em><em>e</em><em>l</em>)</span></p>
+<p><span class="math inline"><em>隐</em><em>藏</em><em>状</em><em>态</em><em>H</em>：(<em>b</em><em>a</em><em>t</em><em>c</em><em>h</em>_<em>s</em><em>i</em><em>z</em><em>e</em>,<em>n</em><em>u</em><em>m</em>_<em>d</em><em>i</em><em>r</em><em>e</em><em>c</em><em>t</em><em>i</em><em>o</em><em>n</em>*<em>n</em><em>u</em><em>m</em>_<em>l</em><em>a</em><em>y</em><em>e</em><em>r</em><em>s</em>,<em>n</em><em>u</em><em>m</em>_<em>h</em><em>i</em><em>d</em><em>d</em><em>e</em><em>n</em>)</span></p>
+<p><span class="math inline"><em>记</em><em>忆</em><em>细</em><em>胞</em><em>C</em>：(<em>b</em><em>a</em><em>t</em><em>c</em><em>h</em>_<em>s</em><em>i</em><em>z</em><em>e</em>,<em>n</em><em>u</em><em>m</em>_<em>d</em><em>i</em><em>r</em><em>e</em><em>c</em><em>t</em><em>i</em><em>o</em><em>n</em>*<em>n</em><em>u</em><em>m</em>_<em>l</em><em>a</em><em>y</em><em>e</em><em>r</em><em>s</em>,<em>n</em><em>u</em><em>m</em>_<em>h</em><em>i</em><em>d</em><em>d</em><em>e</em><em>n</em>)</span></p>
 <hr>
-<p>图片来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/jerr__y/article/details/61195257">TensorFlow入门（五）多层 LSTM 通俗易懂版_永永夜的博客-CSDN博客_lstm层数</a></p>
+<p>图片来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/jerr__y/article/details/61195257">TensorFlow入门（五）多层
+LSTM 通俗易懂版_永永夜的博客-CSDN博客_lstm层数</a></p>
 </article>
 <div class="article-footer">
     <section id="license">
       <div class="header"><span>许可协议</span></div>
-      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+      <div class="body"><p>本文采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
+4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div>
     </section>
     
@@ -153,14 +162,18 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar
+1.33.1</a> 主题创建。 本博客所有文章除特别声明外，均采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
+4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LSTM"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9%EF%BC%9A"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96%EF%BC%9A"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#lstm"><span class="toc-text">LSTM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B"><span class="toc-text">计算过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9"><span class="toc-text">要点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%8C%96"><span class="toc-text">向量化：</span></a></li></ol></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
 </div></aside><div class='float-panel'>
   <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>

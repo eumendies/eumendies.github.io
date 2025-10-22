@@ -96,20 +96,28 @@
   </div>
   </div><article class="md-text content"><p>xv6是MIT为其操作系统课程开发的一个教学目的操作系统，其系统调用的过程是如何进行的？本文将以xv6的RISC-V版本进行说明。</p>
 <span id="more"></span>
-<h1 id="1-系统调用"><a href="#1-系统调用" class="headerlink" title="1 系统调用"></a>1 系统调用</h1><p>用户运行的应用程序处于用户态，处于用户态的进程受到诸多限制，某些工作必须由内核代为完成，因此用户进程需要使用系统调用。</p>
+<h1 id="系统调用">1 系统调用</h1>
+<p>用户运行的应用程序处于用户态，处于用户态的进程受到诸多限制，某些工作必须由内核代为完成，因此用户进程需要使用系统调用。</p>
 <p>内核态下可以获得的特权：</p>
 <ul>
 <li>读写控制寄存器，包括<code>satp</code>、<code>stvec</code>、<code>sepc</code>等</li>
 <li>可以使用页表中用户不可用的表项</li>
 </ul>
-<h1 id="2-xv6系统调用的过程"><a href="#2-xv6系统调用的过程" class="headerlink" title="2 xv6系统调用的过程"></a>2 xv6系统调用的过程</h1><p>下图是整个过程的流程图，先从整体上感受其过程，由于某些命名比较相似，请注意不要混淆其功能，比如<code>uservec</code>、<code>usertrap</code>、<code>userret</code></p>
-<p><img src="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/process.png" alt="过程"></p>
-<h2 id="2-1-系统调用函数原型及汇编代码生成"><a href="#2-1-系统调用函数原型及汇编代码生成" class="headerlink" title="2.1 系统调用函数原型及汇编代码生成"></a>2.1 系统调用函数原型及汇编代码生成</h2><p>xv6使用名为<code>usys.pl</code>的perl脚本在用户空间中生成一个包括所有系统调用的汇编代码</p>
+<h1 id="xv6系统调用的过程">2 xv6系统调用的过程</h1>
+<p>下图是整个过程的流程图，先从整体上感受其过程，由于某些命名比较相似，请注意不要混淆其功能，比如<code>uservec</code>、<code>usertrap</code>、<code>userret</code></p>
+<figure>
+<img src="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/process.png" alt="过程">
+<figcaption aria-hidden="true">过程</figcaption>
+</figure>
+<h2 id="系统调用函数原型及汇编代码生成">2.1
+系统调用函数原型及汇编代码生成</h2>
+<p>xv6使用名为<code>usys.pl</code>的perl脚本在用户空间中生成一个包括所有系统调用的汇编代码</p>
 <figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">sub</span> <span class="title">entry</span> </span>&#123;</span><br><span class="line">	<span class="keyword">my</span> $name = <span class="keyword">shift</span>;</span><br><span class="line">	<span class="keyword">print</span> <span class="string">&quot;.global $name\n&quot;</span>;</span><br><span class="line">	<span class="keyword">print</span> <span class="string">&quot;<span class="subst">$&#123;name&#125;</span>:\n&quot;</span>;</span><br><span class="line">	<span class="keyword">print</span> <span class="string">&quot; li a7, SYS_<span class="subst">$&#123;name&#125;</span>\n&quot;</span>;</span><br><span class="line">	<span class="keyword">print</span> <span class="string">&quot; ecall\n&quot;</span>;</span><br><span class="line">	<span class="keyword">print</span> <span class="string">&quot; ret\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在perl脚本中调用<code>entry(&quot;exit&quot;);</code>就能在<code>usys.S</code>中生成如下汇编代码</p>
+<p>在perl脚本中调用<code>entry("exit");</code>就能在<code>usys.S</code>中生成如下汇编代码</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.global exit</span><br><span class="line">exit:</span><br><span class="line">	li a7, SYS_exit</span><br><span class="line">	ecall</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure>
 <p>而<code>fork</code>函数的函数原型声明在<code>user.h</code>头文件中，当用户程序调用<code>exit(0);</code>时，就会将参数<code>0</code>存入<code>a0</code>参数寄存器，然后使用<code>jalr</code>指令跳转到上述汇编代码中，然后将系统调用号(宏定义<code>SYS_exit</code>)放入<code>a7</code>寄存器中，再由<code>ecall</code>指令发起系统调用，此时会将当前程序计数器<code>pc</code>寄存器的值保存至<code>sepc</code>控制寄存器中。</p>
-<h2 id="2-2-用户空间和内核空间的切换"><a href="#2-2-用户空间和内核空间的切换" class="headerlink" title="2.2 用户空间和内核空间的切换"></a>2.2 用户空间和内核空间的切换</h2><p><code>stvec</code>控制寄存器中保存着<code>uservec</code>函数的地址，当用户使用<code>ecall</code>指令后，会跳转到<code>uservec</code>函数，这个函数位于<code>trampoline.S</code>的汇编代码（由于用户态跳转内核态、内核态跳转用户态都需要经过这里面的代码，故命名为蹦床trampoline）中，<code>uservec</code>作用如下：</p>
+<h2 id="用户空间和内核空间的切换">2.2 用户空间和内核空间的切换</h2>
+<p><code>stvec</code>控制寄存器中保存着<code>uservec</code>函数的地址，当用户使用<code>ecall</code>指令后，会跳转到<code>uservec</code>函数，这个函数位于<code>trampoline.S</code>的汇编代码（由于用户态跳转内核态、内核态跳转用户态都需要经过这里面的代码，故命名为蹦床trampoline）中，<code>uservec</code>作用如下：</p>
 <ul>
 <li>保存32个通用寄存器的值到一片指定的内存区域，这个区域称为<code>trapframe</code>，而<code>sscratch</code>寄存器中保存着<code>trapframe</code>的地址</li>
 <li>将<code>sp</code>栈寄存器的值设为内核栈的地址，开始使用内核的栈；将<code>tp</code>寄存器的值设为该进程所处cpu的id</li>
@@ -117,46 +125,57 @@
 <li>从<code>trapframe</code>中取得<code>usertrap</code>函数的地址，跳转到<code>usertrap</code>中</li>
 </ul>
 <p>每个用户进程都在特定的内存地址保存<code>trampoline</code>的代码和<code>trapframe</code>，用户进程页表如下：</p>
-<p><img src="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/user_space.png" alt="用户页表"></p>
-<h2 id="2-3-内核完成系统调用并返回"><a href="#2-3-内核完成系统调用并返回" class="headerlink" title="2.3 内核完成系统调用并返回"></a>2.3 内核完成系统调用并返回</h2><p>跳转进入<code>usertrap</code>函数后，<code>usertrap</code>执行流程如下：</p>
-<ol>
+<figure>
+<img src="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/user_space.png" alt="用户页表">
+<figcaption aria-hidden="true">用户页表</figcaption>
+</figure>
+<h2 id="内核完成系统调用并返回">2.3 内核完成系统调用并返回</h2>
+<p>跳转进入<code>usertrap</code>函数后，<code>usertrap</code>执行流程如下：</p>
+<ol type="1">
 <li>读取<code>sepc</code>寄存器的值并保存到<code>trapframe</code>中，返回到用户空间时程序会从该值指向的指令处重新开始执行，目前<code>sepc</code>寄存器的值指向之前的<code>ecall</code>指令</li>
 <li>读取<code>scause</code>寄存器的值，<code>scause</code>寄存器的值表明了用户陷入(trap)内核的原因，如果值为8则代表要进行系统调用</li>
 <li>将<code>trapframe</code>中保存的<code>sepc</code>值+4，表明返回用户空间后从<code>ecall</code>的下一条指令开始执行</li>
 <li>调用<code>syscall</code>函数</li>
 </ol>
 <p><code>syscall</code>函数执行流程如下：</p>
-<ol>
+<ol type="1">
 <li>从<code>trapframe</code>中取出<code>a7</code>寄存器的值，这个值是系统调用号，表明了要进行哪一个系统调用(是在<code>usys.S</code>中发起系统调用时放入<code>a7</code>寄存器的)</li>
 <li>执行相应的系统调用函数，该函数会从<code>trapframe</code>中取出函数所需的参数并执行功能(所有参数寄存器都被保存在<code>trapframe</code>中)</li>
 <li>将返回值保存到<code>trapframe</code>中，返回到用户空间时即可取得该返回值</li>
 </ol>
 <p>相应的系统调用完成后，将会执行<code>usertrapret</code>函数，其执行流程如下：</p>
-<ol>
+<ol type="1">
 <li>在<code>trapframe</code>中保存内核页表的地址、内核栈的地址、cpu的id</li>
 <li>将<code>trapframe</code>中保存的<code>sepc</code>值写入<code>sepc</code>寄存器中，由于在内核中也可能发生trap，会导致<code>sepc</code>寄存器的值被修改，所以现在要再次写一遍<code>sepc</code>寄存器的值</li>
 <li>跳转到<code>trampoline</code>中的<code>userret</code></li>
 </ol>
 <div class="tag-plugin colorful note"><div class="title">trapframe的初始化</div><div class="body"><p>每个用户进程在内核中被首次创建出来后都会调用一遍usertrapret函数返回用户空间，从而其trapframe中会保存有内核页表地址等信息，使其可以完成系统调用。</p></div></div>
 <p><code>trampoline</code>中的<code>userret</code>执行流程如下：</p>
-<ol>
+<ol type="1">
 <li>将<code>trapframe</code>中保存的通用寄存器值恢复到32个寄存器中，因为<code>trapframe</code>中<code>a0</code>寄存器的值已经在<code>syscall</code>中被修改成了系统调用函数的返回值，因此恢复过程完毕后<code>a0</code>寄存器中就保存着返回值供用户程序使用</li>
 <li>将<code>satp</code>寄存器设置为指向用户的页表(用户页表地址是<code>userret</code>函数的参数之一)</li>
 <li>使用<code>sret</code>指令返回用户空间继续执行指令，会将<code>pc</code>寄存器的值设置为<code>sepc</code>寄存器的值，而<code>sepc</code>寄存器的值在<code>usertrap</code>中被保存，在<code>usertrapret</code>中被恢复</li>
 </ol>
-<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h1><p>再次放出流程图</p>
-<p><img src="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/process.png" alt="流程"></p>
-<h2 id="3-1-相关的控制寄存器"><a href="#3-1-相关的控制寄存器" class="headerlink" title="3.1 相关的控制寄存器"></a>3.1 相关的控制寄存器</h2><ul>
+<h1 id="总结">3 总结</h1>
+<p>再次放出流程图</p>
+<figure>
+<img src="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/process.png" alt="流程">
+<figcaption aria-hidden="true">流程</figcaption>
+</figure>
+<h2 id="相关的控制寄存器">3.1 相关的控制寄存器</h2>
+<ul>
 <li><code>sepc</code>：发生trap时将<code>pc</code>寄存器的值保存；<code>sret</code>指令会跳转到<code>sepc</code>寄存器所指的指令</li>
 <li><code>stvec</code>：执行<code>ecall</code>指令后会跳转到的位置；在用户空间中指向<code>trampoline</code>中的<code>uservec</code></li>
 <li><code>sccratch</code>：保存着<code>trapframe</code>的内存地址</li>
 <li><code>scause</code>：其值说明了发生trap的原因，8代表系统调用</li>
 </ul>
-<h2 id="3-2-trapframe和trampoline"><a href="#3-2-trapframe和trampoline" class="headerlink" title="3.2 trapframe和trampoline"></a>3.2 trapframe和trampoline</h2><ul>
+<h2 id="trapframe和trampoline">3.2 trapframe和trampoline</h2>
+<ul>
 <li><code>trapframe</code>：用于保存通用寄存器的值和系统调用的返回值，还保存了内核页表、内核栈的地址</li>
 <li><code>trampoline</code>：有用于从用户态跳转到内核态、从内核态跳转到用户态的两个函数<code>uservec</code>和<code>userret</code></li>
 </ul>
-<h2 id="3-3-相关的函数"><a href="#3-3-相关的函数" class="headerlink" title="3.3 相关的函数"></a>3.3 相关的函数</h2><ul>
+<h2 id="相关的函数">3.3 相关的函数</h2>
+<ul>
 <li><code>uservec</code>：保存通用寄存器的值、切换页表和栈</li>
 <li><code>usertrap</code>：改写<code>trapframe</code>中的<code>sepc</code>值，调用<code>syscall</code></li>
 <li><code>syscall</code>：执行相应的系统调用函数，将返回值放入<code>trapframe</code></li>
@@ -167,7 +186,9 @@
 <div class="article-footer">
     <section id="license">
       <div class="header"><span>许可协议</span></div>
-      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+      <div class="body"><p>本文采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
+4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div>
     </section>
     
@@ -194,14 +215,19 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar
+1.33.1</a> 主题创建。 本博客所有文章除特别声明外，均采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
+4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">1 系统调用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-text">2 xv6系统调用的过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0%E5%8E%9F%E5%9E%8B%E5%8F%8A%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="toc-text">2.1 系统调用函数原型及汇编代码生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E5%92%8C%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%E7%9A%84%E5%88%87%E6%8D%A2"><span class="toc-text">2.2 用户空间和内核空间的切换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E5%86%85%E6%A0%B8%E5%AE%8C%E6%88%90%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%B9%B6%E8%BF%94%E5%9B%9E"><span class="toc-text">2.3 内核完成系统调用并返回</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%80%BB%E7%BB%93"><span class="toc-text">3 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8E%A7%E5%88%B6%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">3.1 相关的控制寄存器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-trapframe%E5%92%8Ctrampoline"><span class="toc-text">3.2 trapframe和trampoline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E7%9B%B8%E5%85%B3%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">3.3 相关的函数</span></a></li></ol></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">1 系统调用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-text">2 xv6系统调用的过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0%E5%8E%9F%E5%9E%8B%E5%8F%8A%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="toc-text">2.1
+系统调用函数原型及汇编代码生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E5%92%8C%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%E7%9A%84%E5%88%87%E6%8D%A2"><span class="toc-text">2.2 用户空间和内核空间的切换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E5%AE%8C%E6%88%90%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%B9%B6%E8%BF%94%E5%9B%9E"><span class="toc-text">2.3 内核完成系统调用并返回</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">3 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8E%A7%E5%88%B6%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">3.1 相关的控制寄存器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trapframe%E5%92%8Ctrampoline"><span class="toc-text">3.2 trapframe和trampoline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">3.3 相关的函数</span></a></li></ol></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
 </div></aside><div class='float-panel'>
   <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
