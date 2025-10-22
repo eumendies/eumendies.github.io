@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://eumendies.github.io/images/logo.jpg">
 <meta property="article:published_time" content="2025-10-16T03:20:09.000Z">
-<meta property="article:modified_time" content="2025-10-16T07:33:58.322Z">
+<meta property="article:modified_time" content="2025-10-22T09:27:11.096Z">
 <meta property="article:author" content="Eumendies">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://eumendies.github.io/images/logo.jpg">
@@ -50,7 +50,7 @@
 
   
 
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg"},"dateCreated":"2025-10-16T11:20:09+08:00","dateModified":"2025-10-16T15:33:58+08:00","datePublished":"2025-10-16T11:20:09+08:00","description":"最近跑模型的时候发现GPU利用率奇低，基本维持在百分之十几左右，还会间歇性掉到0，导致训练60K个iteration就需要接近3天的时间，而官方论文的训练总数是整整600K iteration，这就意味着如果我要跑一次全量训练起码要30天，这肯定是无法接受的，因此需要定位问题再进行性能优化。","headline":"记一次pytorch Dataset性能优化","mainEntityOfPage":{"@type":"WebPage","@id":"https://eumendies.github.io/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"},"publisher":{"@type":"Organization","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg","logo":{"@type":"ImageObject","url":"/images/logo.jpg"}},"url":"https://eumendies.github.io/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/","image":[]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg"},"dateCreated":"2025-10-16T11:20:09+08:00","dateModified":"2025-10-22T17:27:11+08:00","datePublished":"2025-10-16T11:20:09+08:00","description":"最近跑模型的时候发现GPU利用率奇低，基本维持在百分之十几左右，还会间歇性掉到0，导致训练60K个iteration就需要接近3天的时间，而官方论文的训练总数是整整600K iteration，这就意味着如果我要跑一次全量训练起码要30天，这肯定是无法接受的，因此需要定位问题再进行性能优化。","headline":"记一次pytorch Dataset性能优化","mainEntityOfPage":{"@type":"WebPage","@id":"https://eumendies.github.io/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"},"publisher":{"@type":"Organization","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg","logo":{"@type":"ImageObject","url":"/images/logo.jpg"}},"url":"https://eumendies.github.io/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/","image":[]}</script>
   
 </head>
 <body>
@@ -69,7 +69,7 @@
 
 
 
-<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/"><span class="title">DDPM扩散模型的数学推导</span></a><a class="item title" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/"><span class="title">LSTM笔记</span></a><a class="item title" href="/2023/10/02/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》宏观经济学分册总结</span></a><a class="item title" href="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/"><span class="title">Raft算法详解</span></a><a class="item title" href="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><span class="title">记一次pytorch Dataset性能优化</span></a><a class="item title" href="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/"><span class="title">详解RISC-V函数调用</span></a><a class="item title" href="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》微观经济学分册总结</span></a><a class="item title" href="/2023/06/24/%E4%BD%BF%E7%94%A8%E8%AF%8D%E5%90%91%E9%87%8F%E5%92%8C%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E5%BA%A6%E8%BF%9B%E8%A1%8C%E6%96%87%E6%9C%AC%E6%9F%A5%E9%87%8D/"><span class="title">使用词向量和余弦相似度进行文本查重</span></a><a class="item title" href="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/"><span class="title">xv6的虚拟存储</span></a><a class="item title" href="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><span class="title">xv6系统调用过程</span></a></div></widget>
+<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><span class="title">记一次pytorch Dataset性能优化</span></a><a class="item title" href="/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/"><span class="title">DDPM扩散模型的数学推导</span></a><a class="item title" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/"><span class="title">LSTM笔记</span></a><a class="item title" href="/2023/10/02/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》宏观经济学分册总结</span></a><a class="item title" href="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/"><span class="title">Raft算法详解</span></a><a class="item title" href="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/"><span class="title">详解RISC-V函数调用</span></a><a class="item title" href="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》微观经济学分册总结</span></a><a class="item title" href="/2023/06/24/%E4%BD%BF%E7%94%A8%E8%AF%8D%E5%90%91%E9%87%8F%E5%92%8C%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E5%BA%A6%E8%BF%9B%E8%A1%8C%E6%96%87%E6%9C%AC%E6%9F%A5%E9%87%8D/"><span class="title">使用词向量和余弦相似度进行文本查重</span></a><a class="item title" href="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/"><span class="title">xv6的虚拟存储</span></a><a class="item title" href="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><span class="title">xv6系统调用过程</span></a></div></widget>
 </div>
 
 </div></aside><div class="l_main" id="main">
@@ -82,7 +82,7 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/deep-learning/">deep-learning</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2025-10-16T03:20:09.000Z">2025-10-16</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2025-10-16T07:33:58.322Z">2025-10-16</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2025-10-16T03:20:09.000Z">2025-10-16</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2025-10-22T09:27:11.096Z">2025-10-22</time></span></div></div></div>
     
     <div class="bottom only-title">
       
@@ -104,9 +104,9 @@
 <p>使用tensorboard打开trace文件：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensorboard --logdir=./train_log</span><br></pre></td></tr></table></figure>
 <p>在面板中可以看到各种操作的时间占比，但是不知道为什么我这里看不到Dataloader的时间占比，即便我按照某issue里面说的把Dataloader的num_workers设置为0，使数据加载发生在主线程里，依然没法解决这个问题。无论如何，从面板可以看出GPU利用率只有11.85%，Kernel操作只占了运行时间的11.3%，性能亟待优化。</p>
-<p>![](./记一次pytorch Dataset性能优化/tensorboard.png)</p>
+<p><img src="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/tensorboard.png" alt></p>
 <p>然后我在<a target="_blank" rel="noopener" href="https://docs.pytorch.ac.cn/tutorials/intermediate/tensorboard_profiler_tutorial.html">profiler_tutorial</a>的warning里看到tensorboard和profiler的集成已经弃用了，可以使用<a target="_blank" rel="noopener" href="https://ui.perfetto.dev/">Perfetto UI</a>来分析trace文件，用其打开trace文件终于能够显示Dataloader的数据了，根据分析结果可以看到在一个iteration中Dataloader的运行时间达到了4s左右，模型的forward方法在900ms左右，backward则在1.4s左右，很明显性能瓶颈在于数据加载，需要针对Dataset类进行优化。</p>
-<p>![](./记一次pytorch Dataset性能优化/perfetto.png)</p>
+<p><img src="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/perfetto.png" alt></p>
 <h2 id="2-性能优化"><a class="markdownIt-Anchor" href="#2-性能优化"></a> 2. 性能优化</h2>
 <h3 id="21-转换为lmdb数据库"><a class="markdownIt-Anchor" href="#21-转换为lmdb数据库"></a> 2.1 转换为LMDB数据库</h3>
 <p>LMDB是一个<strong>高性能、嵌入式键值数据库</strong>，被广泛用于需要<strong>低延迟、高并发读</strong>的场景，LMDB整库就是单个文件，通过 <code>mmap()</code> 一次性映射到进程地址空间，可以减少文件寻址的时间。网上大多博客在谈数据加载优化时首要提到的就是将数据集转换为lmdb格式，故采用如下代码进行转换，在转换时，我把图片转换为了tensor bytes再进行存储，读取时就可以使用<code>torch.load</code>直接转换为tensor，而不需要再进行图片解码，但是要注意存储的tensor是uint8类型的，如果存储float32则会导致占用空间大大增多，增加的io耗时会多于减少的解码耗时，得不偿失：</p>
@@ -134,7 +134,7 @@
 <h2 id="3-final"><a class="markdownIt-Anchor" href="#3-final"></a> 3. Final</h2>
 <p>除了以上的优化以外，我发现在训练过程中模型并不需要用到高分辨率图的深度图，因此删掉了读取代码，也带了很大的速度提升，不过没什么技术性，在此不赘述。</p>
 <p>使用优化后的数据集再跑一次pytorch profiler分析，最终结果如下图所示：</p>
-<p>![](./记一次pytorch Dataset性能优化/perfetto2.png)</p>
+<p><img src="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/perfetto2.png" alt></p>
 <p>可以看到相比模型推理和反向传播，数据集加载要短得多。然而跑训练时虽然能够感受到一点提速，但是GPU利用率也仅仅是稳定在50%左右，还不是很理想，目前仍在想办法优化其他部分的代码。</p>
 </article>
 <div class="article-footer">
