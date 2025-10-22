@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://fastly.jsdelivr.net'>
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
+  <link rel='dns-prefetch' href='//unpkg.com'>
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  <title>DDPM扩散模型的数学推导 - Eumendies</title>
+
+  
+    <meta name="description" content="因为《数字媒体导论》课程要做文献汇报，同组同学选择了和扩散模型相关的论文，而我又没接触过扩散模型，正好学习并整理一下DDPM模型的推导过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDPM扩散模型的数学推导">
+<meta property="og:url" content="https://eumendies.github.io/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/index.html">
+<meta property="og:site_name" content="Eumendies">
+<meta property="og:description" content="因为《数字媒体导论》课程要做文献汇报，同组同学选择了和扩散模型相关的论文，而我又没接触过扩散模型，正好学习并整理一下DDPM模型的推导过程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eumendies.github.io/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/DDPM.png">
+<meta property="article:published_time" content="2025-10-22T05:43:51.000Z">
+<meta property="article:modified_time" content="2025-10-22T06:06:44.111Z">
+<meta property="article:author" content="Eumendies">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eumendies.github.io/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/DDPM.png">
+  
+  
+
+  <!-- feed -->
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/logo.jpg">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class='l_body' id='start'>
+    <aside class='l_left' layout='post'>
+    
+
+
+<header class="header">
+
+<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div>
+<nav class="menu dis-select"></nav></header>
+
+<div class="widgets">
+
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ddpm"><span class="toc-text">1. DDPM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%90%91%E6%89%A9%E6%95%A3"><span class="toc-text">1.1 前向扩散</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E6%89%A9%E6%95%A3"><span class="toc-text">1.2 反向扩散</span></a></li></ol></li></ol></div></div></div>
+
+
+</div>
+
+
+    </aside>
+    <div class='l_main'>
+      
+
+      
+
+    
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/deep-learning/">deep-learning</a></div><div id="post-meta">发布于&nbsp;<time datetime="2025-10-22T05:43:51.000Z">2025-10-22</time></div></div>
+
+<article class='content md post'>
+<h1 class="article-title"><span>DDPM扩散模型的数学推导</span></h1>
+<p>因为《数字媒体导论》课程要做文献汇报，同组同学选择了和扩散模型相关的论文，而我又没接触过扩散模型，正好学习并整理一下DDPM模型的推导过程。</p>
+<span id="more"></span>
+<h2 id="ddpm">1. DDPM</h2>
+<p>扩散模型（Diffusion
+Model）是一种基于概率生成模型的深度学习方法，核心通过前向扩散（逐步加噪）和反向扩散（逐步去噪）两个对称的马尔可夫链，实现从随机噪声到真实数据的生成。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/DDPM.png"></p>
+<p>DDPM是扩散模型中的代表性工作，来自2020年发表的《Denoising Diffusion
+Probabilistic Models》：</p>
+<div class="tag-plugin link dis-select"><a class="link-card plain" title="undefined" href="https://arxiv.org/abs/2006.11239" target="_blank" rel="external nofollow noopener noreferrer"><div class="left"><span class="title">undefined</span><span class="desc fs12">https://arxiv.org/abs/2006.11239</span></div><div class="right"><div class="lazy img" data-bg="https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/link/8f277b4ee0ecd.svg"></div></div></a></div>
+<h3 id="前向扩散">1.1 前向扩散</h3>
+<p>前向扩散的目的是从真实数据
+(_0)出发，按固定规则逐步添加高斯噪声，最终得到纯噪声
+(_t)（t为总步数）。前向扩散的核心是缓慢加噪，确保每一步噪声强度可控，且最终
+(_t) 近似标准高斯分布 ((, ))，加噪过程如下： <span class="math display">\[
+q(x_t | x_{t-1}) \sim \mathcal{N}(\sqrt{1-\beta_t}\cdot
+x_{t-1},\,\beta_t \boldsymbol{I})
+\]</span> 即对于<span class="math inline">\(x_{t-1}\)</span>中的每个像素，以其像素值乘以<span class="math inline">\(\sqrt{1-\beta_t}\)</span>为均值，<span class="math inline">\(\beta_t\)</span>为方差，按照正态分布来随机采样一个值作为下一步图像的像素值。其中<span class="math inline">\(I\)</span>是单位矩阵；<span class="math inline">\(\beta_t \in (0,
+1)\)</span>为预定义的噪声强度，通常设定为从 0.0001 到 0.02
+的递增序列（前期加少量噪声，后期加大量噪声，避免数据过早失真），从<span class="math inline">\(x_0\)</span>开始重复以上操作<span class="math inline">\(t\)</span>次则可以得到噪声图片。</p>
+<p>但是这样的循环操作会非常耗时，为了简化计算，可以采用重参数化技巧来将<span class="math inline">\(t\)</span>次操作转变为一次操作，将(1)式利用标准正态分布来展开：
+<span class="math display">\[
+x_t = \sqrt{1-\beta_t}\cdot x_{t-1} + \sqrt{\beta_t} \cdot
+\epsilon_{t-1} \quad\qquad \epsilon \sim \mathcal{N}(0, 1)
+\]</span> 即当前图像等于上一步图像和一个高斯噪声项的加权和，定义<span class="math inline">\(\alpha = 1 - \beta\)</span>，再将<span class="math inline">\(x_{t-1}\)</span>递推展开： <span class="math display">\[
+x_t = \sqrt{\alpha_t}\cdot x_{t-1} + \sqrt{1-\alpha_t}\cdot
+\epsilon_{t-1}\\
+= \sqrt{\alpha_t}\cdot (\sqrt{\alpha_{t-1}}\cdot x_{t-2} +
+\sqrt{1-\alpha_{t-1}}\cdot \epsilon_{t-2}) + \sqrt{1-\alpha_t}\cdot
+\epsilon_{t-1}\\
+=\sqrt{\alpha_t \alpha_{t-1}}\cdot x_{t-2} +
+\sqrt{\alpha_t(1-\alpha_{t-1})}\epsilon_{t-2} +
+\sqrt{1-\alpha_t}\epsilon_{t-1}
+\]</span>
+我们知道，将两个正态分布相加，最后仍然是正态分布，所得正态分布的方差为两者之和，那么对于上式最后的两个高斯噪声项，将它们相加可以用一个单个高斯噪声来代替：
+$$ ,_{t-2} (0, ,_t -<em>t</em>{t-1})\</p>
+<p>,_{t-1} (0, ,1-_t)\</p>
+<p><em>{t-2} + </em>{t-1} (0, ,1-<em>t</em>{t-1}) \</p>
+<p>x_t = , x_{t-2} + , <span class="math display">\[
+我们不断地进行递推展开至$x_0$，最后就可以得到如下式子：
+\]</span> x_t = ,x_0 + ,_t $$ 其中<span class="math inline">\(\bar{\alpha_t}=\Pi_{i=1}^{t}\alpha_i\)</span>，由此我们无需从
+(_0) 逐步计算到 (_t)，可直接计算任意 t
+步的加噪数据，为后续训练提供便捷。</p>
+<h3 id="反向扩散">1.2 反向扩散</h3>
+<p>反向扩散是扩散模型的核心学习部分，目标是从 (<em>t) 出发，逐步推断
+(</em>{t-1}, , <em>0)，即计算(p(</em>{t-1} _t))
+，但是这个分布我们无法直接计算，因此DDPM利用马尔可夫链的性质来对其进行转化。马尔可夫链中，时间步t的随机变量仅依赖于前一个随机变量，而与更前面的随机变量无关，故有<span class="math inline">\(p(x_{t-1}|x_t)=p(x_{t-1}|x_t,
+x_0)\)</span>，后者意思是在<span class="math inline">\(x_t\)</span>和<span class="math inline">\(x_0\)</span>同时发生的情况下<span class="math inline">\(x_{t-1}\)</span>发生的概率。</p>
+<p>对于<span class="math inline">\(p(x_{t-1}|x_t,x_0)\)</span>可以利用贝叶斯公式进一步展开。根据贝叶斯公式<span class="math inline">\(P(A|B,C) =
+\frac{P(B|A,C)P(A|C)}{P(B|C)}\)</span>，将(p(_{t-1} _t,))
+代入这个公式则可以得到： <span class="math display">\[
+p(x_{t-1}|x_t,x_0) = \frac{p(x_t|x_{t-1},x_0)p(x_{t-1}|x_0)}{p(x_t|x_0)}
+\]</span> 公式右边由三个概率分布组成，对于<span class="math inline">\(p(x_t|x_{t-1},x_0)\)</span>，再次利用马尔可夫链的性质，将其转换为<span class="math inline">\(p(x_t|x_{t-1})\)</span>，则有 <span class="math display">\[
+p(x_{t-1}|x_t,x_0) = \frac{p(x_t|x_{t-1})p(x_{t-1}|x_0)}{p(x_t|x_0)}
+\]</span> 如此，右式的三个概率分布都是我们已知的正态分布，<span class="math inline">\(p(x_t|x_{t-1})\)</span>是前向过程中的一步，而另外两项则可以用之前提到的重参数化的公式<span class="math inline">\(x_t = \sqrt{\bar{\alpha_t}}\,x_0 + \sqrt{1 -
+\bar{\alpha_t}} \,\epsilon_t\)</span> 来给出它们的分布： <span class="math display">\[
+p(x_t|x_{t-1}) = \mathcal{N}(\sqrt{\alpha_t}x_{t-1},\,
+\beta_t\boldsymbol{I})\\
+p(x_{t-1}|x_0) = \mathcal{N}(\sqrt{\bar{\alpha}_{t-1}}x_0,\,
+(1-\bar{\alpha}_{t-1})\boldsymbol{I}) \\
+p(x_t|x_0) = \mathcal{N}(\sqrt{\bar{\alpha_t}}x_0,\,
+(1-\bar{\alpha_t})\boldsymbol{I})
+\]</span> 接下来运用正态分布的乘法和除法公式即可给出公式(7)中左式<span class="math inline">\(p(x_{t-1}|x_t,x_0)\)</span>的分布，正态分布乘法和除法公式如下：
+<span class="math display">\[
+\mathcal{N}(\mu_a,\, \sigma_a^2)\cdot\mathcal{N}(\mu_b,\,
+\sigma_b^2)\propto\mathcal{N}(\mu_c,\,\sigma_c^2)\\
+\frac{1}{\sigma_c^2}=\frac{1}{\sigma_a^2}+\frac{1}{\sigma_b^2} \qquad
+\frac{\mu_c}{\sigma_c^2}=\frac{\mu_a}{\sigma_a^2}+\frac{\mu_b}{\sigma_b^2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{\mathcal{N}(\mu_a,\, \sigma_a^2)}{\mathcal{N}(\mu_b,\,
+\sigma_b^2)}\propto\mathcal{N}(\mu_c,\,\sigma_c^2)\\
+\frac{1}{\sigma_c^2}=\frac{1}{\sigma_a^2}-\frac{1}{\sigma_b^2} \qquad
+\frac{\mu_c}{\sigma_c^2}=\frac{\mu_a}{\sigma_a^2}-\frac{\mu_b}{\sigma_b^2}
+\]</span></p>
+<p>将三个正态分布代入以上公式，最后可以得到： <span class="math display">\[
+p(x_{t-1}|x_t,x_0) =
+\mathcal{N}(\frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0+\frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t,\,\frac{(1-\bar{\alpha}_{t-1})\beta_t}{1-\bar{\alpha}_t})
+\]</span> <span class="math inline">\(\sigma^2\)</span>中的系数是由我们在前向过程中定义的，因此<span class="math inline">\(\sigma^2\)</span>可以直接计算，而在<span class="math inline">\(\mu\)</span>中出现了项<span class="math inline">\(x_0\)</span>，但是在反向过程中，<span class="math inline">\(x_0\)</span>是不给出的，因此利用前面的重参数化公式<span class="math inline">\(x_t = \sqrt{\bar{\alpha_t}}\,x_0 + \sqrt{1 -
+\bar{\alpha_t}} \,\epsilon_t\)</span>反解出<span class="math inline">\(x_0\)</span>： <span class="math display">\[
+x_0 = \frac{x_t -
+\sqrt{1-\bar{\alpha}_t}\epsilon_t}{\sqrt{\bar{\alpha}_t}}
+\]</span> 代入<span class="math inline">\(\mu\)</span>中可得： <span class="math display">\[
+\mu = \frac{1}{\sqrt{\alpha_t}}(x_t -
+\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_t)
+\]</span> 如此，整个<span class="math inline">\(\mu\)</span>中只剩下一个未知项<span class="math inline">\(\epsilon_t\)</span>，因为这个噪声是在前向过程中生成的，反向过程中不能获取这个噪声的值，因此我们可以<strong>让模型来预测这个<span class="math inline">\(\epsilon_t\)</span>的值</strong>，再根据公式来得到<span class="math inline">\(x_{t-1}\)</span>的分布，如此循环直到我们计算出<span class="math inline">\(x_0\)</span>，其流程如下所示：</p>
+<pre class="mermaid">flowchart LR
+subgraph Loop[loop until t equals to 0]
+direction LR
+    A[$$x_t$$]
+    B[Model]
+    C[预测噪声$$\epsilon_t$$]
+    D[代入公式计算$$\mu$$]
+    E["生成$$x_{t-1}=\mu + \sigma\mathcal{N}(0, 1)$$"]
+    A --> B --> C-->D -->E
+end
+Loop-->Loop</pre>
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
+4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">记一次pytorch Dataset性能优化<span class="note">较早</span></a><div class="line"></div></section></div>
+
+
+
+
+
+
+  <div class='related-wrap md reveal' id="comments">
+    <div class='cmt-title cap theme'>
+      快来参与讨论吧
+    </div>
+    <div class='cmt-body waline'>
+      
+
+<div id="waline_container" class="waline_thread"><svg class="loading" style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
+
+    </div>
+  </div>
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="https://eumendies.github.io/"><span class="citation"
+data-cites="Eumendies">@Eumendies</span></a> 使用 <a
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0"
+title="v1.9.0">Stellar</a> 主题创建。</p>
+</div></footer>
+
+      <div class='float-panel mobile-only blur' style='display:none'>
+  <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"></path><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"></path></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
+  };
+
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@6/swiper-bundle.min.css","js":"https://unpkg.com/swiper@6/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://fastly.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://fastly.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://fastly.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti/umd/heti.min.css","js":"https://unpkg.com/heti/umd/heti-addon.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+  <script>
+  function load_comment(){
+    if(!document.getElementById("waline_container"))return;
+    stellar.loadCSS('https://unpkg.com/@waline/client@v2/dist/waline.css');
+    stellar.loadScript('https://unpkg.com/@waline/client@v2/dist/waline.js', {defer:true}).then(function () {
+      const el = document.getElementById("waline_container");
+      var path = el.getAttribute('comment_id');
+      if (!path) {
+        path = decodeURI(window.location.pathname);
+      }
+      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"emoji":["https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["nick","mail"],"lang":"zh-CN","wordLimit":0,"login":"enable","pageSize":10}, {
+        el: '#waline_container',
+        path: path,
+      }));
+    });
+  }
+  window.addEventListener('DOMContentLoaded', (event) => {
+    console.log('DOM fully loaded and parsed');
+    load_comment();
+  });
+
+</script>
+
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

@@ -3,7 +3,6 @@
 
 <head>
   <meta name="generator" content="Hexo 6.3.0">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.15.1">
   <meta charset="utf-8">
   
 
@@ -19,8 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#f8f8f8">
-  
-  <title>Eumendies</title>
+  <title>xv6的虚拟存储 - Eumendies</title>
 
   
     <meta name="description" content="xv6是MIT为其操作系统课程开发的一个教学目的操作系统，本文将介绍xv6的虚拟存储。">
@@ -75,23 +73,16 @@
     <aside class='l_left' layout='post'>
     
 
-  
 
 <header class="header">
 
-<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Eumendies</div></a></div>
-
-
-<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/friends/">友链</a><a class="nav-item" href="/about/">关于</a></nav>
-</header>
-
+<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div>
+<nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
 
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">xv6的虚拟存储</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%94%A8%E6%88%B7%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.1 在用户态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.2 在内核态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E9%9C%80%E8%A6%81%E4%BD%BF%E7%94%A8%E7%94%A8%E6%88%B7%E6%8F%90%E4%BE%9B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80"><span class="toc-text">2.3
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%94%A8%E6%88%B7%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.1 在用户态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.2 在内核态下的虚拟地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B%E9%9C%80%E8%A6%81%E4%BD%BF%E7%94%A8%E7%94%A8%E6%88%B7%E6%8F%90%E4%BE%9B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80"><span class="toc-text">2.3
 内核态下需要使用用户提供的虚拟地址</span></a></li></ol></div></div></div>
-
-
 
 
 </div>
@@ -104,34 +95,6 @@
       
 
     
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-          tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            processEscapes: true
-          }
-        });
-      </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-            tex2jax: {
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-            }
-          });
-      </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-              var all = MathJax.Hub.getAllJax(), i;
-              for(i=0; i < all.length; i += 1) {
-                  all[i].SourceElement().parentNode.className += ' has-jax';
-              }
-          });
-      </script>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
 
 
 
@@ -190,14 +153,14 @@ memory区域是内核用来分配给用户程序的内存，因此用户程序�
 <p>比如用户程序传递虚拟地址<code>0x0000020000</code>给内核，内核通过walk函数得到相应的物理地址<code>0x00800e0000</code>，对其进行解引用并赋值为结果值，MMU在内核页表中查询“虚拟地址”<code>0x00800e0000</code>对应的物理地址，查询结果为<code>0x00800e0000</code>，则CPU将结果值存入<code>0x00800e0000</code>。</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a
 target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
-4.0 国际</a>许可协议，转载请注明出处。</p>
+4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2023/03/27/verilog%E5%AE%9E%E7%8E%B0RISC-V%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%A4%84%E7%90%86%E5%99%A8/">verilog实现RISC-V流水线处理器</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/">xv6系统调用过程</a></div></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/">xv6系统调用过程<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2023/03/27/verilog%E5%AE%9E%E7%8E%B0RISC-V%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%A4%84%E7%90%86%E5%99%A8/">verilog实现RISC-V流水线处理器<span class="note">较新</span></a></section></div>
 
 
 
@@ -219,12 +182,10 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/"><span class="citation"
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="https://eumendies.github.io/"><span class="citation"
 data-cites="Eumendies">@Eumendies</span></a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a>
-主题创建。 本博客所有文章除特别声明外，均采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
-4.0</a> 许可协议，转载请注明出处。</p>
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0"
+title="v1.9.0">Stellar</a> 主题创建。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -328,8 +289,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
       }
     }
   };
-  stellar.version = '1.15.1';
-  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.15.1';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0';
   stellar.config = {
     date_suffix: {
       just: '刚刚',
@@ -342,13 +302,11 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
   // required plugins (only load if needs)
   stellar.plugins = {
-    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js'
+    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
   };
 
-  // stellar js
-  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js"});
-
-  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
   // optional plugins
   if ('true' == 'true') {
     stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
@@ -389,7 +347,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
       if (!path) {
         path = decodeURI(window.location.pathname);
       }
-      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","nick","mail"],"requiredMeta":["nick"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"login":"enable"}, {
+      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"emoji":["https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["nick","mail"],"lang":"zh-CN","wordLimit":0,"login":"enable","pageSize":10}, {
         el: '#waline_container',
         path: path,
       }));

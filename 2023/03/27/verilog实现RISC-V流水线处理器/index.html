@@ -3,7 +3,6 @@
 
 <head>
   <meta name="generator" content="Hexo 6.3.0">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.15.1">
   <meta charset="utf-8">
   
 
@@ -19,8 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#f8f8f8">
-  
-  <title>Eumendies</title>
+  <title>verilog实现RISC-V流水线处理器 - Eumendies</title>
 
   
     <meta name="description" content="使用verilog语言描述的RISC-V流水线处理器，处理了数据冒险和控制冒险，github地址：流水线">
@@ -75,22 +73,15 @@
     <aside class='l_left' layout='post'>
     
 
-  
 
 <header class="header">
 
-<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Eumendies</div></a></div>
-
-
-<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/friends/">友链</a><a class="nav-item" href="/about/">关于</a></nav>
-</header>
-
+<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div>
+<nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
 
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">verilog实现RISC-V流水线处理器</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#risc-v%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%95%B0%E6%8D%AE%E9%80%9A%E8%B7%AF"><span class="toc-text">RISC-V流水线数据通路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pc%E5%AF%84%E5%AD%98%E5%99%A8%E5%92%8Cpc%E5%8A%A0%E6%B3%95%E5%99%A8"><span class="toc-text">PC寄存器和PC加法器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">流水线寄存器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-text">控制器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%8B%E5%8D%B3%E6%95%B0%E7%94%9F%E6%88%90"><span class="toc-text">立即数生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%A0%86"><span class="toc-text">寄存器堆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%A0%86%E5%89%8D%E9%80%92%E5%8D%95%E5%85%83"><span class="toc-text">寄存器堆前递单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#comparator"><span class="toc-text">Comparator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alu"><span class="toc-text">ALU</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ram"><span class="toc-text">RAM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ram%E5%89%8D%E9%80%92%E5%8D%95%E5%85%83"><span class="toc-text">RAM前递单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ram%E6%95%B0%E6%8D%AE%E8%A3%81%E5%89%AA"><span class="toc-text">RAM数据裁剪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alu%E5%89%8D%E9%80%92%E5%8D%95%E5%85%83"><span class="toc-text">ALU前递单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%92%E9%99%A9%E6%A3%80%E6%B5%8B%E5%8D%95%E5%85%83"><span class="toc-text">冒险检测单元</span></a></li></ol></div></div></div>
-
-
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#risc-v%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%95%B0%E6%8D%AE%E9%80%9A%E8%B7%AF"><span class="toc-text">RISC-V流水线数据通路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pc%E5%AF%84%E5%AD%98%E5%99%A8%E5%92%8Cpc%E5%8A%A0%E6%B3%95%E5%99%A8"><span class="toc-text">PC寄存器和PC加法器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">流水线寄存器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-text">控制器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%8B%E5%8D%B3%E6%95%B0%E7%94%9F%E6%88%90"><span class="toc-text">立即数生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%A0%86"><span class="toc-text">寄存器堆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%A0%86%E5%89%8D%E9%80%92%E5%8D%95%E5%85%83"><span class="toc-text">寄存器堆前递单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#comparator"><span class="toc-text">Comparator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alu"><span class="toc-text">ALU</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ram"><span class="toc-text">RAM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ram%E5%89%8D%E9%80%92%E5%8D%95%E5%85%83"><span class="toc-text">RAM前递单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ram%E6%95%B0%E6%8D%AE%E8%A3%81%E5%89%AA"><span class="toc-text">RAM数据裁剪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alu%E5%89%8D%E9%80%92%E5%8D%95%E5%85%83"><span class="toc-text">ALU前递单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%92%E9%99%A9%E6%A3%80%E6%B5%8B%E5%8D%95%E5%85%83"><span class="toc-text">冒险检测单元</span></a></li></ol></div></div></div>
 
 
 </div>
@@ -186,14 +177,14 @@ ID)，<u>执行阶段</u>(EX)，<u>访存阶段</u>(MEM)，<u>写回阶段</u>(W
 </figure>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a
 target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
-4.0 国际</a>许可协议，转载请注明出处。</p>
+4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2023/04/07/%E7%AE%80/">简</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/">xv6的虚拟存储</a></div></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/">xv6的虚拟存储<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2023/04/07/%E7%AE%80/">简<span class="note">较新</span></a></section></div>
 
 
 
@@ -215,12 +206,10 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/"><span class="citation"
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="https://eumendies.github.io/"><span class="citation"
 data-cites="Eumendies">@Eumendies</span></a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a>
-主题创建。 本博客所有文章除特别声明外，均采用 <a
-target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
-4.0</a> 许可协议，转载请注明出处。</p>
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0"
+title="v1.9.0">Stellar</a> 主题创建。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -324,8 +313,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
       }
     }
   };
-  stellar.version = '1.15.1';
-  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.15.1';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0';
   stellar.config = {
     date_suffix: {
       just: '刚刚',
@@ -338,13 +326,11 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
 
   // required plugins (only load if needs)
   stellar.plugins = {
-    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js'
+    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
   };
 
-  // stellar js
-  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js"});
-
-  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
   // optional plugins
   if ('true' == 'true') {
     stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
@@ -385,7 +371,7 @@ target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-
       if (!path) {
         path = decodeURI(window.location.pathname);
       }
-      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"emoji":["https://unpkg.com/@waline/emojis@1.1.0/qq","https://unpkg.com/@waline/emojis@1.1.0/tieba","https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["昵称","邮箱","nick","mail"],"requiredMeta":["nick"],"lang":"zh-CN","wordLimit":0,"pageSize":10,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"login":"enable"}, {
+      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"emoji":["https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["nick","mail"],"lang":"zh-CN","wordLimit":0,"login":"enable","pageSize":10}, {
         el: '#waline_container',
         path: path,
       }));
