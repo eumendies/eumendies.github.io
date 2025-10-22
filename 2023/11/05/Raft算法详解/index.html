@@ -1,76 +1,49 @@
-<!DOCTYPE html>
-<html lang='zh-CN'>
+
+<!DOCTYPE html><html lang="zh-CN">
 
 <head>
-  <meta name="generator" content="Hexo 6.3.0">
   <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1" theme-name="Stellar" theme-version="1.33.1">
   
-
+  
+  <meta name="generator" content="Hexo 6.3.0">
   <meta http-equiv='x-dns-prefetch-control' content='on' />
-  <link rel='dns-prefetch' href='https://fastly.jsdelivr.net'>
-  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
-  <link rel='dns-prefetch' href='//unpkg.com'>
-
+  
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
   <meta name="HandheldFriendly" content="True" >
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="theme-color" content="#f8f8f8">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
   <title>Raft算法详解 - Eumendies</title>
 
   
     <meta name="description" content="Raft算法用于将一台服务器的状态机分布到服务器集群中，保持各个服务器的状态一致，以便在主服务器宕机时能够找出一台新服务器替代，并且让用户无法察觉到这个过程。Raft是一种共识算法，可以将其主要过程分为领导者选举、日志复制、日志压缩等，通过Raft算法，我们可以实现具有容错的分布式系统。本文详细介绍了Raft算法的实现原理，并且附带详细的案例分析帮助理解。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Raft算法详解">
-<meta property="og:url" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:url" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/">
 <meta property="og:site_name" content="Eumendies">
 <meta property="og:description" content="Raft算法用于将一台服务器的状态机分布到服务器集群中，保持各个服务器的状态一致，以便在主服务器宕机时能够找出一台新服务器替代，并且让用户无法察觉到这个过程。Raft是一种共识算法，可以将其主要过程分为领导者选举、日志复制、日志压缩等，通过Raft算法，我们可以实现具有容错的分布式系统。本文详细介绍了Raft算法的实现原理，并且附带详细的案例分析帮助理解。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/basic.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/%E7%8A%B6%E6%80%81%E6%9C%BA.png">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/term.png">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/vote.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/conflict.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-candidates.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-leaders.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/out-of-date.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync1.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync2.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/log.png">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/lack.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/nextIndex.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/leader-change.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/heartbeat-prev.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum-log.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/commited-by-new-leader.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite-commit.png">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/more-up-to-date.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election-restriction.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot.png">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot-prev.jpg">
-<meta property="og:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/send-snapshot.jpg">
+<meta property="og:image" content="https://eumendies.github.io/images/logo.jpg">
 <meta property="article:published_time" content="2023-11-05T04:00:26.000Z">
 <meta property="article:modified_time" content="2025-10-16T07:39:41.022Z">
 <meta property="article:author" content="Eumendies">
 <meta property="article:tag" content="分布式系统">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/basic.jpg">
+<meta name="twitter:image" content="https://eumendies.github.io/images/logo.jpg">
   
   
+  
+  <meta name="keywords" content="分布式系统">
 
   <!-- feed -->
   
 
-  
-    
-<link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/main.css?v=1.33.1">
 
-  
 
   
     <link rel="shortcut icon" href="/images/logo.jpg">
@@ -78,92 +51,90 @@
 
   
 
-  
-
-
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg"},"dateCreated":"2023-11-05T12:00:26+08:00","dateModified":"2025-10-16T15:39:41+08:00","datePublished":"2023-11-05T12:00:26+08:00","description":"Raft算法用于将一台服务器的状态机分布到服务器集群中，保持各个服务器的状态一致，以便在主服务器宕机时能够找出一台新服务器替代，并且让用户无法察觉到这个过程。Raft是一种共识算法，可以将其主要过程分为领导者选举、日志复制、日志压缩等，通过Raft算法，我们可以实现具有容错的分布式系统。本文详细介绍了Raft算法的实现原理，并且附带详细的案例分析帮助理解。","headline":"Raft算法详解","mainEntityOfPage":{"@type":"WebPage","@id":"https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/"},"publisher":{"@type":"Organization","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg","logo":{"@type":"ImageObject","url":"/images/logo.jpg"}},"url":"https://eumendies.github.io/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/","keywords":"分布式系统","thumbnailUrl":"/cover/raft.jpg","image":1}</script>
   
 </head>
-
 <body>
-  
+
+<div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 
 
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div></header>
 
+<div class="nav-area">
 
-  <div class='l_body' id='start'>
-    <aside class='l_left' layout='post'>
-    
-
-
-<header class="header">
-
-<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div>
-<nav class="menu dis-select"></nav></header>
-
+<nav class="menu dis-select"></nav>
+</div>
 <div class="widgets">
-
-<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#raft%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">1. Raft的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="toc-text">2. 领导者选举</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B"><span class="toc-text">2.1 选举过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#corner-case"><span class="toc-text">2.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#raft%E5%88%9D%E5%90%AF%E5%8A%A8"><span class="toc-text">2.2.1 Raft初启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E5%80%99%E9%80%89%E8%80%85"><span class="toc-text">2.2.2 多候选者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">2.2.3 多领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A0%E6%B3%95%E9%80%89%E5%87%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">2.2.3 无法选出领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="toc-text">3. 日志同步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">3.1 同步过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#corner-case-1"><span class="toc-text">3.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%8D%A2%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">3.2.1 更换领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%9F%E9%9A%8F%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text">3.2.2 跟随者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%A1%E7%9B%AE%E6%9C%AA%E6%8F%90%E4%BA%A4%E6%97%B6%E9%A2%86%E5%AF%BC%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text">3.2.3 条目未提交时领导者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%BA%E5%B0%91%E6%9D%A1%E7%9B%AE%E7%9A%84%E8%B7%9F%E9%9A%8F%E8%80%85%E6%88%90%E4%B8%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">3.2.4
-缺少条目的跟随者成为领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7"><span class="toc-text">4. 快照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">5. 总结</span></a></li></ol></div></div></div>
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
 
 
+
+<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/"><span class="title">DDPM扩散模型的数学推导</span></a><a class="item title" href="/2023/10/02/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》宏观经济学分册总结</span></a><a class="item title" href="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/"><span class="title">Raft算法详解</span></a><a class="item title" href="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><span class="title">记一次pytorch Dataset性能优化</span></a><a class="item title" href="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/"><span class="title">详解RISC-V函数调用</span></a><a class="item title" href="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》微观经济学分册总结</span></a><a class="item title" href="/2023/06/24/%E4%BD%BF%E7%94%A8%E8%AF%8D%E5%90%91%E9%87%8F%E5%92%8C%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E5%BA%A6%E8%BF%9B%E8%A1%8C%E6%96%87%E6%9C%AC%E6%9F%A5%E9%87%8D/"><span class="title">使用词向量和余弦相似度进行文本查重</span></a><a class="item title" href="/2023/02/16/xv6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8/"><span class="title">xv6的虚拟存储</span></a><a class="item title" href="/2023/01/02/xv6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><span class="title">xv6系统调用过程</span></a><a class="item title" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/"><span class="title">LSTM笔记</span></a></div></widget>
 </div>
 
+</div></aside><div class="l_main" id="main">
 
-    </aside>
-    <div class='l_main'>
-      
 
-      
 
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2023-11-05T04:00:26.000Z">2023-11-05</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2025-10-16T07:39:41.022Z">2025-10-16</time></span></div></div></div>
     
-
-
-
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-11-05T04:00:26.000Z">2023-11-05</time></div></div>
-
-<article class='content md post'>
-<h1 class="article-title"><span>Raft算法详解</span></h1>
-<p>Raft算法用于将一台服务器的状态机分布到服务器集群中，保持各个服务器的状态一致，以便在主服务器宕机时能够找出一台新服务器替代，并且让用户无法察觉到这个过程。Raft是一种共识算法，可以将其主要过程分为领导者选举、日志复制、日志压缩等，通过Raft算法，我们可以实现具有容错的分布式系统。本文详细介绍了Raft算法的实现原理，并且附带详细的案例分析帮助理解。</p>
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>Raft算法详解</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>Raft算法用于将一台服务器的状态机分布到服务器集群中，保持各个服务器的状态一致，以便在主服务器宕机时能够找出一台新服务器替代，并且让用户无法察觉到这个过程。Raft是一种共识算法，可以将其主要过程分为领导者选举、日志复制、日志压缩等，通过Raft算法，我们可以实现具有容错的分布式系统。本文详细介绍了Raft算法的实现原理，并且附带详细的案例分析帮助理解。</p>
 <span id="more"></span>
 <h2 id="raft的基本概念">1. Raft的基本概念</h2>
 <p>Raft是一种共识算法，只有在大多数(多于半数，<span class="math inline">\(\lfloor\frac{n}{2}\rfloor+1\)</span>)服务器同意某一个命令并保存了该命令之后，这个命令才会被提交，然后服务器再对客户端进行回应，这样做是为了保证当主服务器宕机时，能够找出一台和原来主服务器具有相同状态机的替代服务器。</p>
 <p>为了实现上述的“大多数”原则，Raft给服务器设置了三种状态，分别是领导者(leader)、跟随者(follower)和候选者(candidate)。跟随者通过投票选出领导者，只有得到“大多数”跟随者投票的服务器能成为领导者；领导者负责将命令同步给跟随者，只有被“大多数”跟随者确认的命令才能提交。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/basic.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/basic.jpg"></p>
 <p>客户端发来的命令必须被保存，因为当有跟随者因为各种原因错过了某些命令时，领导者必须负责将跟随者缺少的命令发送给跟随者；当跟随者收到领导者发来的命令时，也必须根据自己保存的内容来判断传来的命令是重复的、是过时的、是可以确认的、还是缺少了一些前置命令的。</p>
 <p>Raft算法将命令保存到日志当中，日志中保存的命令实际上可以构建出一个状态机，只要保存的日志与领导者一致，重启的服务器按照日志保存的命令顺序执行，最后就可以同步到和领导者相同的状态。领导者将自己的日志复制给其他的跟随者实际上就是将状态机复制给其他服务器。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/状态机.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/状态机.png"></p>
 <h2 id="领导者选举">2. 领导者选举</h2>
 <h3 id="选举过程">2.1 选举过程</h3>
 <p>Raft算法将时间划分成一个个任期(term)，当有跟随者发起选举时其转变成为候选者，然后将当前任期号加一，如果它得到了大多数跟随者的投票，那么它就可以由候选者转换成为当前任期的领导者。每个服务器需要维护一个变量来记录当前的任期号。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/term.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/term.png"></p>
 <p>Raft使用超时机制来控制选举的发生。每个服务器被赋予一个随机的超时时间，当一个跟随者经过一个超时时间后还没有收到来自领导者的消息时，它会认为领导者已经宕机，并发起一次新的选举。领导者宕机或者领导者与跟随者网络不通都会导致这种超时的发生。</p>
 <p>发起选举的服务器需要做三件事：1. 首先转换为候选者状态，投票给自己，2.
 然后将保存的任期号加一，并把新的任期号发送给其他所有服务器。3.
 如果得到大多数选票，转换成领导者状态；如果在一定时间内没有得到大多数选票，就重置超时时间并转回跟随者状态等待下一次选举。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election.jpg"></p>
 <p>一个服务器是否投票另一个服务器取决于双方的任期号。当其他服务器收到投票请求时，如果发来的任期号大于自己保存的任期号，则选择投票给该服务器并设置新的任期号，如果发来的任期号小于等于自己保存的任期号，则拒绝投票给该服务器。当该服务器获得大于半数的投票时，其从候选者状态转换为领导者状态。如果该服务器没有成为领导者，则重新回到跟随者状态并重置超时时间。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/vote.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/vote.jpg"></p>
 <p>服务器有命令需要发送时就发送命令，没有命令需要发送时就定时发送“心跳”信息给所有跟随者。为了避免在领导者未宕机的情况下跟随者发起选举，领导者需要定时发送“心跳”信息，当跟随者收到来自领导者的消息(心跳信息或任何其他信息)时就会重置自己的超时计时器。领导者发送心跳信息的间隔时间要小于跟随者超时时间的最小值。领导者发送心跳信息时需要附带任期号，因为领导者可能已经过时了，而其他服务器需要通过任期号来判断这点，具体请参考2.2.3
 多领导者。</p>
 <h3 id="corner-case">2.2 corner case</h3>
 <h4 id="raft初启动">2.2.1 Raft初启动</h4>
 <p>当Raft算法刚刚启动时，所有服务器都处于跟随者状态，由于没有领导者发送心跳信息，在一段时间过后必定有一个服务器首先超时并发起选举。</p>
 <p>每个服务器的超时时间都是随机设定而不是设为相同的固定值，这是为了防止出现大多数服务器同时超时的情况。当所有服务器同时超时时，每个发起选举的服务器都会先投票给自己，这样就没有一个服务器能够得到大多数选票，然后又经过一段相同的时间，所有服务器再次同时发起选举，这样就会导致死循环发生。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/conflict.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/conflict.jpg"></p>
 <h4 id="多候选者">2.2.2 多候选者</h4>
 <p>虽然随机设置的超时时间让同时超时变得不太可能，但是一个新任期中还是有可能出现两个及以上的候选者。比如当两个服务器的超时时间很接近时，一个服务器超时后另一个服务器马上就紧跟着超时了；又比如有一条心跳信息因为网络原因丢失了，那么就有一个跟随者的时钟没有被重置，其剩余的时间可能恰好与其他跟随者的超时时间很相近。</p>
 <p>现在假设服务器A超时，将任期号升至2，且在还没来得及将投票请求发送出去时服务器B也超时，也将自己的任期号升至2，此时新任期中就有两个候选者，网络中包含了两个候选者的投票请求。其他跟随者可能在收到一个投票请求后又会收到另一条投票请求，但是2.1节中描述的投票规则保证了：<strong>一个服务器在一个任期中最多投票一次</strong>。</p>
 <p>若另一个服务器C先收到了A的投票请求，C由于收到了更大的任期号所以会选择同意投票，然后其任期号也升至2。当其再收到B的投票请求时，由于收到的任期号还是2，并不比自己现在的任期号大，因此C会拒绝投票，同理，任何其他来自任期2的投票请求都会被C拒绝。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-candidates.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-candidates.jpg"></p>
 <p>“大多数原则”加上一任期一票的限制保证了一个重要的性质：<strong>一个任期内只能产生一个领导者</strong>。如果有n个服务器，则当上领导者必须获得<span class="math inline">\(\lfloor\frac{n}{2}\rfloor+1\)</span>的选票，而服务器在一个任期内只会投票一次，总投票数最多为n，如果出现了两个领导者，则总票数大于n，矛盾。</p>
 <h4 id="多领导者">2.2.3 多领导者</h4>
 <p>需要注意：<strong>一个任期内只有一个领导者不等于某时刻下只有一个领导者</strong>。假设任期1的领导者与其他所有跟随者的网络连接断开，剩下的跟随者在超时后会选举出任期2的领导者，此时任期1的领导者和任期2的领导者同时存在，但并不违反一个任期内只有一个领导者的性质。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-leaders.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/multi-leaders.jpg"></p>
 <p>与其他服务器隔离的任期1领导者仍在不断尝试发送心跳信息，当它和任何一个服务器的网络连接恢复后，收到心跳信息的服务器会发现这是一个来自任期1的信息，说明存在一个已经过时的领导者，服务器会在回应中附带上最新的任期号，任期1领导者看到这个任期号后直到自己已不再是领导者，就会转换为跟随者。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/out-of-date.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/out-of-date.jpg"></p>
 <h4 id="无法选出领导者">2.2.3 无法选出领导者</h4>
 <p>如果大多数服务器宕机或者断网，此时没有服务器能够得到大多数选票，剩下的服务器就会不断地发起选举，然后失败，然后一段时间后继续发起选举，直到在线服务器的数量恢复到一定程度，在这种情况下会经历数个没有领导者的任期，这段时间内系统无法处理客户端的请求。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum.jpg"></p>
 <p>即使当大多数服务器宕机时当前任期的领导者没有宕机，它仍旧回应不了客户端的请求，因为它无法将这条命令添加到大多数跟随者的日志中。</p>
 <h2 id="日志同步">3. 日志同步</h2>
 <h3 id="同步过程">3.1 同步过程</h3>
@@ -174,36 +145,36 @@
 <li>当领导者收到大多数跟随者的确认之后才能提交并执行这条命令，执行完毕之后向客户端发送响应。如果领导者没有得到大多数跟随者的确认，领导者需要不断给未确认的跟随者重发命令直到收到确认。</li>
 <li>在之后的心跳信息中，会包含有领导者已经提交到哪条命令的信息，收到心跳信息的跟随者查看该信息，如果自己的日志中包含有领导者已提交的命令，则跟随者也提交并执行这些命令。</li>
 </ol>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync1.jpg"></p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync2.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync1.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/sync2.jpg"></p>
 <p><strong>服务器通过网络发送的任何消息都有可能会丢失</strong>，因此可能会有跟随者没有收到某些命令，如果此时领导者发来新的命令，跟随者需要拒绝这条命令并要求领导者将跟随者缺失的命令重新发送，否则跟随者的日志会缺少条目，这样就与领导者的日志出现了不一致。</p>
 <p>为了避免日志条目的缺失，保存到日志中的条目还需要额外保存添加这个条目时所在的任期，结合条目在日志中的索引号和相对应的任期号，跟随者就能判断自己是否缺少了一些日志条目。保存了任期号的日志如下图：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/log.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/log.png"></p>
 <p>领导者在发送新的日志条目给跟随者时，要附带上该条目的前一条目的索引和任期号，跟随者利用发来的索引从日志中取出条目，如果不存在条目或者条目记录的任期和传来的任期不符，那么跟随者就拒绝添加新的日志条目。实际上这是在确认新条目之前的条目与领导者的是否一致。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/lack.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/lack.jpg"></p>
 <p>由于每个跟随者成功接收的情况不同，因此领导者需要记录每个跟随者的日志同步情况。领导者维护一个matchIndex数组和一个nextIndex数组，前者保存各个跟随者的日志和自身日志匹配到了哪一个索引，后者保存下一次要发送给各个跟随者的日志条目的索引号。</p>
 <p>在上图的例子中，原本的nextIndex[1] =
 4，因此领导者给跟随者1发送了索引为4的日志条目，但是跟随者1由于缺少索引为3的条目所以拒绝添加，领导者收到拒绝消息后会将nextIndex[1]减一，即下一次发送日志条目3(为了提高效率，可以一次性发送条目3及其之后的所有条目)，如果继续失败则不断减小nextIndex直到成功，成功则将nextIndex[1]设置为发送的最后一个条目的索引号加一。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/nextIndex.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/nextIndex.jpg"></p>
 <h3 id="corner-case-1">3.2 corner case</h3>
 <h4 id="更换领导者">3.2.1 更换领导者</h4>
 <p>当服务器们选出新的领导者时，新领导者不知道各服务器的日志同步情况。假设原领导者宕机，剩下的服务器选出一个新的领导者，但新选出来的领导者由于尚未与跟随者们进行过日志同步，因此不知道其他服务器上日志的同步情况，即无法确定matchIndex和nextIndex数组的值。</p>
 <p>为了能够进行正确的同步，新领导者将每个跟随者的matchIndex设置为0，nextIndex设置为自己日志中的最大索引加一。此时当领导者<strong>收到新的命令</strong>时，它就会直接发送最新的命令给其他跟随者，如果其他跟随者同意添加，那说明跟随者的日志和领导者的日志是完全一致的，可以将matchIndex设置为日志的最大索引；如果跟随者拒绝添加，则领导者像常规情况一样逐步减小nextIndex尝试逐个发送之前的条目，直到跟随者同意添加。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/leader-change.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/leader-change.jpg"></p>
 <p>即使新领导者短时间内没有收到新的命令，也可以通过心跳信息来获取跟随者的日志同步情况。即使是心跳信息，领导者也要附带上prevIndex和prevTerm，领导者将这两个值分别设置为日志中最后一个条目的索引和任期号，如果收到了跟随者否定的响应则说明跟随者的日志没有完全和领导者的同步，然后领导者将相应的nextIndex减一，后续过程则是和前文一样的不断试探。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/heartbeat-prev.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/heartbeat-prev.jpg"></p>
 <h4 id="跟随者宕机">3.2.2 跟随者宕机</h4>
 <p>如果跟随者宕机，导致当前没有多于半数的服务器在线，那么剩下的服务器将无法提交任何一条命令。由于领导者无法得到大多数服务器的确认，因此不能将命令提交执行，当然也就不能对客户端进行响应，客户端长时间得不到响应，可能会将命令重发，领导者就会将同一条命令再次保存到日志中，后续大多数服务器重新上线后领导者可能会执行多条相同的命令，不过这些命令是具有幂等性的，因此不会对状态机造成影响。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum-log.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/no-quorum-log.jpg"></p>
 <h4 id="条目未提交时领导者宕机">3.2.3 条目未提交时领导者宕机</h4>
 <p>一个领导者可能在还未提交某条命令时就宕机了，但它可能之前已经将这条命令添加到了某些跟随者的日志中，这些未提交的日志条目<strong>要么被新的领导者提交，要么被新的领导者覆盖</strong>。</p>
 <p>如果新领导者日志中没有未提交的日志条目，当它将新日志条目添加到其他跟随者日志中时会覆盖跟随者日志中的日志条目。当跟随者收到新条目时，如果发现新条目要插入的位置已有条目，跟随者需要用新条目覆盖旧条目，因为跟随者需要和领导者保持日志同步。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite.jpg"></p>
 <blockquote>
 <p>这里画了5台服务器，如果只有前3台服务器，第二台服务器不可能成为新领导者，这与即将引入的新选举规则有关</p>
 </blockquote>
 <p>如果新领导者日志中有未提交的日志条目，它需要将这个条目先同步到跟随者日志中，但即使大多数服务器已经有了这个条目，它也要<strong>等提交了一条当前任期的日志条目后</strong>才能提交前一任期的日志条目。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/commited-by-new-leader.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/commited-by-new-leader.jpg"></p>
 <p>如果不这样做的话，就有可能导致已提交的条目被下一个领导者覆盖。以原始论文中给出的图为例，在(a)中S1在提交索引2条目前宕机；(b)中S5成为任期3的新领导者，并在给自己的日志添加一条新条目后宕机；(c)中S1恢复并成为任期4的领导者，将索引2的条目添加给S3后立即提交该条目，然后再次宕机；(d)中S5成为任期5的领导者，并且将原来添加的条目同步到了所有跟随者的日志中，这样就导致了S1在索引2处已提交的条目被覆盖！</p>
 <p>但如果在(c)中S1没有立即提交索引2的条目，而是像(e)一样等到提交了任期4的条目后再提交任期2的条目，那么即使S5再次成为领导者也无法再覆盖跟随者的日志，因为S5会发送prevIndex
 = 1, prevTerm =
@@ -212,78 +183,168 @@
 <blockquote>
 <p>但事实上，在引入新的选举规则后，S5根本不可能再次成为新的领导者</p>
 </blockquote>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite-commit.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/overwrite-commit.png"></p>
 <h4 id="缺少条目的跟随者成为领导者">3.2.4
 缺少条目的跟随者成为领导者</h4>
 <p>按照我们目前的选举规则，一般谁先发出选举请求谁就更可能成为新的领导者，假如一个缺少条目的跟随者成为领导者，会导致其他跟随者已提交的条目被覆盖。为了防止这种情况的发生，需要在已有的选举规则上再新增一条：跟随者收到投票请求时，<strong>只有当候选者的日志比自己的日志更新的时候才同意投票</strong>。</p>
 <p>Raft算法这样来定义“新”：1. 最后一个日志条目的任期号更大。2.
 如果相同，则日志更长的为"新"。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/more-up-to-date.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/more-up-to-date.jpg"></p>
 <p>在3.2.3的图(e)中，如果S1，S2，S3的日志中添加了任期4的条目，那么即使S1宕机，S5也不可能成为任期5的领导者了，S5可以得到S4的选票，但是得不到S2和S3的选票。通过添加这样一条新的选举规则，S5不可能再次覆盖其他服务器中已经提交了的日志条目。</p>
 <p>为了让服务器在选举阶段能够相互对比日志情况，候选者在发送投票请求时不仅要附带自己所处的任期，还要附带自己最后一条日志条目的索引和任期号。跟随者用发来的索引和任期号对比自己的最后一条日志条目，如果候选者的更新则同意投票。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election-restriction.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/election-restriction.jpg"></p>
 <h2 id="快照">4. 快照</h2>
 <p>处理的用户请求越多，服务器的日志就越长，占用的内存空间就越多，因此需要使用快照技术来压缩日志。</p>
 <p>当日志达到一定大小之后，服务器选定一个已经提交了的索引位，将该索引位下的服务器状态保存到硬盘当中，然后该索引位之前的日志条目就可以被丢弃。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot.png"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot.png"></p>
 <p>保存快照时服务器还要记录快照中包含的最后一条日志条目的索引和任期号，当领导者需要发送快照后一条日志条目给其他跟随者时，要将prevIndex和prevTerm设置为快照中尾部条目的对应值。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot-prev.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/snapshot-prev.jpg"></p>
 <p>如果跟随者缺少的条目已经被包含在了领导者的快照当中，即nextIndex值小于等于lastIncludedIndex值时，那么领导者就直接将保存的快照发送给跟随者，跟随者直接将服务器的状态设置为快照中的状态。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/send-snapshot.jpg"></p>
+<p><img src="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/send-snapshot.jpg"></p>
 <h2 id="总结">5. 总结</h2>
 <p>Raft算法从选举开始，当跟随者超时之后转为候选者发起选举，然后向其他跟随者发送自己的任期号、日志尾部条目的索引和任期号；跟随者收到投票请求后，如果对方的任期号大于自己的任期号、并且对方的日志更新，则同意投票。候选者得到大多数选票后成为领导者。</p>
 <p>领导者负责处理客户端请求并将日志条目同步到其他跟随者的日志当中。当领导者收到客户端新请求后，要将新的日志条目发送给跟随者，并附带prevIndex、prevTerm，跟随者确定自己没有缺失之前的条目后确认添加，领导者得到大多数跟随者的确认后将命令提交。没有条目要发送的时候领导者向跟随者发送心跳信息避免跟随者发起选举。</p>
 <p>当服务器的日志到达一定的大小之后，需要通过快照来进行压缩。快照保存了服务器的状态，还有包括的最后一条日志条目的索引和任期号，用于领导者进行日志同步。发送快照可以让一些落后很多的跟随者快速地来到和领导者接近的状态。</p>
-
-
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a
+</article>
+<div class="article-footer">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a
 target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享
 4.0 国际</a> 许可协议，转载请注明出处。</p>
-</div></section></div>
+</div>
+    </section>
+    
 
-</article>
-
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2023/10/02/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/">《经济学原理》宏观经济学分册总结<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">记一次pytorch Dataset性能优化<span class="note">较新</span></a></section></div>
-
-
-
-
-
-
-  <div class='related-wrap md reveal' id="comments">
-    <div class='cmt-title cap theme'>
-      快来参与讨论吧
-    </div>
-    <div class='cmt-body waline'>
-      
-
-<div id="waline_container" class="waline_thread"><svg class="loading" style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
-
-    </div>
-  </div>
-
-
-
-      
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="https://eumendies.github.io/"><span class="citation"
-data-cites="Eumendies">@Eumendies</span></a> 使用 <a
-target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0"
-title="v1.9.0">Stellar</a> 主题创建。</p>
-</div></footer>
-
-      <div class='float-panel mobile-only blur' style='display:none'>
-  <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
-    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"></path><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"></path></svg>
-  </button>
 </div>
 
-    </div>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">记一次pytorch Dataset性能优化</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2023/10/02/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/">《经济学原理》宏观经济学分册总结</a></div></section></div>
+
+
+
+
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>快来参与讨论吧~</p>
+
+    </section>
+    <section class='body cmt-body waline'>
+      
+
+<div id="waline_container" class="waline_thread"><svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
+
+    </section>
   </div>
-  <div class='scripts'>
-    <script type="text/javascript">
-  stellar = {
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a
+target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar
+1.33.1</a> 主题创建。 本博客所有文章除特别声明外，均采用 <a
+target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA
+4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#raft%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">1. Raft的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="toc-text">2. 领导者选举</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B"><span class="toc-text">2.1 选举过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#corner-case"><span class="toc-text">2.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#raft%E5%88%9D%E5%90%AF%E5%8A%A8"><span class="toc-text">2.2.1 Raft初启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E5%80%99%E9%80%89%E8%80%85"><span class="toc-text">2.2.2 多候选者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">2.2.3 多领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A0%E6%B3%95%E9%80%89%E5%87%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">2.2.3 无法选出领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="toc-text">3. 日志同步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">3.1 同步过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#corner-case-1"><span class="toc-text">3.2 corner case</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%8D%A2%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">3.2.1 更换领导者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%9F%E9%9A%8F%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text">3.2.2 跟随者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%A1%E7%9B%AE%E6%9C%AA%E6%8F%90%E4%BA%A4%E6%97%B6%E9%A2%86%E5%AF%BC%E8%80%85%E5%AE%95%E6%9C%BA"><span class="toc-text">3.2.3 条目未提交时领导者宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%BA%E5%B0%91%E6%9D%A1%E7%9B%AE%E7%9A%84%E8%B7%9F%E9%9A%8F%E8%80%85%E6%88%90%E4%B8%BA%E9%A2%86%E5%AF%BC%E8%80%85"><span class="toc-text">3.2.4
+缺少条目的跟随者成为领导者</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7"><span class="toc-text">4. 快照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">5. 总结</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+</div></aside><div class='float-panel'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+
+
+<script type="text/javascript">
+  window.canonical = {"originalHost":null,"officialHosts":["localhost"],"encoded":""};
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/`,
+    tag_plugins: {
+      chat: Object.assign({"api":"https://siteinfo.listentothewind.cn/api/v1"}),
+    }
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+    loading: `https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd`,
+  };
+  const deps = {
+    jquery: `https://gcore.jsdelivr.net/npm/jquery@3.7/dist/jquery.min.js`,
+    marked: `https://gcore.jsdelivr.net/npm/marked@13.0/lib/marked.umd.min.js`,
+    lazyload: `/%5Bobject%20Object%5D`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  
+  function RunItem() {
+    this.list = []; // 存放回调函数
+    this.start = () => {
+      for (var i = 0; i < this.list.length; i++) {
+        this.list[i].run();
+      }
+    };
+    this.push = (fn, name, setRequestAnimationFrame = true) => {
+      let myfn = fn
+      if (setRequestAnimationFrame) {
+        myfn = () => {
+          utils.requestAnimationFrame(fn)
+        }
+      }
+      var f = new Item(myfn, name);
+      this.list.push(f);
+    };
+    this.remove = (name) => {
+      for (let index = 0; index < this.list.length; index++) {
+        const e = this.list[index];
+        if (e.name == name) {
+          this.list.splice(index, 1);
+        }
+      }
+    }
+    // 构造一个可以run的对象
+    function Item(fn, name) {
+      // 函数名称
+      this.name = name || fn.name;
+      // run方法
+      this.run = () => {
+        try {
+          fn()
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    }
+  }
+
+  const utils = {
     // 懒加载 css https://github.com/filamentgroup/loadCSS
-    loadCSS: (href, before, media, attributes) => {
+    css: (href, before, media, attributes) => {
       var doc = window.document;
       var ss = doc.createElement("link");
       var ref;
@@ -341,9 +402,11 @@ title="v1.9.0">Stellar</a> 主题创建。</p>
       return ss;
     },
 
-    // 从 butterfly 和 volantis 获得灵感
-    loadScript: (src, opt) => new Promise((resolve, reject) => {
+    js: (src, opt) => new Promise((resolve, reject) => {
       var script = document.createElement('script');
+      if (src.startsWith('/')) {
+        src = ctx.root + src.substring(1);
+      }
       script.src = src;
       if (opt) {
         for (let key of Object.keys(opt)) {
@@ -354,7 +417,7 @@ title="v1.9.0">Stellar</a> 主题创建。</p>
         script.async = true
       }
       script.onerror = reject
-      script.onload = script.onreadystatechange = function() {
+      script.onload = script.onreadystatechange = function () {
         const loadState = this.readyState
         if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
         script.onload = script.onreadystatechange = null
@@ -363,92 +426,586 @@ title="v1.9.0">Stellar</a> 主题创建。</p>
       document.head.appendChild(script)
     }),
 
-    // https://github.com/jerryc127/hexo-theme-butterfly
-    jQuery: (fn) => {
+    jq: (fn) => {
       if (typeof jQuery === 'undefined') {
-        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+        utils.js(deps.jquery).then(fn)
       } else {
         fn()
       }
+    },
+
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      const maxRetry = 3;
+      let retryCount = 0;
+
+      return new Promise((resolve, reject) => {
+        const load = () => {
+          utils.onLoading?.(el);
+
+          let timedOut = false;
+          const timeout = setTimeout(() => {
+            timedOut = true;
+            console.warn('[request] 超时:', url);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject('请求超时');
+            } else {
+              setTimeout(load, 1000);
+            }
+          }, 5000);
+
+          fetch(url).then(resp => {
+            if (timedOut) return;
+            clearTimeout(timeout);
+
+            if (!resp.ok) throw new Error('响应失败');
+            return resp;
+          }).then(data => {
+            if (timedOut) return;
+            utils.onLoadSuccess?.(el);
+            callback(data);
+            resolve(data);
+          }).catch(err => {
+            clearTimeout(timeout);
+            console.warn('[request] 错误:', err);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject(err);
+            } else {
+              setTimeout(load, 1000);
+            }
+          });
+        };
+
+        load();
+      });
+    },
+    requestWithoutLoading: (url, options = {}, maxRetry = 2, timeout = 5000) => {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+
+        const tryRequest = () => {
+          let timedOut = false;
+          const timer = setTimeout(() => {
+            timedOut = true;
+            if (++retryCount > maxRetry) reject('timeout');
+            else tryRequest();
+          }, timeout);
+
+          fetch(url, options)
+            .then(resp => {
+              clearTimeout(timer);
+              if (!resp.ok) throw new Error('bad response');
+              resolve(resp);
+            })
+            .catch(err => {
+              clearTimeout(timer);
+              if (++retryCount > maxRetry) reject(err);
+              else setTimeout(tryRequest, 500);
+            });
+        };
+
+        tryRequest();
+      });
+    },
+    /********************** requestAnimationFrame ********************************/
+    // 1、requestAnimationFrame 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒60帧。
+    // 2、在隐藏或不可见的元素中，requestAnimationFrame 将不会进行重绘或回流，这当然就意味着更少的的 cpu，gpu 和内存使用量。
+    requestAnimationFrame: (fn) => {
+      if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+      }
+      window.requestAnimationFrame(fn)
+    },
+    dark: {},
+  };
+
+  // utils.dark.mode 当前模式 dark or light
+  // utils.dark.toggle() 暗黑模式触发器
+  // utils.dark.push(callBack[,"callBackName"]) 传入触发器回调函数
+  utils.dark.method = {
+    toggle: new RunItem(),
+  };
+  utils.dark = Object.assign(utils.dark, {
+    push: utils.dark.method.toggle.push,
+  });
+</script>
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+<script async src="https://gcore.jsdelivr.net/npm/vanilla-lazyload@19.1/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+    callback_loaded: (el) => {
+      el.classList.add('loaded');
+      const wrapper = el.closest('.lazy-box');
+      const icon = wrapper?.querySelector('.lazy-icon');
+      if (icon) icon.remove();
     }
   };
-  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.9.0';
-  stellar.config = {
-    date_suffix: {
-      just: '刚刚',
-      min: '分钟前',
-      hour: '小时前',
-      day: '天前',
-      month: '个月前',
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
     },
-  };
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
 
-  // required plugins (only load if needs)
-  stellar.plugins = {
-    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
-    sitesjs: '/js/plugins/sites.js',
-    friendsjs: '/js/plugins/friends.js',
-  };
+  window.wrapLazyloadImages = (container) => {
+    if (typeof container === 'string') {
+      container = document.querySelector(container);
+    }
+    if (!container) return;
+    
+    const images = container.querySelectorAll('img');
+    images.forEach((img) => {
+      if (img.classList.contains('lazy')) return;
 
-  // optional plugins
-  if ('true' == 'true') {
-    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+      const src = img.getAttribute('src');
+      if (!src) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'lazy-box';
+
+      const newImg = img.cloneNode();
+      newImg.removeAttribute('src');
+      newImg.setAttribute('data-src', src);
+      newImg.classList.add('lazy');
+
+      const icon = document.createElement('div');
+      icon.className = 'lazy-icon';
+      if (def.loading) {
+        icon.style.backgroundImage = `url("${def.loading}")`;
+      }
+
+      wrapper.appendChild(newImg);
+      wrapper.appendChild(icon);
+
+      img.replaceWith(wrapper);
+    });
+
+    // 通知 LazyLoad 更新
+    if (window.lazyLoadInstance?.update) {
+      window.lazyLoadInstance.update();
+    }
   }
-  if ('true' == 'true') {
-    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@6/swiper-bundle.min.css","js":"https://unpkg.com/swiper@6/swiper-bundle.min.js"});
-  }
-  if ('' == 'true') {
-    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://fastly.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
-  }
-  if ('true' == 'true') {
-    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://fastly.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://fastly.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
-  }
-  if ('true' == 'true') {
-    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
-  }
-  if ('false' == 'true') {
-    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti/umd/heti.min.css","js":"https://unpkg.com/heti/umd/heti-addon.min.js"});
-  }
+  
 </script>
 
 <!-- required -->
+<script src="/js/main.js?v=1.33.1" defer></script>
 
-  
-<script src="/js/main.js" async></script>
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
 
+    // applyThemeToGiscus(theme)
+  }
+
+  // FIXME: 这会导致无法使用 preferred_color_scheme 以外的主题
+  const applyThemeToGiscus = (theme) => {
+    // theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+    utils.dark.mode = newTheme === 'auto' ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : newTheme;
+    utils.dark.method.toggle.start();
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    } else {
+      utils.dark.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    utils.dark.method.toggle.start();
+  })()
+</script>
 
 
 <!-- optional -->
 
-  <script>
-  function load_comment(){
-    if(!document.getElementById("waline_container"))return;
-    stellar.loadCSS('https://unpkg.com/@waline/client@v2/dist/waline.css');
-    stellar.loadScript('https://unpkg.com/@waline/client@v2/dist/waline.js', {defer:true}).then(function () {
-      const el = document.getElementById("waline_container");
-      var path = el.getAttribute('comment_id');
-      if (!path) {
-        path = decodeURI(window.location.pathname);
-      }
-      Waline.init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"emoji":["https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["nick","mail"],"lang":"zh-CN","wordLimit":0,"login":"enable","pageSize":10}, {
-        el: '#waline_container',
-        path: path,
-      }));
-    });
-  }
-  window.addEventListener('DOMContentLoaded', (event) => {
-    console.log('DOM fully loaded and parsed');
-    load_comment();
-  });
+  <script type="module">
+  import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.js';
 
+  const el = document.getElementById('waline_container');
+  util.viewportLazyload(el, load_waline, false);
+
+  function load_waline(){
+    if (!el) return;
+
+    utils.css('https://unpkg.com/@waline/client@v2/dist/waline.css');
+    utils.css('https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline-meta.css');
+
+    const path = el.getAttribute('comment_id') ?? decodeURI(window.location.pathname);
+    const waline = init(Object.assign({"js":"https://unpkg.com/@waline/client@v2/dist/waline.js","css":"https://unpkg.com/@waline/client@v2/dist/waline.css","meta_css":"https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline-meta.css","serverURL":"https://waline-blog-self.vercel.app/","commentCount":false,"pageview":false,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"},"emoji":["https://gcore.jsdelivr.net/gh/norevi/waline-blobcatemojis@1.0/blobs"],"meta":["nick","mail"],"lang":"zh-CN","wordLimit":0,"login":"enable","pageSize":10}, {
+      el: '#waline_container',
+      path: path,
+      
+    }));
+  }
 </script>
 
 
 
 
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"rating":{"js":"/js/services/rating.js","api":"https://star-vote.xaox.cc/api/rating"},"vote":{"js":"/js/services/vote.js","api":"https://star-vote.xaox.cc/api/vote"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"friends_and_posts":{"js":"/js/services/friends_and_posts.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"voice":{"js":"/js/plugins/voice.js"},"video":{"js":"/js/plugins/video.js"},"download-file":{"js":"/js/plugins/download-file.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"},"contributors":{"edit_this_page":{"_posts/":null,"wiki/stellar/":"https://github.com/xaoxuu/hexo-theme-stellar-docs/blob/main/"},"js":"/js/services/contributors.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else if (id == 'voice') {
+        ctx.voiceAudios = document.querySelectorAll('.voice>audio');
+        if (ctx.voiceAudios?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            createVoiceDom(ctx.voiceAudios);
+          });
+        }
+      } else if (id == 'video') {
+        ctx.videos = document.querySelectorAll('.video>video');
+        if (ctx.videos?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            videoEvents(ctx.videos);
+          });
+        }
+      } else if (id == 'download-file') {
+        ctx.files = document.querySelectorAll('.file');
+        if (ctx.files?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            downloadFileEvent(ctx.files);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+
+    // chat iphone time
+    let phoneTimes = document.querySelectorAll('.chat .status-bar .time');
+
+    if (phoneTimes.length > 0) {
+      NowTime();
+      var date = new Date();
+      var sec = date.getSeconds();
+      var firstAdjustInterval = setInterval(firstAdjustTime, 1000 * (60 - sec));
+    }
+
+    function firstAdjustTime() {
+      NowTime();
+      clearInterval(firstAdjustInterval);
+      setInterval(NowTime, 1000 * 60);
+    }
+
+    function NowTime() {
+      for (let i = 0; i < phoneTimes.length; ++i) {
+        var timeSpan = phoneTimes[i];
+        var date = new Date();
+        var hour = date.getHours();
+        var min = date.getMinutes();
+        timeSpan.innerHTML = check(hour) + ":" + check(min);
+      }
+    };
+
+    function check(val) {
+      if (val < 10) {
+        return ("0" + val);
+      }
+      return (val);
+    }
+
+    // chat quote
+    const chat_quote_obverser = new IntersectionObserver((entries, observer) => {
+      entries.filter((entry) => { return entry.isIntersecting }).sort((a, b) => a.intersectionRect.y !== b.intersectionRect.y ? a.intersectionRect.y - b.intersectionRect.y : a.intersectionRect.x - b.intersectionRect.x).forEach((entry, index) => {
+          observer.unobserve(entry.target);
+          setTimeout(() => {
+            entry.target.classList.add('quote-blink');
+            setTimeout(() => {
+              entry.target.classList.remove('quote-blink');
+            }, 1000);
+          }, Math.max(100, 16) * (index + 1));
+        });
+    });
+
+    var chatQuotes = document.querySelectorAll(".chat .talk .quote");
+    chatQuotes.forEach((quote) => {
+      quote.addEventListener('click', function () {
+        var chatCellDom = document.getElementById("quote-" + quote.getAttribute("quotedCellTag"));
+        if (chatCellDom) {
+          var chatDiv = chatCellDom.parentElement;
+          var mid = chatDiv.clientHeight / 2;
+          var offsetTop = chatCellDom.offsetTop;
+          if (offsetTop > mid - chatCellDom.clientHeight / 2) {
+            chatDiv.scrollTo({
+              top: chatCellDom.offsetTop - mid + chatCellDom.clientHeight / 2,
+              behavior: "smooth"
+            });
+          } else {
+            chatDiv.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+          }
+          chat_quote_obverser.observe(chatCellDom);
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error), .with-fancybox .atk-content img:not([atk-emoticon])';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const memos = document.getElementsByClassName('ds-memos');
+    if (memos != undefined && memos.length > 0) {
+      needFancybox = true;
+    }
+    const fancybox = document.getElementsByClassName('with-fancybox');
+    if (fancybox != undefined && fancybox.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+
+<script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+  MathJax.Hub.Config({
+    tex2jax: {
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  });
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
 <!-- inject -->
 
-
-  </div>
-</body>
-</html>
+</div></body></html>
