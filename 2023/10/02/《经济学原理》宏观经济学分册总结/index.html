@@ -697,8 +697,8 @@
 
   function load_artalk() {
     if (!el) return;
-    utils.css('https://unpkg.com/artalk@2.7/dist/Artalk.css');
-    utils.js('https://unpkg.com/artalk@2.7/dist/Artalk.js', {defer: true}).then(function () {
+    utils.css('https://unpkg.com/artalk@2.9/dist/Artalk.css');
+    utils.js('https://unpkg.com/artalk@2.9/dist/Artalk.js', {defer: true}).then(function () {
       // 监听 Artalk 事件
       // FIXME: Artalk开启了懒加载会导致评论输入预览框里的图也变成data-src，导致看不到图
       // Artalk.use((ctx) => {
@@ -710,7 +710,7 @@
         pageKey: path,
         pageTitle: '《经济学原理》宏观经济学分册总结',
         server: 'http://120.55.192.128:8085/',
-        site: '',
+        site: 'Eumendies的博客',
         darkMode: 'auto',
         
       });

@@ -1063,8 +1063,8 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 
   function load_artalk() {
     if (!el) return;
-    utils.css('https://unpkg.com/artalk@2.7/dist/Artalk.css');
-    utils.js('https://unpkg.com/artalk@2.7/dist/Artalk.js', {defer: true}).then(function () {
+    utils.css('https://unpkg.com/artalk@2.9/dist/Artalk.css');
+    utils.js('https://unpkg.com/artalk@2.9/dist/Artalk.js', {defer: true}).then(function () {
       // 监听 Artalk 事件
       // FIXME: Artalk开启了懒加载会导致评论输入预览框里的图也变成data-src，导致看不到图
       // Artalk.use((ctx) => {
@@ -1076,7 +1076,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         pageKey: path,
         pageTitle: 'DDPM扩散模型的数学推导',
         server: 'http://120.55.192.128:8085/',
-        site: '',
+        site: 'Eumendies的博客',
         darkMode: 'auto',
         
       });
