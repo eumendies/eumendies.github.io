@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://eumendies.github.io/images/logo.jpg">
 <meta property="article:published_time" content="2025-10-22T05:43:51.000Z">
-<meta property="article:modified_time" content="2025-10-22T10:55:11.259Z">
+<meta property="article:modified_time" content="2025-10-23T02:17:31.664Z">
 <meta property="article:author" content="Eumendies">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://eumendies.github.io/images/logo.jpg">
@@ -50,12 +50,12 @@
 
   
 
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg"},"dateCreated":"2025-10-22T13:43:51+08:00","dateModified":"2025-10-22T18:55:11+08:00","datePublished":"2025-10-22T13:43:51+08:00","description":"因为《数字媒体导论》课程要做文献汇报，同组同学选择了和扩散模型相关的论文，而我又没接触过扩散模型，正好学习并整理一下DDPM模型的推导过程。","headline":"DDPM扩散模型的数学推导","mainEntityOfPage":{"@type":"WebPage","@id":"https://eumendies.github.io/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/"},"publisher":{"@type":"Organization","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg","logo":{"@type":"ImageObject","url":"/images/logo.jpg"}},"url":"https://eumendies.github.io/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/","image":[]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg"},"dateCreated":"2025-10-22T13:43:51+08:00","dateModified":"2025-10-23T10:17:31+08:00","datePublished":"2025-10-22T13:43:51+08:00","description":"因为《数字媒体导论》课程要做文献汇报，同组同学选择了和扩散模型相关的论文，而我又没接触过扩散模型，正好学习并整理一下DDPM模型的推导过程。","headline":"DDPM扩散模型的数学推导","mainEntityOfPage":{"@type":"WebPage","@id":"https://eumendies.github.io/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/"},"publisher":{"@type":"Organization","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg","logo":{"@type":"ImageObject","url":"/images/logo.jpg"}},"url":"https://eumendies.github.io/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/","image":[]}</script>
   
 </head>
 <body>
 
-<div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
+<div class="l_body content" id="start" layout="post" type="tech" text-indent><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 
 
 <header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div></header>
@@ -82,7 +82,7 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/deep-learning/">deep-learning</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2025-10-22T05:43:51.000Z">2025-10-22</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2025-10-22T10:55:11.259Z">2025-10-22</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2025-10-22T05:43:51.000Z">2025-10-22</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2025-10-23T02:17:31.664Z">2025-10-23</time></span></div></div></div>
     
     <div class="bottom only-title">
       
@@ -544,11 +544,10 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       <p>快来参与讨论吧~</p>
 
     </section>
-    <section class='body cmt-body waline'>
+    <section class='body cmt-body artalk'>
       
 
-<div id="waline_container" class="waline_thread"><svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
-
+<div class="artalk with-fancybox" id="artalk_container"><svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
     </section>
   </div>
 
@@ -1059,26 +1058,31 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <!-- optional -->
 
   <script type="module">
-  import { init } from 'https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline.js';
+  const el = document.getElementById('artalk_container');
+  util.viewportLazyload(el, load_artalk, false);
 
-  const el = document.getElementById('waline_container');
-  util.viewportLazyload(el, load_waline, false);
-
-  function load_waline(){
+  function load_artalk() {
     if (!el) return;
-
-    utils.css('https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline.css');
-    utils.css('https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline-meta.css');
-
-    const path = el.getAttribute('comment_id') ?? decodeURI(window.location.pathname);
-    const waline = init(Object.assign({"js":"https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline.js","css":"https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline.css","meta_css":"https://gcore.jsdelivr.net/npm/@waline/client@3.1/dist/waline-meta.css","serverURL":"https://walinev3.vercel.app/","commentCount":true,"pageview":false,"locale":{"placeholder":"快来发表你的看法吧（不用登录也能评论）"}}, {
-      el: '#waline_container',
-      path: path,
-      
-    }));
+    utils.css('https://unpkg.com/artalk@2.7/dist/Artalk.css');
+    utils.js('https://unpkg.com/artalk@2.7/dist/Artalk.js', {defer: true}).then(function () {
+      // 监听 Artalk 事件
+      // FIXME: Artalk开启了懒加载会导致评论输入预览框里的图也变成data-src，导致看不到图
+      // Artalk.use((ctx) => {
+      //   ctx.on('list-loaded', () => window.lazyLoadInstance?.update())
+      // })
+      const path = el.getAttribute('comment_id') ?? decodeURI(window.location.pathname);
+      const artalk = Artalk.init({
+        el: '#artalk_container',
+        pageKey: path,
+        pageTitle: 'DDPM扩散模型的数学推导',
+        server: 'http://120.55.192.128:8085/',
+        site: '',
+        darkMode: 'auto',
+        
+      });
+    });
   }
 </script>
-
 
 
 
