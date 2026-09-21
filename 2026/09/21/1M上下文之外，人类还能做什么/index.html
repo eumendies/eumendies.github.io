@@ -1,0 +1,1032 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1" theme-name="Stellar" theme-version="1.33.1">
+  
+  
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  <title>1M 上下文之外，人类还能做什么？ - Eumendies</title>
+
+  
+    <meta name="description" content="凡能装进1M上下文之内的任务，AI已经能够执行得比人更好，我们不得不开始思考AI取代人类的可能性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1M 上下文之外，人类还能做什么？">
+<meta property="og:url" content="https://eumendies.github.io/2026/09/21/1M%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B9%8B%E5%A4%96%EF%BC%8C%E4%BA%BA%E7%B1%BB%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88/">
+<meta property="og:site_name" content="Eumendies">
+<meta property="og:description" content="凡能装进1M上下文之内的任务，AI已经能够执行得比人更好，我们不得不开始思考AI取代人类的可能性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eumendies.github.io/images/logo.jpg">
+<meta property="article:published_time" content="2026-09-21T05:05:00.000Z">
+<meta property="article:modified_time" content="2026-09-21T08:09:12.629Z">
+<meta property="article:author" content="Eumendies">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="思考">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eumendies.github.io/images/logo.jpg">
+  
+  
+  
+  <meta name="keywords" content="LLM,Agent,思考">
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.33.1">
+
+
+  
+    <link rel="shortcut icon" href="/images/logo.jpg">
+  
+
+  
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg"},"dateCreated":"2026-09-21T13:05:00+08:00","dateModified":"2026-09-21T16:09:12+08:00","datePublished":"2026-09-21T13:05:00+08:00","description":"凡能装进1M上下文之内的任务，AI已经能够执行得比人更好，我们不得不开始思考AI取代人类的可能性。","headline":"1M 上下文之外，人类还能做什么？","mainEntityOfPage":{"@type":"WebPage","@id":"https://eumendies.github.io/2026/09/21/1M%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B9%8B%E5%A4%96%EF%BC%8C%E4%BA%BA%E7%B1%BB%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88/"},"publisher":{"@type":"Organization","name":"Eumendies","sameAs":[],"image":"/images/logo.jpg","logo":{"@type":"ImageObject","url":"/images/logo.jpg"}},"url":"https://eumendies.github.io/2026/09/21/1M%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B9%8B%E5%A4%96%EF%BC%8C%E4%BA%BA%E7%B1%BB%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88/","keywords":"LLM, Agent, 思考","image":[]}</script>
+  
+<!-- hexo injector head_end start --><style id="hexo-reference-style">
+#refs.csl-bib-body{font-size:.95em;margin-top:.6em;margin-bottom:1.5em}
+#refs .csl-entry{display:flex;align-items:flex-start;line-height:1.65;margin:.55em 0}
+#refs .csl-left-margin{flex:0 0 auto;margin-right:.5em}
+#refs .csl-right-inline{flex:1 1 auto;min-width:0}
+#refs .csl-right-inline a{word-break:break-word}
+.citation a{text-decoration:none}
+</style><!-- hexo injector head_end end --></head>
+<body>
+
+<div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/logo.jpg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main">Eumendies</div></a></div></header>
+
+<div class="nav-area">
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="友链" href="/friends/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="关于我" href="/about/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M20 12a8 8 0 1 1-16 0a8 8 0 0 1 16 0" opacity=".5"/><path fill="currentColor" d="M17.712 5.453c1.047-.193 2.006-.259 2.797-.152c.77.103 1.536.393 1.956 1.064c.446.714.312 1.542-.012 2.258c-.33.728-.918 1.499-1.672 2.268c-1.516 1.547-3.836 3.226-6.597 4.697c-2.763 1.472-5.495 2.484-7.694 2.92c-1.095.217-2.098.299-2.923.201c-.8-.095-1.6-.383-2.032-1.075c-.47-.752-.296-1.63.07-2.379c.375-.768 1.032-1.586 1.872-2.403L4 12.416c0 .219.083.71.168 1.146c.045.23.09.444.123.596c-.652.666-1.098 1.263-1.339 1.756c-.277.567-.208.825-.145.925c.072.116.305.305.937.38c.609.073 1.44.018 2.455-.183c2.02-.4 4.613-1.351 7.28-2.772c2.667-1.42 4.85-3.015 6.23-4.423c.694-.707 1.15-1.334 1.377-1.836c.233-.515.167-.75.107-.844c-.07-.112-.289-.294-.883-.374c-.542-.072-1.272-.041-2.163.112L16.87 5.656c.338-.101.658-.17.842-.203"/></svg></a></nav>
+</div>
+<div class="widgets">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+
+<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2026/09/21/1M%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B9%8B%E5%A4%96%EF%BC%8C%E4%BA%BA%E7%B1%BB%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88/"><span class="title">1M 上下文之外，人类还能做什么？</span></a><a class="item title" href="/2025/01/01/%E5%BC%95%E7%94%A8%E5%8A%9F%E8%83%BD%E6%B5%8B%E8%AF%95/"><span class="title">引用功能测试</span></a><a class="item title" href="/2025/10/22/DDPM%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/"><span class="title">DDPM扩散模型的数学推导</span></a><a class="item title" href="/2025/12/04/%E3%80%8A%E5%AD%98%E5%9C%A8%E4%B8%BB%E4%B9%89%E5%BF%83%E7%90%86%E6%B2%BB%E7%96%97%E3%80%8B%E6%80%BB%E7%BB%93/"><span class="title">《存在主义心理治疗》总结</span></a><a class="item title" href="/2025/10/16/%E8%AE%B0%E4%B8%80%E6%AC%A1pytorch%20Dataset%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><span class="title">记一次pytorch Dataset性能优化</span></a><a class="item title" href="/2022/09/29/LSTM%E7%AC%94%E8%AE%B0/"><span class="title">LSTM笔记</span></a><a class="item title" href="/2023/10/02/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》宏观经济学分册总结</span></a><a class="item title" href="/2023/11/05/Raft%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/"><span class="title">Raft算法详解</span></a><a class="item title" href="/2022/11/09/%E8%AF%A6%E8%A7%A3RISC-V%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/"><span class="title">详解RISC-V函数调用</span></a><a class="item title" href="/2023/08/04/%E3%80%8A%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%8E%9F%E7%90%86%E3%80%8B%E5%BE%AE%E8%A7%82%E7%BB%8F%E6%B5%8E%E5%AD%A6%E5%88%86%E5%86%8C%E6%80%BB%E7%BB%93/"><span class="title">《经济学原理》微观经济学分册总结</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2026-09-21T05:05:00.000Z">2026-09-21</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2026-09-21T08:09:12.629Z">2026-09-21</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>1M 上下文之外，人类还能做什么？</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>凡能装进1M上下文之内的任务，AI已经能够执行得比人更好，我们不得不开始思考AI取代人类的可能性。</p>
+<span id="more"></span>
+<h2 id="1-背景"><a class="markdownIt-Anchor" href="#1-背景"></a> 1. 背景</h2>
+<p>自从 2022.11.30 OpenAI发布ChatGPT3.5以来<span class="citation" data-cites="ChatGPT2022"><sup>[<a href="#ref-ChatGPT2022" role="doc-biblioref">1</a>]</sup></span>，生成式大模型的能力已经得到了显著的提升，从最开始的简单问答，发展到现在能够使用工具、编写软件、参与科研，开始接手工作流里越来越多的任务：</p>
+<ul>
+<li>在编程领域，benchmark从最开始的简单函数补全<span class="citation" data-cites="HumanEval"><sup>[<a href="#ref-HumanEval" role="doc-biblioref">2</a>]</sup></span>，转变到需要先理解仓库、定位问题再修改代码的SWE-bench<span class="citation" data-cites="SWE-bench"><sup>[<a href="#ref-SWE-bench" role="doc-biblioref">3</a>]</sup></span>，且最新模型的解决率都已经达到80%以上。</li>
+<li>在科研领域，Google DeepMind已经探索了基于Multi-Agent系统的AI科研方式<span class="citation" data-cites="Co-Scientist"><sup>[<a href="#ref-Co-Scientist" role="doc-biblioref">4</a>]</sup></span>；而OpenAI近期 (2026.09.08) 更是宣布通过1万个左右的并发Agent在88小时内解决了 Navier–Stokes 千禧年问题<span class="citation" data-cites="OpenAI-NS"><sup>[<a href="#ref-OpenAI-NS" role="doc-biblioref">5</a>]</sup></span>。</li>
+</ul>
+<p>编程是有明确目标、已知答案的任务，而科研是高度开放式的任务，当前AI已经能够很好地完成这两个领域内的任务，说明无论是知识复用、还是知识生产，AI都有超越人类智能的趋势。</p>
+<h2 id="2-现状"><a class="markdownIt-Anchor" href="#2-现状"></a> 2. 现状</h2>
+<h3 id="21-注意力机制"><a class="markdownIt-Anchor" href="#21-注意力机制"></a> 2.1. 注意力机制</h3>
+<p><img src="/2026/09/21/1M%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B9%8B%E5%A4%96%EF%BC%8C%E4%BA%BA%E7%B1%BB%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88/attention.png" alt></p>
+<p>现有的大模型无一例外地是基于Attention机制构造的，最原始的Self-Attention公式如下：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>A</mi><mi>t</mi><mi>t</mi><mi>e</mi><mi>n</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo stretchy="false">(</mo><mi>Q</mi><mo separator="true">,</mo><mi>K</mi><mo separator="true">,</mo><mi>V</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">softmax</mi><mo>⁡</mo><mo stretchy="false">(</mo><mfrac><mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mfrac><mo stretchy="false">)</mo><mi>V</mi></mrow><annotation encoding="application/x-tex">Attention(Q,K,V)=\operatorname{softmax}(\frac{QK^T}{\sqrt{d_k}})V
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">A</span><span class="mord mathnormal">t</span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord mathnormal">n</span><span class="mord mathnormal">t</span><span class="mord mathnormal">i</span><span class="mord mathnormal">o</span><span class="mord mathnormal">n</span><span class="mopen">(</span><span class="mord mathnormal">Q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.448331em;vertical-align:-0.93em;"></span><span class="mop"><span class="mord mathrm">s</span><span class="mord mathrm">o</span><span class="mord mathrm" style="margin-right:0.07778em;">f</span><span class="mord mathrm">t</span><span class="mord mathrm">m</span><span class="mord mathrm">a</span><span class="mord mathrm">x</span></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5183309999999999em;"><span style="top:-2.25278em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85722em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.81722em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewbox="0 0 400000 1080" preserveaspectratio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.18278000000000005em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.93em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">)</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span></span></p>
+<p>简单理解，这个公式计算了token两两之间的相关性，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">Q</span></span></span></span>矩阵代表了每个token想要取回什么样的信息，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span>矩阵代表了每个token有哪些信息，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">QK^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span>通过点积表达token两两之间信息上的相关性，最后通过对<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>矩阵进行加权得到汇总结果。</p>
+<p>原始注意力机制最大的问题在于其计算复杂度是<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>的，也就是随着输入长度线性增长，计算量按平方来增长，主要原因就在于计算<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">QK^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span>得到的是一个<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">n \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">n</span></span></span></span>的矩阵。当模型的上下文窗口从8K增长到1M时，计算量增长了<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12</mn><msup><mn>5</mn><mn>2</mn></msup><mo>=</mo><mn>15625</mn></mrow><annotation encoding="application/x-tex">125^2=15625</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">2</span><span class="mord"><span class="mord">5</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">5</span><span class="mord">6</span><span class="mord">2</span><span class="mord">5</span></span></span></span>。</p>
+<p>过去几年，研究者们尝试对原始Attention做了很多改造来降低计算量，比如Sparse Attention将全局注意力改成局部注意力；Linear Attention通过核化来将Attention的计算复杂度降低到<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>。但是原始Full Attention表达能力实在太好，这些新Attention机制都不能完全替代。</p>
+<p>因此大模型上下文的增长目前仍受<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>复杂度掣肘。</p>
+<h3 id="22-新知识获取"><a class="markdownIt-Anchor" href="#22-新知识获取"></a> 2.2. 新知识获取</h3>
+<p>大模型在预训练阶段学习到语料库内包含的世界知识，也就是说，当预训练完成之后，内化在大模型参数里面的知识只是过去世界的快照。当询问大模型知识库截止日期之后的新知识时，回答的正确率会非常低<span class="citation" data-cites="RAG-or-Learning"><sup>[<a href="#ref-RAG-or-Learning" role="doc-biblioref">6</a>]</sup></span>。</p>
+<p>目前一般有两种解决方式：</p>
+<ul>
+<li>RAG (retrieval-augmented generation)：在运行时根据用户的输入去数据库内查询相关知识，然后注入到大模型的上下文中作为知识补充 (给大模型配备Web Search工具是一样的)。这种方式的有效性高度依赖于知识库数据质量和召回的准确性，否则召回的垃圾信息只会浪费上下文，甚至导致模型性能劣化。</li>
+<li>Fine-tuning：通过LoRA等方式对模型参数进行微调，从而把新的世界知识内化到新模型参数里。但是这种方式也可能导致灾难性遗忘，也就是模型记住了新的知识，但是把之前训练过的知识给忘记了；且微调也需要一定的成本，并不是一个可以随意执行的操作。</li>
+</ul>
+<h3 id="23-agent化"><a class="markdownIt-Anchor" href="#23-agent化"></a> 2.3. Agent化</h3>
+<p>ChatGPT刚刚推出时，其交互模型是简单的多轮会话聊天，还不具备和外界环境直接交互的能力，但Agent化的基础范式实际已经在2022.10由姚顺雨提出<span class="citation" data-cites="ReAct"><sup>[<a href="#ref-ReAct" role="doc-biblioref">7</a>]</sup></span>，其典型形式是<code>Thought → Action → Observation</code>，也就是要求模型先思考，再行动，然后观察行动产生的结果，如此反复直到完成目标，已经与现在的Agent Loop非常相近了。</p>
+<p>随后在2023.06.13，OpenAI发布function calling，模型获得了原生调用外部工具的能力<span class="citation" data-cites="Function-Calling"><sup>[<a href="#ref-Function-Calling" role="doc-biblioref">8</a>]</sup></span>，Agent化从此进入工程可用的阶段，函数调用成为了大模型和外界环境进行交互的标准形式，比如大模型需要获取额外信息，就可以调用Web Search，需要写文件就调用Edit File，这些函数或者Tool实际上都是一些程序员提前写好的程序，大模型只需要负责声明调用，从而保证了参数相同的情况下获得相同的执行结果。</p>
+<p>此后 Agent 完成任务的过程，本质上就是一个以 function calling 为核心的循环：模型先判断当前是否需要调用函数，需要就执行函数并把结果回传给模型，如此反复，直到模型可以直接给出最终答案。</p>
+<pre class="mermaid">flowchart LR
+    U(["用户输入"]) --> M["模型推理"]
+    M --> D{"需要调用函数？"}
+    D -->|是| F["执行函数调用<br>搜索 / 代码 / 数据库"]
+    F -->|结果回传| M
+    D -->|否| O(["输出结果"])</pre>
+<h2 id="3-我们还能做什么"><a class="markdownIt-Anchor" href="#3-我们还能做什么"></a> 3. 我们还能做什么</h2>
+<p>我相信大部分人接触到的工作绝不可能比千禧年问题还要复杂，通过解决千禧年问题，AI已经证明了其智能上限，之所以我们还没有被大规模取代 (在软件开发行业已经有苗头，纯前端/后端岗位已经基本不存在，秋季招聘名额在体感上也大幅度减少)，也只是大部分工作还不值得如此大费周章地用Agent去解决罢了。</p>
+<p>所以我们只能在「预算有限」这个前提条件下去探讨大模型时代下人类在工作流里还能主导哪些环节。</p>
+<h3 id="31-工作流组织"><a class="markdownIt-Anchor" href="#31-工作流组织"></a> 3.1 工作流组织</h3>
+<p>实际软件开发不单单是写一个函数或者写一个类就完事了，其大致流程会涉及到「需求评估」-&gt; 「技术方案调研」-&gt; 「编写技术文档」-&gt; 「代码实现」-&gt; 「测试」-&gt; 「上线部署」。其中每个环节都可以用agent辅助，但是如果要用单个agent跑完整个流程，目前来说效果不好，主要是因为长程任务需要摄入的上下文量远远大于模型的上下文窗口大小，那执行过程中就需要反复执行有损的记忆压缩，会导致后续逐步发生漂移。</p>
+<p>更好的方法是引入一个orchestrator agent，工程师负责提出需求和初始prompt，orchestrator负责拆解任务然后在每个流程节点指派另外一个worker agent负责实现，实现完毕后orchestrator推进到下一个节点直到完成为止。</p>
+<p>这当然只是理想状态下的情况，现实里会有很多因素制约这套工作流的正常运行，这套工作流能跑起来依赖以下假设：</p>
+<ul>
+<li>每一步的验收标准绝对明确</li>
+<li>所有业务知识对于agent来说是可达的，也就是agent能够通过内部文档搜索、网络搜索等方式获取到完成任务所需的知识</li>
+<li>流程上需要用到的所有平台都提供了CLI或者API，让agent能够与平台进行交互</li>
+</ul>
+<p>首先软件开发里的「需求」本身就是不明确的，存在很多模糊甚至矛盾的地方，业务人员或者产品人员在提出需求的时候不可能考虑到全部的情况，就会导致在实际开发过程中会发现新的问题，比如引入这个新功能可能会导致接口性能劣化，这个时候怎么取舍？还是需要工程师跟业务和产品讨论做决策，AI很难知道用户想要什么体验。</p>
+<p>其次有很多业务知识agent是获取不到的，比如这一块为什么有一段特判的逻辑，可能是给大客户留的，也可能是为了快速落地留的写死代码，这些决策点不会全部都持久化在内部文档里面，可能只保存在工程师的脑子里面，agent获取不到这部分内容的话自然容易出现漂移。</p>
+<p>最后，软件开发过程中需要使用到很多内部基建平台，比如代码管理平台、OLAP平台、部署平台等等，这些平台未必都开发了CLI或者API提供给agent使用，自然就无法代劳。</p>
+<p>综上，在工作流组织这方面，比起使用一个orchestrator agent，由工程师来负责会更优，工程师能够明确和沟通需求、知道软件的迭代历史和未被记录的业务知识、自然也能操作大部分平台，且成本更低。但以上问题并非不可解决的，平台CLI是可以开发的，隐性的业务知识会随着agent化进程逐步减少，过往只是因为人力问题所以存在一些未被记录的决策，而agent参与得越多，这些盲区会越来越少。目前仅仅在需求这一块，由于和人类体验有关，暂时没办法全面自动化。</p>
+<h3 id="32-外挂memory存储"><a class="markdownIt-Anchor" href="#32-外挂memory存储"></a> 3.2 外挂Memory存储</h3>
+<p>大模型的参数内化的是过去世界的快照，上下文内容是当前任务的快照；前者意味着大模型没办法随时内化最新的知识，也没办法知道训练时没有接触过的知识，后者意味着大模型没有意识连续性，只要新开一个会话，大模型就无法知道自己之前做过什么事情。</p>
+<p>一般解决方法是由外部持久化存储负责管理额外知识和长期记忆，工程师在大模型运行环境 (harness)的某些节点去调用负责记忆或者召回记忆的程序，所以记忆机制是程序化、固定化的，不像大模型的next token prediction那样是语义化的。这些记忆机制也仅仅是解决了「能够存储」的问题，距离「能够被有效利用」还有相当的距离，目前主要是还存在这些问题：</p>
+<ul>
+<li>知识和记忆会腐化和过期，程序难以描述这种过程。前一个决策点可能被记录下来了，但是可能第二天做了版本迭代，这个决策点过时了，如果没有及时更新，就会污染记忆；如果人工更新，那工程师每天的工作就只剩维护记忆库了</li>
+<li>记忆的触发和召回的触发做不到非常准确。常见的记忆触发时机包括「大模型自主调用」、「会话结束时由程序强制调用」、「消息积累一定程度后由程序调用」，召回时机则包括「大模型自主调用」、「每轮会话强制注入」。这些都和人类的记忆机制相去甚远，人类工作时会自动隐式地在大脑里留下记忆，在遇到相关事件时也可以高效、准确地召回稳定的记忆</li>
+</ul>
+<p>无论是openclaw、codex还是claude code的记忆机制我都有尝试使用过，甚至在我自己的项目里我也开发过长期记忆系统，但是对于长期记忆机制，我并没有感觉出对agent工作的正确率有什么巨大的提升 (对于聊天来说memory还是有点用的)。我们可以开发非常tricky的程序，但是这种纯外化的记忆机制跟人脑的记忆终究有巨大的鸿沟，因此在日常和agent合作时，完全可以关掉长期记忆功能，把我们自身当作agent的人肉外挂memory存储。</p>
+<p>结合之前提到的「工作流组织」，我们可以把脑内的准确记忆作为优质上下文传给大模型，同时在监督agent工作的过程中把遇到的问题、进行过的决策记忆下来，在横跨新旧会话时，如果agent的行为不符合预期直接纠正即可，目前根本用不上外化的长期记忆机制。</p>
+<h3 id="33-架构设计"><a class="markdownIt-Anchor" href="#33-架构设计"></a> 3.3 架构设计</h3>
+<p>软件架构需要全局判断，包括系统全貌、历史包袱和未来演进，所以主要是两个问题：</p>
+<ul>
+<li>架构设计是押注「预期要支持的功能」来做提前设计，但是预期只是判断，不是从代码或者文档里面能够推断出来的</li>
+<li>架构的正确性没有明确的检验标准，必须等业务变化之后才能判断架构设计是否优良</li>
+</ul>
+<p>由于预期不能用代码或者文档来描述，所以agent很难获取到这部分上下文，只能由工程师把自己大概的想法拿来和agent讨论，不能由agent完全自动化。其次就是架构的检验是模糊的、非标的，没有一个具体的打分标准或者测试程序来验证，agent做了也没办法判断自己做得好不好。</p>
+<p>好的架构设计分层明确、职责清晰、可读性和可维护性优良，这不仅对人类工程师有用，对agent展开工作也有很多好处。主要收益来自于明确的分层可以减少模型完成工作的上下文摄入量。比如将软件划分为A层、B层和C层，当某个需求仅涉及到A层的功能变更时，agent只需要阅读A层代码及少量其他层的代码、且只需要修改A层代码就能够完成任务。但如果工程师不对架构进行维护，任由agent把软件变成big ball of mud，大量噪声上下文会降低模型性能也会提高单任务耗费。</p>
+<p>从这个角度来看，软件工程里的概念和理论在agent时代还是需要的。</p>
+<h3 id="34-背锅"><a class="markdownIt-Anchor" href="#34-背锅"></a> 3.4 背锅</h3>
+<p>无需多言。</p>
+<h2 id="4-总结"><a class="markdownIt-Anchor" href="#4-总结"></a> 4. 总结</h2>
+<p>大模型的出现代表了智力劳动终于进入到了工业化时代，AI的智能可以随硬件资源的扩大、算法的进步进行scaling和复制，人的智能有上限，而且天才再聪明，智力值和普通人还是处于同一个数量级的。AI运行效率比人脑高得多，只是目前受限于上下文容量、自进化成本高、很多决策点没有标准化等问题，还没办法在日常智力工作中全面取代人类。我们因为高效的记忆机制、拥有意识连续性等原因，还能主导大部分工作，只是在执行细节层面上已经远远比不上大模型。</p>
+<p>目前全世界最顶尖的人才都集中到了大模型领域，无论是算法侧还是工程侧，都在飞速发展中，按照目前的趋势来看，智力劳动被AI全面取代的可能性还是不小的，这原本就是开发人工智能的长期愿景，只是转型过程存在阵痛，生产力在飞跃，但是生产关系的变化还存在滞后，给我们这些乱世中的普通人带来不小的心理和生存上的压力。</p>
+<p>等到不知道还有多远的将来，人工智能和具身智能能够取代智力劳动和体力劳动时，可以设想到两种可能的社会形态：</p>
+<ul>
+<li>人类不再需要劳动，人的价值不再由劳动价值衡量，且无论人是否从事生产，都对生产力高低没有影响。人类迎来真正的大平等时代，人可以出于喜好去劳动，也可以不劳动，社会给人分配生活资料，仅取决于人的内在价值（也就是人仅仅因为存在就有价值，因为存在有益于人类社会的存续）</li>
+<li>智能被大公司垄断，同时“必要的”劳动被保留，普通人给AI挖煤、洗数据，这样你才知道自己还在一个存在阶级的社会</li>
+</ul>
+<p>不过社会进步是一个多目标优化任务，还存在多方博弈，最后长期会演进到什么地步没有任何人或组织能够预测。短期上，作为普通人的我们只能把握我们还能承担的宏观职能、开拓广度、做1M上下文以外的事情。</p>
+<h1 class="unnumbered" id="bibliography">参考文献</h1>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-ChatGPT2022" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">OPENAI. Introducing ChatGPT[EB/OL]. (2022-11-30)[2026-09-15]. <a target="_blank" rel="noopener" href="https://openai.com/zh-Hans-CN/index/chatgpt/">https://openai.com/zh-Hans-CN/index/chatgpt/</a>.</div>
+</div>
+<div id="ref-HumanEval" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">CHEN M, TWOREK J, JUN H, 等. Evaluating Large Language Models Trained on Code[EB/OL]. (2021-07-07)[2026-09-15]. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2107.03374">https://arxiv.org/abs/2107.03374</a>. DOI:<a target="_blank" rel="noopener" href="https://doi.org/10.48550/arXiv.2107.03374">10.48550/arXiv.2107.03374</a>.</div>
+</div>
+<div id="ref-SWE-bench" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">JIMENEZ C E, YANG J, WETTIG A, 等. SWE-bench: Can Language Models Resolve Real-World GitHub Issues?[J]. ArXiv, 2023, abs/2310.06770.</div>
+</div>
+<div id="ref-Co-Scientist" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">GOTTWEIS J, WENG W H, DARYIN A, 等. Accelerating scientific discovery with Co-Scientist[J]. Nature, 2025, 655: 487-496.</div>
+</div>
+<div id="ref-OpenAI-NS" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline">OPENAI. On the Navier-Stokes Millennium Prize Problem[EB/OL]. (2026-09-08)[2026-09-16]. <a target="_blank" rel="noopener" href="https://openai.com/index/navier-stokes-solution/">https://openai.com/index/navier-stokes-solution/</a>.</div>
+</div>
+<div id="ref-RAG-or-Learning" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">LIU H B, CAO L, LI Y. RAG or Learning? Understanding the Limits of LLM Adaptation under Continuous Knowledge Drift in the Real World[C/OL]//Annual Meeting of the Association for Computational Linguistics. 2026. <a target="_blank" rel="noopener" href="https://api.semanticscholar.org/CorpusID:287208268">https://api.semanticscholar.org/CorpusID:287208268</a>.</div>
+</div>
+<div id="ref-ReAct" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline">YAO S, ZHAO J, YU D, 等. ReAct: Synergizing Reasoning and Acting in Language Models[J]. ArXiv, 2022, abs/2210.03629.</div>
+</div>
+<div id="ref-Function-Calling" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[8] </div><div class="csl-right-inline">OPENAI. Function calling and other API updates[EB/OL]. (2023-06-13)[2026-09-17]. <a target="_blank" rel="noopener" href="https://openai.com/index/function-calling-and-other-api-updates/">https://openai.com/index/function-calling-and-other-api-updates/</a>.</div>
+</div>
+</div>
+</article>
+<div class="article-footer">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+
+</div>
+
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2025/12/04/%E3%80%8A%E5%AD%98%E5%9C%A8%E4%B8%BB%E4%B9%89%E5%BF%83%E7%90%86%E6%B2%BB%E7%96%97%E3%80%8B%E6%80%BB%E7%BB%93/">《存在主义心理治疗》总结</a></div></section></div>
+
+
+
+
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>快来参与讨论吧~</p>
+
+    </section>
+    <section class='body cmt-body artalk'>
+      
+
+<div class="artalk with-fancybox" id="artalk_container"><svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg></div>
+    </section>
+  </div>
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Eumendies</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。<br />
+本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%83%8C%E6%99%AF"><span class="toc-text"> 1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%8E%B0%E7%8A%B6"><span class="toc-text"> 2. 现状</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="toc-text"> 2.1. 注意力机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E6%96%B0%E7%9F%A5%E8%AF%86%E8%8E%B7%E5%8F%96"><span class="toc-text"> 2.2. 新知识获取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-agent%E5%8C%96"><span class="toc-text"> 2.3. Agent化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%88%91%E4%BB%AC%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text"> 3. 我们还能做什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#31-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%BB%84%E7%BB%87"><span class="toc-text"> 3.1 工作流组织</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32-%E5%A4%96%E6%8C%82memory%E5%AD%98%E5%82%A8"><span class="toc-text"> 3.2 外挂Memory存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#33-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-text"> 3.3 架构设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#34-%E8%83%8C%E9%94%85"><span class="toc-text"> 3.4 背锅</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%80%BB%E7%BB%93"><span class="toc-text"> 4. 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bibliography"><span class="toc-text">参考文献</span></a></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+</div></aside><div class='float-panel'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+
+
+<script type="text/javascript">
+  window.canonical = {"originalHost":null,"officialHosts":["localhost"],"encoded":""};
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/`,
+    tag_plugins: {
+      chat: Object.assign({"api":"https://siteinfo.listentothewind.cn/api/v1"}),
+    }
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+    loading: `https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd`,
+  };
+  const deps = {
+    jquery: `https://gcore.jsdelivr.net/npm/jquery@3.7/dist/jquery.min.js`,
+    marked: `https://gcore.jsdelivr.net/npm/marked@13.0/lib/marked.umd.min.js`,
+    lazyload: `/%5Bobject%20Object%5D`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  
+  function RunItem() {
+    this.list = []; // 存放回调函数
+    this.start = () => {
+      for (var i = 0; i < this.list.length; i++) {
+        this.list[i].run();
+      }
+    };
+    this.push = (fn, name, setRequestAnimationFrame = true) => {
+      let myfn = fn
+      if (setRequestAnimationFrame) {
+        myfn = () => {
+          utils.requestAnimationFrame(fn)
+        }
+      }
+      var f = new Item(myfn, name);
+      this.list.push(f);
+    };
+    this.remove = (name) => {
+      for (let index = 0; index < this.list.length; index++) {
+        const e = this.list[index];
+        if (e.name == name) {
+          this.list.splice(index, 1);
+        }
+      }
+    }
+    // 构造一个可以run的对象
+    function Item(fn, name) {
+      // 函数名称
+      this.name = name || fn.name;
+      // run方法
+      this.run = () => {
+        try {
+          fn()
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    }
+  }
+
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')) {
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function () {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      const maxRetry = 3;
+      let retryCount = 0;
+
+      return new Promise((resolve, reject) => {
+        const load = () => {
+          utils.onLoading?.(el);
+
+          let timedOut = false;
+          const timeout = setTimeout(() => {
+            timedOut = true;
+            console.warn('[request] 超时:', url);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject('请求超时');
+            } else {
+              setTimeout(load, 1000);
+            }
+          }, 5000);
+
+          fetch(url).then(resp => {
+            if (timedOut) return;
+            clearTimeout(timeout);
+
+            if (!resp.ok) throw new Error('响应失败');
+            return resp;
+          }).then(data => {
+            if (timedOut) return;
+            utils.onLoadSuccess?.(el);
+            callback(data);
+            resolve(data);
+          }).catch(err => {
+            clearTimeout(timeout);
+            console.warn('[request] 错误:', err);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject(err);
+            } else {
+              setTimeout(load, 1000);
+            }
+          });
+        };
+
+        load();
+      });
+    },
+    requestWithoutLoading: (url, options = {}, maxRetry = 2, timeout = 5000) => {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+
+        const tryRequest = () => {
+          let timedOut = false;
+          const timer = setTimeout(() => {
+            timedOut = true;
+            if (++retryCount > maxRetry) reject('timeout');
+            else tryRequest();
+          }, timeout);
+
+          fetch(url, options)
+            .then(resp => {
+              clearTimeout(timer);
+              if (!resp.ok) throw new Error('bad response');
+              resolve(resp);
+            })
+            .catch(err => {
+              clearTimeout(timer);
+              if (++retryCount > maxRetry) reject(err);
+              else setTimeout(tryRequest, 500);
+            });
+        };
+
+        tryRequest();
+      });
+    },
+    /********************** requestAnimationFrame ********************************/
+    // 1、requestAnimationFrame 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒60帧。
+    // 2、在隐藏或不可见的元素中，requestAnimationFrame 将不会进行重绘或回流，这当然就意味着更少的的 cpu，gpu 和内存使用量。
+    requestAnimationFrame: (fn) => {
+      if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+      }
+      window.requestAnimationFrame(fn)
+    },
+    dark: {},
+  };
+
+  // utils.dark.mode 当前模式 dark or light
+  // utils.dark.toggle() 暗黑模式触发器
+  // utils.dark.push(callBack[,"callBackName"]) 传入触发器回调函数
+  utils.dark.method = {
+    toggle: new RunItem(),
+  };
+  utils.dark = Object.assign(utils.dark, {
+    push: utils.dark.method.toggle.push,
+  });
+</script>
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+<script async src="https://gcore.jsdelivr.net/npm/vanilla-lazyload@19.1/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+    callback_loaded: (el) => {
+      el.classList.add('loaded');
+      const wrapper = el.closest('.lazy-box');
+      const icon = wrapper?.querySelector('.lazy-icon');
+      if (icon) icon.remove();
+    }
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+
+  window.wrapLazyloadImages = (container) => {
+    if (typeof container === 'string') {
+      container = document.querySelector(container);
+    }
+    if (!container) return;
+    
+    const images = container.querySelectorAll('img');
+    images.forEach((img) => {
+      if (img.classList.contains('lazy')) return;
+
+      const src = img.getAttribute('src');
+      if (!src) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'lazy-box';
+
+      const newImg = img.cloneNode();
+      newImg.removeAttribute('src');
+      newImg.setAttribute('data-src', src);
+      newImg.classList.add('lazy');
+
+      const icon = document.createElement('div');
+      icon.className = 'lazy-icon';
+      if (def.loading) {
+        icon.style.backgroundImage = `url("${def.loading}")`;
+      }
+
+      wrapper.appendChild(newImg);
+      wrapper.appendChild(icon);
+
+      img.replaceWith(wrapper);
+    });
+
+    // 通知 LazyLoad 更新
+    if (window.lazyLoadInstance?.update) {
+      window.lazyLoadInstance.update();
+    }
+  }
+  
+</script>
+
+<!-- required -->
+<script src="/js/main.js?v=1.33.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    // applyThemeToGiscus(theme)
+  }
+
+  // FIXME: 这会导致无法使用 preferred_color_scheme 以外的主题
+  const applyThemeToGiscus = (theme) => {
+    // theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+    utils.dark.mode = newTheme === 'auto' ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : newTheme;
+    utils.dark.method.toggle.start();
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    } else {
+      utils.dark.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    utils.dark.method.toggle.start();
+  })()
+</script>
+
+
+<!-- optional -->
+
+  <script type="module">
+  const el = document.getElementById('artalk_container');
+  util.viewportLazyload(el, load_artalk, false);
+
+  function load_artalk() {
+    if (!el) return;
+    utils.css('https://unpkg.com/artalk@2.9/dist/Artalk.css');
+    utils.js('https://unpkg.com/artalk@2.9/dist/Artalk.js', {defer: true}).then(function () {
+      // 监听 Artalk 事件
+      // FIXME: Artalk开启了懒加载会导致评论输入预览框里的图也变成data-src，导致看不到图
+      // Artalk.use((ctx) => {
+      //   ctx.on('list-loaded', () => window.lazyLoadInstance?.update())
+      // })
+      const path = el.getAttribute('comment_id') ?? decodeURI(window.location.pathname);
+      const artalk = Artalk.init({
+        el: '#artalk_container',
+        pageKey: path,
+        pageTitle: '1M 上下文之外，人类还能做什么？',
+        server: 'https://eumendies.xyz/artalk',
+        site: 'Eumendies的博客',
+        darkMode: 'auto',
+        
+      });
+    });
+  }
+</script>
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"rating":{"js":"/js/services/rating.js","api":"https://star-vote.xaox.cc/api/rating"},"vote":{"js":"/js/services/vote.js","api":"https://star-vote.xaox.cc/api/vote"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"friends_and_posts":{"js":"/js/services/friends_and_posts.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"voice":{"js":"/js/plugins/voice.js"},"video":{"js":"/js/plugins/video.js"},"download-file":{"js":"/js/plugins/download-file.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"},"contributors":{"edit_this_page":{"_posts/":null,"wiki/stellar/":"https://github.com/xaoxuu/hexo-theme-stellar-docs/blob/main/"},"js":"/js/services/contributors.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else if (id == 'voice') {
+        ctx.voiceAudios = document.querySelectorAll('.voice>audio');
+        if (ctx.voiceAudios?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            createVoiceDom(ctx.voiceAudios);
+          });
+        }
+      } else if (id == 'video') {
+        ctx.videos = document.querySelectorAll('.video>video');
+        if (ctx.videos?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            videoEvents(ctx.videos);
+          });
+        }
+      } else if (id == 'download-file') {
+        ctx.files = document.querySelectorAll('.file');
+        if (ctx.files?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            downloadFileEvent(ctx.files);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+
+    // chat iphone time
+    let phoneTimes = document.querySelectorAll('.chat .status-bar .time');
+
+    if (phoneTimes.length > 0) {
+      NowTime();
+      var date = new Date();
+      var sec = date.getSeconds();
+      var firstAdjustInterval = setInterval(firstAdjustTime, 1000 * (60 - sec));
+    }
+
+    function firstAdjustTime() {
+      NowTime();
+      clearInterval(firstAdjustInterval);
+      setInterval(NowTime, 1000 * 60);
+    }
+
+    function NowTime() {
+      for (let i = 0; i < phoneTimes.length; ++i) {
+        var timeSpan = phoneTimes[i];
+        var date = new Date();
+        var hour = date.getHours();
+        var min = date.getMinutes();
+        timeSpan.innerHTML = check(hour) + ":" + check(min);
+      }
+    };
+
+    function check(val) {
+      if (val < 10) {
+        return ("0" + val);
+      }
+      return (val);
+    }
+
+    // chat quote
+    const chat_quote_obverser = new IntersectionObserver((entries, observer) => {
+      entries.filter((entry) => { return entry.isIntersecting }).sort((a, b) => a.intersectionRect.y !== b.intersectionRect.y ? a.intersectionRect.y - b.intersectionRect.y : a.intersectionRect.x - b.intersectionRect.x).forEach((entry, index) => {
+          observer.unobserve(entry.target);
+          setTimeout(() => {
+            entry.target.classList.add('quote-blink');
+            setTimeout(() => {
+              entry.target.classList.remove('quote-blink');
+            }, 1000);
+          }, Math.max(100, 16) * (index + 1));
+        });
+    });
+
+    var chatQuotes = document.querySelectorAll(".chat .talk .quote");
+    chatQuotes.forEach((quote) => {
+      quote.addEventListener('click', function () {
+        var chatCellDom = document.getElementById("quote-" + quote.getAttribute("quotedCellTag"));
+        if (chatCellDom) {
+          var chatDiv = chatCellDom.parentElement;
+          var mid = chatDiv.clientHeight / 2;
+          var offsetTop = chatCellDom.offsetTop;
+          if (offsetTop > mid - chatCellDom.clientHeight / 2) {
+            chatDiv.scrollTo({
+              top: chatCellDom.offsetTop - mid + chatCellDom.clientHeight / 2,
+              behavior: "smooth"
+            });
+          } else {
+            chatDiv.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+          }
+          chat_quote_obverser.observe(chatCellDom);
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error), .with-fancybox .atk-content img:not([atk-emoticon])';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const memos = document.getElementsByClassName('ds-memos');
+    if (memos != undefined && memos.length > 0) {
+      needFancybox = true;
+    }
+    const fancybox = document.getElementsByClassName('with-fancybox');
+    if (fancybox != undefined && fancybox.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.23/dist/katex.min.css" integrity="sha384-//SZkxyB7axjCAopkAL1E1rve+ZSPKapD89Lo/lLhcsXR+zOYl5z6zJZEFXil+q0" crossorigin="anonymous">
+<script defer type="text/javascript" src="https://gcore.jsdelivr.net/npm/mermaid@v9/dist/mermaid.min.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme:
+        "auto" == "auto" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "neutral",
+      logLevel: 3,
+      themeVariables: {
+        darkMode: true
+      },
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: "linear"
+      },
+      gantt: {
+        axisFormat: "%Y/%m/%d"
+      },
+      sequence: {
+        actorMargin: 50
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script><script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
